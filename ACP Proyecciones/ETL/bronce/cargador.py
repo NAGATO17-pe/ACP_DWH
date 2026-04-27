@@ -474,18 +474,35 @@ def insertar_en_bronce(df: pd.DataFrame,
                         engine) -> int:
     """
     Inserta el DataFrame en la tabla Bronce indicada.
-    Retorna el nÃºmero de filas insertadas.
-    """
-    esquema, nombre_tabla = tabla.split('.')
+    Retorna el número de filas insertadas.
 
-    df.to_sql(
-        name=nombre_tabla,
-        con=engine,
-        schema=esquema,
-        if_exists='append',
-        index=False,
-        chunksize=1000,  # fast_executemany=True ya estÃ¡ en el engine
-    )
+    Usa cursor.fast_executemany directo en vez de pandas.to_sql() para
+    garantizar que fast_executemany se aplique efectivamente: to_sql()
+    usa su propia ruta de ejecución interna que puede ignorar el flag
+    del engine según la versión de pandas/SQLAlchemy.
+    """
+    if df.empty:
+        return 0
+
+    esquema, nombre_tabla = tabla.split('.')
+    columnas = list(df.columns)
+    placeholders = ', '.join(['?' for _ in columnas])
+    cols_quoted   = ', '.join([f'[{c}]' for c in columnas])
+    sql = f'INSERT INTO [{esquema}].[{nombre_tabla}] ({cols_quoted}) VALUES ({placeholders})'
+
+    # Convertir a lista de tuplas; sustituir NaN/NaT por None para que
+    # pyodbc los envíe como NULL sin lanzar "Invalid parameter type"
+    datos: list[tuple] = [
+        tuple(None if (v != v or v is None) else v for v in fila)
+        for fila in df.itertuples(index=False, name=None)
+    ]
+
+    with engine.begin() as conn:
+        cursor = conn.connection.cursor()
+        cursor.fast_executemany = True
+        cursor.executemany(sql, datos)
+        cursor.close()
+
     return len(df)
 
 

@@ -44,9 +44,22 @@ def _cargar_dim(engine: Engine, tabla: str,
 
 
 def limpiar_cache() -> None:
+    """
+    Vacía todos los caches de dimensiones y mapas.
+
+    CONTRATO: debe llamarse al inicio de cada corrida del pipeline
+    (pipeline.ejecutar() y pipeline.ejecutar_reproceso_facts() ya lo hacen).
+    Si no se llama entre corridas en el mismo proceso (ej. FastAPI con múltiples
+    ejecuciones), el cache puede devolver IDs de una corrida anterior si se
+    insertaron nuevas dimensiones en Silver entre medias.
+    """
     with _cache_lock:
+        n_dims = len(_cache)
+        n_mapas = len(_cache_mapas)
         _cache.clear()
         _cache_mapas.clear()
+    if n_dims or n_mapas:
+        _log.debug(f'Cache de lookup limpiado: {n_dims} dims, {n_mapas} mapas descartados.')
 
 
 def _normalizar_texto(valor) -> str | None:

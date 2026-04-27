@@ -2,3 +2,25 @@
 programa o archivo por lotes ejecutable.
 "D:\Proyecto2026\ACP_DWH\ACP" no se reconoce como un comando interno o externo,
 programa o archivo por lotes ejecutable.
+
+============================================================
+[2026-04-27 10:45:36.775870] INICIO
+============================================================
+[32m[INFO    ][0m 15:45:38 | runner | [RUNNER] Iniciando. PID=12012
+[32m[INFO    ][0m 15:45:38 | runner | [RUNNER] Tomando comando
+[32m[INFO    ][0m 15:46:07 | runner.ejecutor | [RUNNER] Corrida finalizada
+
+============================================================
+[2026-04-27 10:46:15.543904] INICIO
+============================================================
+[32m[INFO    ][0m 15:46:16 | runner | [RUNNER] Iniciando. PID=36124
+
+============================================================
+[2026-04-27 12:17:00.340470] INICIO
+============================================================
+[32m[INFO    ][0m 17:17:01 | runner | [RUNNER] Iniciando. PID=24152
+
+============================================================
+[2026-04-27 13:20:53.225350] INICIO
+============================================================
+[32m[INFO    ][0m 18:20:54 | runner | [RUNNER] Iniciando. PID=37064

@@ -253,45 +253,49 @@ class BaseFactProcessor:
     # ── helpers internos ───────────────────────────────────────────────────────
 
     def _tipo_sql_para_valor(self, valor: Any) -> str:
-        """Infiere el tipo SQL Server para la columna del batch."""
+        """Infiere el tipo SQL Server para un valor no-nulo."""
+        import datetime
         if isinstance(valor, bool):
             return "BIT"
         if isinstance(valor, int):
             return "BIGINT"
         if isinstance(valor, float):
             return "FLOAT"
-        # fecha/datetime
-        try:
-            import datetime
-            if isinstance(valor, (datetime.date, datetime.datetime)):
-                return "DATETIME2"
-        except ImportError:
-            pass
+        if isinstance(valor, (datetime.date, datetime.datetime)):
+            return "DATETIME2"
         return "NVARCHAR(MAX)"
 
-    def _crear_tabla_temp_en_sesion(self, conexion, nombre_temp: str, columnas_con_tipos: list[tuple[str, str]]) -> None:
+    def _inferir_tipo_columna(self, lista_dicts: list[dict], col: str) -> str:
         """
-        Crea una #Temp table en la MISMA sesion/conexion activa del pipeline.
-        Esta es la unica forma correcta de usar tablas temporales de SQL Server
-        con SQLAlchemy+pyodbc: si usas pandas.to_sql() crea la tabla en una
-        conexion interna separada que SQL Server NO comparte con la transaccion.
+        Devuelve el tipo SQL para 'col' buscando el primer valor no-nulo en el batch.
+        Evita el bug de inferir NVARCHAR(MAX) cuando la primera fila tiene None en
+        una columna numérica, lo que causaría implicit conversions en el JOIN contra
+        la fact e invalidaría los índices de la #Temp table.
         """
-        defs = ", ".join([f"[{col}] {tipo}" for col, tipo in columnas_con_tipos])
-        conexion.execute(text(f"IF OBJECT_ID('tempdb..{nombre_temp}') IS NOT NULL DROP TABLE {nombre_temp}"))
-        conexion.execute(text(f"CREATE TABLE {nombre_temp} ({defs})"))
+        for row in lista_dicts:
+            val = row.get(col)
+            if val is not None:
+                return self._tipo_sql_para_valor(val)
+        return "NVARCHAR(MAX)"
 
-    def _insertar_en_temp(self, conexion, nombre_temp: str, lista_dicts: list[dict], columnas: list[str]) -> None:
-        """Inserta filas en la tabla temporal via executemany (eficiente para lotes grandes)."""
-        placeholders = ", ".join(["?" for _ in columnas])
-        cols_quoted = ", ".join([f"[{c}]" for c in columnas])
-        sql = f"INSERT INTO {nombre_temp} ({cols_quoted}) VALUES ({placeholders})"
+    def _crear_y_cargar_temp(
+        self,
+        conexion,
+        nombre_temp: str,
+        cols_con_tipos: list[tuple[str, str]],
+        lista_dicts: list[dict],
+        columnas: list[str],
+    ) -> None:
+        """
+        Delega en utils.sql_lotes.crear_e_insertar_temp: crea la #Temp table y
+        la carga en la misma sesión/transacción activa del pipeline.
 
-        raw_conn = conexion.connection
-        cursor = raw_conn.cursor()
-        cursor.fast_executemany = True
+        Centraliza el patrón DROP/CREATE/INSERT que antes estaba duplicado entre
+        _crear_tabla_temp_en_sesion + _insertar_en_temp aquí y en sql_lotes.
+        """
+        from utils.sql_lotes import crear_e_insertar_temp
         datos = [tuple(row.get(c) for c in columnas) for row in lista_dicts]
-        cursor.executemany(sql, datos)
-        cursor.close()
+        crear_e_insertar_temp(conexion, nombre_temp, cols_con_tipos, datos)
 
     def _limpiar_duplicados_internos(self, lista_dicts: list[dict]) -> list[dict]:
         """
@@ -398,26 +402,34 @@ class BaseFactProcessor:
         nombre_temp: str,
     ) -> None:
         """
-        Deduplicacion y carga masiva en 6 pasos sin consumir RAM del servidor.
+        Deduplicacion y carga masiva en 5 pasos sin consumir RAM del servidor.
 
-        1. Deduplicación Interna: Limpia duplicados en el mismo batch.
-        2. Inferir tipos SQL para cada columna del batch.
-        3. Crear #Temp table en la MISMA transaccion activa.
-        4. Insertar todo el batch via fast_executemany.
+        1. Deduplicación interna: limpia duplicados dentro del mismo batch.
+        2. Inferir tipos SQL escaneando el batch completo por columna.
+        3+4. Crear #Temp e insertar batch vía crear_e_insertar_temp (helper compartido).
         5. Detectar duplicados con INNER JOIN contra la tabla destino.
-        6. Insertar solo los NO-duplicados con WHERE NOT EXISTS.
+        6. Insertar solo los NO-duplicados con WHERE NOT EXISTS / MERGE tiebreaker.
         """
         if not lista_dicts:
             return
 
         # 0. Inyección automática de ID_Campana (Nueva Arquitectura)
-        from mdm.lookup import obtener_id_campana
-        for row in lista_dicts:
-            if 'ID_Campana' not in row:
-                id_geo = row.get('ID_Geografia')
-                id_var = row.get('ID_Variedad')
-                fecha = row.get('Fecha_Evento') or row.get('Fecha') or row.get('Fecha_Cosecha')
-                row['ID_Campana'] = obtener_id_campana(id_geo, id_var, fecha, self.engine)
+        # Vectorizado: se resuelven solo las claves únicas (geo, var, fecha),
+        # no una query por fila. obtener_id_campana tiene cache interno, pero
+        # llamarlo N veces con la misma clave aún entra al lock N veces.
+        if any('ID_Campana' not in row for row in lista_dicts):
+            from mdm.lookup import obtener_id_campana
+            _cache_campana_local: dict[tuple, Any] = {}
+            for row in lista_dicts:
+                if 'ID_Campana' not in row:
+                    id_geo  = row.get('ID_Geografia')
+                    id_var  = row.get('ID_Variedad')
+                    fecha   = row.get('Fecha_Evento') or row.get('Fecha') or row.get('Fecha_Cosecha')
+                    fecha_k = str(fecha)[:10] if fecha is not None else None
+                    clave   = (id_geo, id_var, fecha_k)
+                    if clave not in _cache_campana_local:
+                        _cache_campana_local[clave] = obtener_id_campana(id_geo, id_var, fecha, self.engine)
+                    row['ID_Campana'] = _cache_campana_local[clave]
 
         # 1. Deduplicación interna en memoria (para evitar IntegrityError en el INSERT final)
         lista_dicts_limpia = self._limpiar_duplicados_internos(lista_dicts)
@@ -428,18 +440,14 @@ class BaseFactProcessor:
         conexion = contexto._conexion_activa()
         todas_cols = list(lista_dicts_limpia[0].keys())
 
-        # 2. Inferir tipos SQL para cada columna
-        primera = lista_dicts_limpia[0]
-        cols_con_tipos: list[tuple[str, str]] = []
-        for col in todas_cols:
-            val = primera.get(col)
-            cols_con_tipos.append((col, self._tipo_sql_para_valor(val)))
+        # 2. Inferir tipos SQL escaneando el batch completo por columna
+        cols_con_tipos: list[tuple[str, str]] = [
+            (col, self._inferir_tipo_columna(lista_dicts_limpia, col))
+            for col in todas_cols
+        ]
 
-        # 3. Crear #Temp en la sesion activa
-        self._crear_tabla_temp_en_sesion(conexion, nombre_temp, cols_con_tipos)
-
-        # 4. Insertar batch via fast_executemany
-        self._insertar_en_temp(conexion, nombre_temp, lista_dicts_limpia, todas_cols)
+        # 3+4. Crear #Temp e insertar batch en un solo paso (helper compartido)
+        self._crear_y_cargar_temp(conexion, nombre_temp, cols_con_tipos, lista_dicts_limpia, todas_cols)
 
         # 5. Detectar duplicados (Filtrando columnas que existen en el destino para evitar error 42S22)
         columnas_fisicas_key = [c for c in self.columnas_clave_unica if c in todas_cols and c != 'id_origen_rastreo']

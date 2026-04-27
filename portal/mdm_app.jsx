@@ -58,8 +58,8 @@ const LoginScreen = ({ onLogin, theme: t }) => {
   const handleLogin = e => {
     e.preventDefault();
     if(!user||!pass){setError('Por favor ingresa usuario y contraseña.');return;}
-    setError('');setLoading(true);
-    setTimeout(()=>{setLoading(false);onLogin();},1200);
+    setError(''); setLoading(true);
+    setTimeout(() => { setLoading(false); onLogin(); if (window.showToast) window.showToast('Sesión iniciada correctamente', 'success'); }, 1200);
   };
 
   const inp = focused => ({
@@ -216,10 +216,20 @@ const TweaksPanel = ({ tweaks, setTweaks, visible }) => {
 // ── App Root ───────────────────────────────────────────────
 const App = () => {
   const saved = (() => { try { return JSON.parse(localStorage.getItem('mdm_state2')||'{}'); } catch { return {}; } })();
-  const [tweaks, setTweaks] = useState({...TWEAK_DEFAULTS,...saved.tweaks});
-  const [active, setActive] = useState(saved.active||'dashboard');
+  const [tweaks, setTweaks] = useState({...TWEAK_DEFAULTS, ...saved.tweaks});
+  const [active, setActive] = useState(saved.active || 'dashboard');
   const [tweaksVis, setTweaksVis] = useState(false);
   const [loggedIn, setLoggedIn] = useState(!!saved.loggedIn);
+  const [toasts, setToasts] = useState([]);
+
+  useEffect(() => {
+    window.showToast = (msg, type = 'info') => {
+      const id = Date.now() + Math.random();
+      setToasts(p => [...p, { id, msg, type }]);
+      setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), 3000);
+    };
+    return () => { delete window.showToast; };
+  }, []);
 
   const theme = THEMES[tweaks.theme] || THEMES.verdeGlass;
   const isExec = tweaks.portalMode === 'executive';
@@ -274,6 +284,21 @@ const App = () => {
           </div>
         </div>
         <TweaksPanel tweaks={tweaks} setTweaks={setTweaks} visible={tweaksVis}/>
+        <div style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 9999, display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {toasts.map(t => (
+            <div key={t.id} className="slide-in" style={{
+              background: t.type === 'success' ? theme.okLight : (t.type === 'error' ? theme.errLight : theme.card),
+              color: t.type === 'success' ? theme.ok : (t.type === 'error' ? theme.err : theme.text),
+              border: `1px solid ${t.type === 'success' ? theme.ok : (t.type === 'error' ? theme.err : theme.cardBorder)}`,
+              padding: '12px 20px', borderRadius: 8, boxShadow: theme.shadow, fontWeight: 600, fontSize: 13,
+              backdropFilter: theme.blur, WebkitBackdropFilter: theme.blur, minWidth: 200,
+              display: 'flex', alignItems: 'center', gap: 8
+            }}>
+              <Icon name={t.type === 'success' ? 'checkC' : (t.type === 'error' ? 'alertC' : 'info')} size={16} />
+              {t.msg}
+            </div>
+          ))}
+        </div>
       </FiltersProvider>
     </ThemeCtx.Provider>
   );

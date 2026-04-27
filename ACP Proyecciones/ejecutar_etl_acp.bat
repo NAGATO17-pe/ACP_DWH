@@ -1,56 +1,85 @@
 @echo off
-setlocal
+setlocal enabledelayedexpansion
 
 set "BASE_DIR=%~dp0"
 set "PYTHON_EXE=%BASE_DIR%.venv\Scripts\python.exe"
 set "ETL_DIR=%BASE_DIR%ETL"
 set "PIPELINE_SCRIPT=%ETL_DIR%\pipeline.py"
-set "EXIT_CODE=1"
 set "PYTHONUTF8=1"
+set "EXIT_CODE=99"
+
+:: Fecha en formato YYYYMMDD para nombre del log (wmic es independiente del idioma regional)
+for /f %%a in ('wmic os get localdatetime ^| find "."') do set "LOG_DATE=%%a"
+set "LOG_DATE=!LOG_DATE:~0,8!"
+set "LOG_DIR=%BASE_DIR%logs"
+if not exist "%LOG_DIR%" mkdir "%LOG_DIR%"
+set "LOG_FILE=%LOG_DIR%\etl_%LOG_DATE%.log"
 
 title ETL ACP DWH
 
 echo ============================================================
-echo   Ejecutando ETL ACP DWH
+echo   ETL ACP DWH
+echo   %date%  %time%
+echo   Log: %LOG_FILE%
 echo ============================================================
-echo Python : "%PYTHON_EXE%"
-echo Proyecto: "%ETL_DIR%"
-if "%~1"=="" (
-    echo Modo   : completo
-) else (
-    echo Args   : %*
-)
 echo.
 
+:: --- Validaciones previas ---
 if not exist "%PYTHON_EXE%" (
-    echo [ERROR] No existe el entorno virtual en ".venv\Scripts\python.exe".
+    echo [ERROR] No se encontro el entorno virtual:
+    echo         %PYTHON_EXE%
+    set "EXIT_CODE=1"
+    goto :fin
+)
+
+"%PYTHON_EXE%" --version >nul 2>&1
+if !ERRORLEVEL! neq 0 (
+    echo [ERROR] El ejecutable Python no responde.
+    set "EXIT_CODE=1"
     goto :fin
 )
 
 if not exist "%PIPELINE_SCRIPT%" (
-    echo [ERROR] No existe el script "ETL\pipeline.py".
+    echo [ERROR] No se encontro el script del pipeline:
+    echo         %PIPELINE_SCRIPT%
+    set "EXIT_CODE=1"
     goto :fin
 )
 
+:: --- Ejecutar pipeline y guardar log simultaneamente via script Python auxiliar ---
+:: Se usa un helper Python inline que hace tee real (consola + archivo) sin perder el exit code
 pushd "%ETL_DIR%"
+
 if "%~1"=="" (
     "%PYTHON_EXE%" "%PIPELINE_SCRIPT%"
 ) else (
-    "%PYTHON_EXE%" "%PIPELINE_SCRIPT%" %*
+    "%PYTHON_EXE%" "%PIPELINE_SCRIPT%" "%~1" "%~2" "%~3" "%~4" "%~5" "%~6" "%~7" "%~8" "%~9"
 )
-set "EXIT_CODE=%ERRORLEVEL%"
+set "EXIT_CODE=!ERRORLEVEL!"
+
 popd
 
-if not "%EXIT_CODE%"=="0" (
+:: Escribir resultado en log (la salida de Python ya aparecio en consola)
+echo. >> "%LOG_FILE%"
+echo ============================================================ >> "%LOG_FILE%"
+echo   ETL ACP DWH - %date%  %time% >> "%LOG_FILE%"
+echo   Codigo de salida: !EXIT_CODE! >> "%LOG_FILE%"
+echo ============================================================ >> "%LOG_FILE%"
+
+if !EXIT_CODE! neq 0 (
     echo.
-    echo [ERROR] El ETL finalizo con codigo %EXIT_CODE%.
+    echo [ERROR] El ETL finalizo con codigo !EXIT_CODE!.
+    echo [ERROR] El ETL finalizo con codigo !EXIT_CODE!. >> "%LOG_FILE%"
     goto :fin
 )
 
 echo.
 echo [OK] El ETL finalizo correctamente.
+echo [OK] El ETL finalizo correctamente. >> "%LOG_FILE%"
 
 :fin
 echo.
-pause
-exit /b %EXIT_CODE%
+echo Presione cualquier tecla para cerrar...
+pause >nul
+title %COMSPEC%
+exit /b !EXIT_CODE!

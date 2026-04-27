@@ -36,7 +36,8 @@ def _leer_bronce_poda(engine: Engine) -> pd.DataFrame:
                 Tipo_Evaluacion_Raw,
                 TallosPlanta_Raw, LongitudTallo_Raw, DiametroTallo_Raw,
                 RamillaPlanta_Raw, ToconesPlanta_Raw,
-                CortesDefectuosos_Raw, AlturaPoda_Raw
+                CortesDefectuosos_Raw, AlturaPoda_Raw,
+                Fecha_Sistema
             FROM {TABLA_PODA}
             WHERE Estado_Carga = 'CARGADO'
         """))
@@ -48,6 +49,7 @@ class ProcesadorCicloPoda(BaseFactProcessor):
         super().__init__(engine, TABLA_PODA, TABLA_DESTINO, columna_id='ID_Evaluacion_Poda')
         # Grain: Geo + Tiempo + Variedad + Tipo_Evaluacion
         self.columnas_clave_unica = ['ID_Geografia', 'ID_Tiempo', 'ID_Variedad', 'Tipo_Evaluacion']
+        self.columna_tiebreaker_timestamp = 'Fecha_Sistema'
 
     def _construir_payload(self, df: pd.DataFrame) -> list[dict]:
         payload = []
@@ -90,6 +92,7 @@ class ProcesadorCicloPoda(BaseFactProcessor):
                 'Promedio_Cortes_Defectuosos': _a_decimal(fila.get('CortesDefectuosos_Raw')),
                 'Promedio_Altura_Poda':      _a_decimal(fila.get('AlturaPoda_Raw')),
                 'Fecha_Evento':              fecha,
+                'Fecha_Sistema':             fila.get('Fecha_Sistema'),
                 'Estado_DQ':                 'OK',
                 'id_origen_rastreo':         id_origen,
             })
