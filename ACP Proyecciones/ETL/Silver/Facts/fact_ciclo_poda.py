@@ -102,22 +102,29 @@ class ProcesadorCicloPoda(BaseFactProcessor):
 def cargar_fact_ciclo_poda(engine: Engine) -> dict:
     proc = ProcesadorCicloPoda(engine)
 
-    df_poda = _leer_bronce_poda(engine)
-    if df_poda.empty:
+    cols_raw = [
+        'Fecha_Raw', 'Fundo_Raw', 'Modulo_Raw', 'Turno_Raw', 'Valvula_Raw',
+        'Variedad_Raw', 'Tipo_Evaluacion_Raw', 'TallosPlanta_Raw',
+        'LongitudTallo_Raw', 'DiametroTallo_Raw', 'RamillaPlanta_Raw',
+        'ToconesPlanta_Raw', 'CortesDefectuosos_Raw', 'AlturaPoda_Raw',
+        'Fecha_Sistema'
+    ]
+    df = proc.leer_bronce(cols_raw)
+    if df.empty:
         return _finalizar_resumen_fact(proc.resumen)
-    proc.resumen['leidos'] = len(df_poda)
+    proc.resumen['leidos'] = len(df)
 
     with ContextoTransaccionalETL(engine) as contexto:
         conexion = contexto._conexion_activa()
-        df_poda, cuar_var = homologar_columna(
-            df_poda, 'Variedad_Raw', 'Variedad_Canonica', TABLA_PODA, conexion,
+        df, cuar_var = homologar_columna(
+            df, 'Variedad_Raw', 'Variedad_Canonica', TABLA_PODA, conexion,
             columna_id_origen='ID_Evaluacion_Poda'
         )
-        df_poda = proc.pre_limpiar_duplicados_batch(df_poda, ['Modulo_Raw', 'Fecha_Raw', 'Variedad_Raw', 'Tipo_Evaluacion_Raw'])
+        df = proc.pre_limpiar_duplicados_batch(df, ['Modulo_Raw', 'Fecha_Raw', 'Variedad_Raw', 'Tipo_Evaluacion_Raw'])
         
         proc.resumen['cuarentena'].extend(cuar_var)
 
-        payload = proc._construir_payload(df_poda)
+        payload = proc._construir_payload(df)
         proc._ejecutar_insercion_masiva_segura(contexto, payload, '#Temp_CicloPoda')
 
         return proc.finalizar_proceso(contexto)

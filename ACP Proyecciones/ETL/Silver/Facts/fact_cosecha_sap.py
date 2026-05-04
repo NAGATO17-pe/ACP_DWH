@@ -125,10 +125,10 @@ class ProcesadorCosechaReporte(BaseFactProcessor):
             )
             if id_var is None:
                 continue
-
             self.ids_procesados.append(id_origen)
             payload.append({
                 'ID_Geografia':        resultado_geo['id_geografia'],
+                '_id_modulo_catalogo': resultado_geo.get('id_modulo_catalogo'),
                 'ID_Tiempo':           obtener_id_tiempo(fecha),
                 'ID_Variedad':         id_var,
                 'ID_Condicion_Cultivo': self._id_condicion_default,
@@ -188,6 +188,7 @@ class ProcesadorCosechaSAP(BaseFactProcessor):
             self.ids_procesados.append(id_origen)
             payload.append({
                 'ID_Geografia':        resultado_geo['id_geografia'],
+                '_id_modulo_catalogo': resultado_geo.get('id_modulo_catalogo'),
                 'ID_Tiempo':           obtener_id_tiempo(fecha),
                 'ID_Variedad':         id_var,
                 'ID_Condicion_Cultivo': self._id_condicion_default,

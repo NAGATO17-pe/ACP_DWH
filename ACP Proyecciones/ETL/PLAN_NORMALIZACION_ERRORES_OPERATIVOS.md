@@ -1,4 +1,5 @@
 # PLAN DE NORMALIZACIÓN — MÓDULO ERRORES OPERATIVOS
+
 ## ACP DWH Geographic Phenology | Investigación Completada
 
 ---
@@ -68,7 +69,7 @@ CREATE TABLE mdm.Catalogo_Tipo_Error (
 -- 8. INCORRECTA_EVALUACION (Lógica de evaluación aplicada incorrectamente)
 -- 9. APP_DESACTUALIZADA (Versión de app no soporta evaluación)
 -- 10. ESTADO_PENDIENTE_REVISION (Para los "Sin corregir")
-```
+
 
 ### 1.4 Migración del Histórico: `mdm.homologador`
 
@@ -125,7 +126,7 @@ WITH CTE AS (
 ```
 
 **Fase 2: Uso de `obtener_id_personal`**
-Al usar el orquestador ETL, el procesador de Silver llamará a `lookup.obtener_id_personal(dni, engine)`. 
+Al usar el orquestador ETL, el procesador de Silver llamará a `lookup.obtener_id_personal(dni, engine)`.
 Si la dimensión ya está limpia, automáticamente absorberá ambas variantes del Excel a un único `ID_Personal`.
 
 ---
@@ -137,6 +138,7 @@ Si la dimensión ya está limpia, automáticamente absorberá ambas variantes de
 **PUNTO = Contador acumulado de errores por evaluador** (Métrica de severidad)
 
 No es geografía ni identificador.
+
 - **Media:** 4.21 errores por registro.
 
 ### 3.2 Uso en Arquitectura del DWH
@@ -158,6 +160,7 @@ CREATE TABLE Silver.Fact_Error_Operativo (
 ```
 
 **En Gold (Capa de Datamart Analítico)**:
+
 ```sql
 CREATE VIEW Gold.Mart_Calidad_Operativa AS
 SELECT 

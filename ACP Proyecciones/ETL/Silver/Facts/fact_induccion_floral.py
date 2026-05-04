@@ -183,6 +183,7 @@ class ProcesadorInduccionFloral(BaseFactProcessor):
                 self.ids_procesados.append(id_origen)
             payload.append({
                 'ID_Geografia':                   resultado_geo['id_geografia'],
+                '_id_modulo_catalogo':            resultado_geo.get('id_modulo_catalogo'),
                 'ID_Tiempo':                      obtener_id_tiempo(fecha),
                 'ID_Variedad':                    id_var,
                 'ID_Personal':                    id_personal,
@@ -204,10 +205,16 @@ class ProcesadorInduccionFloral(BaseFactProcessor):
 
 
 def cargar_fact_induccion_floral(engine: Engine) -> dict:
-    columna_id = _validar_layout_migrado(engine)
-    proc = ProcesadorInduccionFloral(engine, columna_id)
+    proc = ProcesadorInduccionFloral(engine, columna_id='ID_Induccion_Floral')
 
-    df = _leer_bronce(engine, columna_id)
+    cols_raw = [
+        'Fecha_Raw', 'DNI_Raw', 'Fecha_Subida_Raw', 'Consumidor_Raw',
+        'Modulo_Raw', 'Turno_Raw', 'Valvula_Raw', 'Tipo_Evaluacion_Raw',
+        'Cama_Raw', 'Descripcion_Raw', 'Variedad_Raw', 'PlantasPorCama_Raw',
+        'PlantasConInduccion_Raw', 'BrotesConInduccion_Raw', 'BrotesTotales_Raw',
+        'BrotesConFlor_Raw'
+    ]
+    df = proc.leer_bronce(cols_raw)
     if df.empty:
         return _finalizar_resumen_fact(proc.resumen)
     proc.resumen['leidos'] = len(df)
@@ -221,7 +228,7 @@ def cargar_fact_induccion_floral(engine: Engine) -> dict:
         )
         df, cuar_var = homologar_columna(
             df, 'Variedad_Fuente_Raw', 'Variedad_Canonica', TABLA_ORIGEN, conexion,
-            columna_id_origen='ID_Registro_Origen',
+            columna_id_origen='ID_Induccion_Floral',
         )
         df = proc.pre_limpiar_duplicados_batch(df, ['Modulo_Raw', 'Fecha_Raw', 'Variedad_Raw', 'DNI_Raw', 'Tipo_Evaluacion_Raw', 'Consumidor_Raw'])
         

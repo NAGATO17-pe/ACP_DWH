@@ -15,6 +15,7 @@ Funcionalidades:
 
 from __future__ import annotations
 
+import inspect
 import io
 from datetime import datetime
 
@@ -36,8 +37,8 @@ from utils.formato import crear_tarjeta_kpi, header_pagina, renderizar_tabla_pre
 
 # ── Helpers de datos ──────────────────────────────────────────────────────────
 
-@st.cache_data(ttl=30, show_spinner=False)
 def _cargar_historial(limite: int) -> list[dict]:
+    """Consulta directa al backend — sin caché. Siempre datos frescos."""
     resultado = get_api(f"/auditoria/log-carga?limite={limite}")
     if resultado.ok and isinstance(resultado.data, list):
         return resultado.data
@@ -84,6 +85,7 @@ def _render_kpis(df: pd.DataFrame) -> None:
     total_corridas   = df["id_log"].nunique() if "id_log" in df.columns else len(df)
     total_ok         = int(df["filas_insertadas"].sum()) if "filas_insertadas" in df.columns else 0
     total_rechaz     = int(df["filas_rechazadas"].sum()) if "filas_rechazadas" in df.columns else 0
+    corridas_ok      = int((df["estado"] == "OK").sum()) if "estado" in df.columns else 0
     corridas_error   = int((df["estado"] == "ERROR").sum()) if "estado" in df.columns else 0
     tablas_distintas = df["tabla_destino"].nunique() if "tabla_destino" in df.columns else 0
 
@@ -96,17 +98,24 @@ def _render_kpis(df: pd.DataFrame) -> None:
         prom = df["duracion_segundos"].dropna().mean()
         duracion_prom = _formatear_duracion(prom)
 
-    html_kpis = f"""
-    <div class="kpi-container" style="margin-bottom: 28px;">
-        {crear_tarjeta_kpi("Última corrida",    ultima_fecha,         "🕒",  "info")}
-        {crear_tarjeta_kpi("Tablas cargadas",   str(tablas_distintas),"📋",  "info")}
-        {crear_tarjeta_kpi("Filas insertadas",  f"{total_ok:,}",      "✅",  "success")}
-        {crear_tarjeta_kpi("Filas rechazadas",  f"{total_rechaz:,}",  "🚫",  "danger" if total_rechaz else "")}
-        {crear_tarjeta_kpi("Corridas con error",str(corridas_error),  "⚠️",  "warning" if corridas_error else "success")}
-        {crear_tarjeta_kpi("Duración promedio", duracion_prom,        "⏱️",  "")}
-    </div>
-    """
-    st.markdown(html_kpis, unsafe_allow_html=True)
+    # Barra de progreso OK vs Error
+    pct_ok = round((corridas_ok / total_corridas) * 100, 1) if total_corridas > 0 else 0
+
+    # Usar componente premium centralizado
+    crear_panel_metricas_premium(
+        metricas=[
+            {"label": "Última corrida", "value": ultima_fecha, "color": "#F59E0B"},
+            {"label": "Tablas", "value": str(tablas_distintas)},
+            {"label": "Filas OK", "value": f"{total_ok:,}", "color": "#10B981"},
+            {"label": "Rechazadas", "value": f"{total_rechaz:,}", "color": "#EF4444" if total_rechaz else "#94A3B8"},
+            {"label": "Errores", "value": str(corridas_error), "color": "#EF4444" if corridas_error else "#10B981"},
+            {"label": "Duración", "value": duracion_prom}
+        ],
+        pct_progreso=pct_ok,
+        texto_progreso="Tasa de éxito de corridas",
+        labels_progreso={"ok": f"{corridas_ok} exitosas", "error": f"{corridas_error} con error"}
+    )
+
 
 
 # ── Sección filtros ───────────────────────────────────────────────────────────
@@ -114,8 +123,8 @@ def _render_kpis(df: pd.DataFrame) -> None:
 def _render_filtros(df: pd.DataFrame) -> pd.DataFrame:
     with st.container(border=True):
         st.markdown(
-            "<p style='font-size:0.75rem;font-weight:700;color:#64748B;"
-            "text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;'>Filtros</p>",
+            "<p style='font-size:0.65rem;font-weight:700;color:#94A3B8;"
+            "text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;'>Filtros</p>",
             unsafe_allow_html=True,
         )
         col_b, col_e, col_t, col_d = st.columns([2, 1, 2, 1])
@@ -304,8 +313,8 @@ def _render_detalle_tabla(df: pd.DataFrame) -> None:
         ff = datos.get("fecha_fin")
         if fi or ff:
             st.markdown(
-                f"<p style='font-size:0.8rem;color:#64748B;margin-top:10px;'>"
-                f"⏱ Inicio: <b>{fi or '—'}</b> &nbsp;|&nbsp; Fin: <b>{ff or '—'}</b></p>",
+                f"<p style='font-size:0.8rem;color:#94A3B8;margin-top:10px;'>"
+                f"⏱ Inicio: <b style='color:#F8FAFC'>{fi or '—'}</b> &nbsp;|&nbsp; Fin: <b style='color:#F8FAFC'>{ff or '—'}</b></p>",
                 unsafe_allow_html=True,
             )
 
@@ -326,34 +335,42 @@ def _render_resumen_estados(df: pd.DataFrame) -> None:
 
     bloques = ""
     paleta = {
-        "OK":      ("#10B981", "#ECFDF5"),
-        "ERROR":   ("#EF4444", "#FEF2F2"),
-        "RUNNING": ("#F59E0B", "#FFFBEB"),
-        "SKIPPED": ("#6B7280", "#F9FAFB"),
+        "OK":      "#10B981",
+        "ERROR":   "#EF4444",
+        "RUNNING": "#F59E0B",
+        "SKIPPED": "#6B7280",
     }
 
     for estado, cnt in conteo.items():
         pct   = round((cnt / total) * 100, 1)
-        color, bg = paleta.get(str(estado).upper(), ("#6B7280", "#F9FAFB"))
+        color = paleta.get(str(estado).upper(), "#6B7280")
         icono = _ESTADO_ICONOS.get(str(estado).upper(), "❓")
         bloques += f"""
         <div style="
-            background:{bg}; border:1px solid {color}22;
-            border-left:4px solid {color};
-            border-radius:10px; padding:12px 16px;
-            flex:1; min-width:120px;
-            display:flex; flex-direction:column; align-items:center; gap:4px;
+            background: rgba(30, 41, 59, 0.45);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 2px solid {color}33;
+            border-radius: 16px;
+            padding: 20px 16px;
+            flex: 1; min-width: 140px;
+            display: flex; flex-direction: column; align-items: center; gap: 6px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+            transition: all 0.3s ease;
         ">
-            <div style="font-size:1.4rem;">{icono}</div>
-            <div style="font-size:1.3rem;font-weight:700;color:{color};font-family:'Outfit',sans-serif;">{cnt}</div>
-            <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.8px;color:#64748B;font-weight:600;">{estado}</div>
-            <div style="font-size:0.72rem;color:{color};font-weight:600;">{pct}%</div>
+            <div style="font-size:1.6rem; filter: drop-shadow(0 0 8px {color}44);">{icono}</div>
+            <div style="font-family:'JetBrains Mono','Outfit',monospace; font-size:1.6rem; font-weight:700;
+                        color:{color}; text-shadow: 0 0 20px {color}33;">{cnt}</div>
+            <div style="font-size:0.6rem; text-transform:uppercase; letter-spacing:2px;
+                        color:#94A3B8; font-weight:700;">{estado}</div>
+            <div style="font-size:0.7rem; color:{color}; font-weight:600; opacity:0.8;">{pct}%</div>
         </div>"""
 
     st.markdown(
-        f"<div style='display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;'>{bloques}</div>",
+        f"<div style='display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:16px; margin-bottom:24px;'>{bloques}</div>",
         unsafe_allow_html=True,
     )
+
 
 
 # ── Render principal ──────────────────────────────────────────────────────────
@@ -386,11 +403,8 @@ def render() -> None:
 
     df = _a_dataframe(registros)
 
-    # ── KPIs globales ────────────────────────────────────────────────────────
+    # ── KPIs + barra de progreso (panel unificado) ──────────────────────────
     _render_kpis(df)
-
-    # ── Distribución por estado ──────────────────────────────────────────────
-    _render_resumen_estados(df)
 
     # ── Filtros + tabla ──────────────────────────────────────────────────────
     st.markdown("### 📊 Historial de corridas")

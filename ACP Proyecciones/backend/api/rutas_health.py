@@ -14,16 +14,20 @@ entre un proceso vivo pero no listo (ej: BD caída) y un proceso caído.
 
 from __future__ import annotations
 
+import asyncio
 from datetime import datetime, timezone
+from typing import AsyncGenerator
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
+from sse_starlette.sse import EventSourceResponse
 
 from nucleo.auth import require_rol
 from nucleo.conexion import verificar_conexion
 from nucleo.settings import settings
 from repositorios.repo_corridas import obtener_resumen_control_plane
 from repositorios.repo_locks import obtener_estado_lock
+from repositorios.repo_calidad import obtener_resumen_calidad_hoy
 
 enrutador_health = APIRouter(tags=["Sistema"])
 
@@ -237,3 +241,81 @@ def health() -> JSONResponse:
             "timestamp":   _timestamp(),
         },
     )
+
+# ── GET /health/telemetria/stream (SSE) ─────────────────────────────────────────────
+
+async def _generar_telemetria() -> AsyncGenerator[dict, None]:
+    """
+    Generador SSE: emite métricas del sistema cada 3 segundos.
+    Consumido por el dashboard SSR del portal (iframe EventSource).
+    Emite JSON con: latencia_ms, corridas_activas, comandos_pendientes, timestamp.
+    """
+    import json
+    while True:
+        try:
+            bd_info   = verificar_conexion()
+            cp_resumen = {}
+            try:
+                cp_resumen = obtener_resumen_control_plane()
+            except Exception:
+                pass
+
+            payload = {
+                "conectado":          bd_info.get("conectado", False),
+                "latencia_ms":        bd_info.get("latencia_ms", None),
+                "version_sql":        bd_info.get("version", "—"),
+                "corridas_activas":   cp_resumen.get("corridas_activas", 0),
+                "comandos_pendientes":cp_resumen.get("comandos_pendientes", 0),
+                "comandos_procesando":cp_resumen.get("comandos_procesando", 0),
+                "timestamp":          datetime.now(tz=timezone.utc).isoformat(),
+            }
+            yield {"event": "telemetria", "data": json.dumps(payload)}
+        except Exception as exc:
+            yield {"event": "error", "data": f'{{"error": "{exc}"}}'}
+
+        await asyncio.sleep(3)
+
+
+@enrutador_health.get(
+    "/health/telemetria/stream",
+    summary="Stream SSE de telemetría del sistema",
+    description=(
+        "Abre un canal SSE que emite métricas del sistema cada 3 segundos: "
+        "latencia de BD, corridas activas, comandos en cola y timestamp. "
+        "Consume desde el browser vía EventSource para dashboards SSR. "
+        "No requiere autenticación para permitir conexiones desde iframes."
+    ),
+)
+async def stream_telemetria() -> EventSourceResponse:
+    return EventSourceResponse(_generar_telemetria())
+
+
+# ── GET /health/calidad/stream (SSE) ────────────────────────────────────────────────
+
+async def _generar_calidad() -> AsyncGenerator[dict, None]:
+    """
+    Generador SSE: emite métricas de calidad de datos cada 10 segundos.
+    Extrae información de errores recientes en Bronce.
+    """
+    import json
+    while True:
+        try:
+            resumen = obtener_resumen_calidad_hoy()
+            yield {"event": "calidad", "data": json.dumps(resumen)}
+        except Exception as exc:
+            yield {"event": "error", "data": f'{{"error": "{exc}"}}'}
+        
+        # Consultamos cada 10 segundos para no sobrecargar la BD con aggregations
+        await asyncio.sleep(10)
+
+
+@enrutador_health.get(
+    "/health/calidad/stream",
+    summary="Stream SSE de observabilidad de calidad de datos",
+    description=(
+        "Abre un canal SSE que emite métricas de errores detectados en la capa Bronce. "
+        "Emite cada 10 segundos: total errores hoy, top tipos de error, top fundos con error."
+    ),
+)
+async def stream_calidad() -> EventSourceResponse:
+    return EventSourceResponse(_generar_calidad())

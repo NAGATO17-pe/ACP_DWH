@@ -199,6 +199,7 @@ class ProcesadorConteoFenologico(BaseFactProcessor):
 
                 payload.append({
                     'ID_Geografia':        resultado_geo['id_geografia'],
+                    '_id_modulo_catalogo': resultado_geo.get('id_modulo_catalogo'),
                     'ID_Tiempo':           obtener_id_tiempo(fecha),
                     'ID_Variedad':         id_var,
                     'ID_Personal':         id_personal,
@@ -223,7 +224,13 @@ class ProcesadorConteoFenologico(BaseFactProcessor):
 def cargar_fact_conteo_fenologico(engine: Engine) -> dict:
     proc = ProcesadorConteoFenologico(engine)
 
-    df = _leer_bronce(engine)
+    cols_raw = [
+        'Fecha_Raw', 'Fundo_Raw', 'Sector_Raw', 'Modulo_Raw', 'Turno_Raw',
+        'Valvula_Raw', 'Variedad_Raw', 'Evaluador_Raw', 'Color_Cinta_Raw',
+        'Estado_Raw', 'Cantidad_Organos_Raw', 'Tipo_Evaluacion_Raw',
+        'Valores_Raw', 'Fecha_Registro_Raw'
+    ]
+    df = proc.leer_bronce(cols_raw)
     if df.empty:
         return _finalizar_resumen_fact(proc.resumen)
     proc.resumen['leidos'] = len(df)

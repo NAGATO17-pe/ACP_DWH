@@ -803,3 +803,646 @@ INFO:     Waiting for application startup.
 [32m[INFO    ][0m 20:48:52 | main | Backend iniciado — BD conectada
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 20:49:08 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 22:34:23 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8840]
+
+============================================================
+[2026-04-29 10:57:03.097639] INICIO
+============================================================
+INFO:     Started server process [35632]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 15:57:09 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[31m[ERROR   ][0m 15:57:16 | asyncio | Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\chernandez\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chernandez\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+[32m[INFO    ][0m 15:57:33 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+INFO:     Shutting down
+
+============================================================
+[2026-04-29 11:15:55.119044] INICIO
+============================================================
+INFO:     Started server process [33952]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 16:15:59 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 16:16:14 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 16:16:36 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 16:19:44 | servicios.servicio_etl | Corrida encolada
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 16:31:56 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [33952]
+
+============================================================
+[2026-04-29 11:31:59.631719] INICIO
+============================================================
+INFO:     Started server process [27088]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 16:32:03 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 16:32:40 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[31m[ERROR   ][0m 16:32:46 | nucleo.excepciones | Error no controlado en el servidor  [request_id=9813d779]
+Traceback (most recent call last):
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\chernandez\AppData\Local\Python\pythoncore-3.14-64\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_utils.py", line 87, in collapse_excgroups
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\nucleo\middleware.py", line 84, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\api\rutas_catalogos.py", line 63, in obtener_dim_variedades
+    resultado = listar_dim_variedades(pagina=pagina, tamano=tamano)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\servicios\servicio_catalogos.py", line 55, in listar_dim_variedades
+    return _listar_catalogo(
+        "dim_variedades",
+        pagina=pagina,
+        tamano=tamano,
+    )
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\servicios\servicio_catalogos.py", line 38, in _listar_catalogo
+    return _REPOSITORIOS_CATALOGO[nombre_catalogo](
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'dim_variedades'
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 420, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\chernandez\AppData\Local\Python\pythoncore-3.14-64\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_utils.py", line 87, in collapse_excgroups
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\nucleo\middleware.py", line 84, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\api\rutas_catalogos.py", line 63, in obtener_dim_variedades
+    resultado = listar_dim_variedades(pagina=pagina, tamano=tamano)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\servicios\servicio_catalogos.py", line 55, in listar_dim_variedades
+    return _listar_catalogo(
+        "dim_variedades",
+        pagina=pagina,
+        tamano=tamano,
+    )
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\servicios\servicio_catalogos.py", line 38, in _listar_catalogo
+    return _REPOSITORIOS_CATALOGO[nombre_catalogo](
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'dim_variedades'
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 16:55:58 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [27088]
+
+============================================================
+[2026-04-29 11:56:01.269213] INICIO
+============================================================
+INFO:     Started server process [8020]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 16:56:04 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[31m[ERROR   ][0m 16:56:08 | asyncio | Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\chernandez\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chernandez\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+[32m[INFO    ][0m 16:56:17 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+INFO:     Shutting down
+
+============================================================
+[2026-04-29 12:15:30.970970] INICIO
+============================================================
+INFO:     Started server process [37924]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 17:15:32 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 17:15:47 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[31m[ERROR   ][0m 17:15:58 | nucleo.excepciones | Error no controlado en el servidor  [request_id=31f00aba]
+Traceback (most recent call last):
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\chernandez\AppData\Local\Python\pythoncore-3.14-64\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_utils.py", line 87, in collapse_excgroups
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\nucleo\middleware.py", line 84, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\api\rutas_catalogos.py", line 68, in obtener_dim_variedades
+    return _construir_respuesta_paginada(resultado, RespuestaDimVariedad)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\api\rutas_catalogos.py", line 40, in _construir_respuesta_paginada
+    datos=[schema_fila(**fila) for fila in resultado["datos"]],
+           ~~~~~~~~~~~^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\pydantic\main.py", line 250, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+pydantic_core._pydantic_core.ValidationError: 1 validation error for RespuestaDimVariedad
+fecha_creacion
+  Input should be a valid string [type=string_type, input_value=datetime.datetime(2026, 4, 29, 12, 6, 15, 683333), input_type=datetime]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 420, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\chernandez\AppData\Local\Python\pythoncore-3.14-64\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_utils.py", line 87, in collapse_excgroups
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\nucleo\middleware.py", line 84, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\api\rutas_catalogos.py", line 68, in obtener_dim_variedades
+    return _construir_respuesta_paginada(resultado, RespuestaDimVariedad)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\api\rutas_catalogos.py", line 40, in _construir_respuesta_paginada
+    datos=[schema_fila(**fila) for fila in resultado["datos"]],
+           ~~~~~~~~~~~^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\pydantic\main.py", line 250, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+pydantic_core._pydantic_core.ValidationError: 1 validation error for RespuestaDimVariedad
+fecha_creacion
+  Input should be a valid string [type=string_type, input_value=datetime.datetime(2026, 4, 29, 12, 6, 15, 683333), input_type=datetime]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 17:16:55 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [37924]
+
+============================================================
+[2026-04-29 12:16:58.182014] INICIO
+============================================================
+INFO:     Started server process [34340]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 17:16:59 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 17:17:27 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 17:20:34 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [34340]
+
+============================================================
+[2026-04-29 12:20:37.886641] INICIO
+============================================================
+INFO:     Started server process [5276]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 17:20:40 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 17:20:58 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 19:11:16 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [5276]
+
+============================================================
+[2026-04-29 14:11:19.472846] INICIO
+============================================================
+INFO:     Started server process [18904]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 19:11:21 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 19:11:35 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 19:18:33 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 19:21:02 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 19:24:45 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 19:32:22 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [18904]
+
+============================================================
+[2026-04-29 14:32:25.067992] INICIO
+============================================================
+INFO:     Started server process [32512]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 19:32:27 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 19:32:50 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 19:38:38 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 19:43:23 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [32512]
+
+============================================================
+[2026-04-29 14:43:26.560608] INICIO
+============================================================
+INFO:     Started server process [39452]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 19:43:28 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 19:43:43 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 19:58:00 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 20:04:46 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 20:10:54 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 20:11:02 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 20:18:22 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[31m[ERROR   ][0m 20:48:40 | repositorios.repo_catalogos | Error al listar geografÃ­a
+Traceback (most recent call last):
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+pyodbc.ProgrammingError: ('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Fundo'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Sector'. (207); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Modulo'. (207); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Turno'. (207); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Valvula'. (207); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Cama'. (207); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\repositorios\repo_catalogos.py", line 120, in _listar_catalogo
+    return _paginar(
+        con,
+    ...<4 lines>...
+        tamano=tamano,
+    )
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\repositorios\repo_catalogos.py", line 105, in _paginar
+    filas = con.execute(text(sql_datos), params).fetchall()
+            ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.ProgrammingError: (pyodbc.ProgrammingError) ('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Fundo'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Sector'. (207); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Modulo'. (207); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Turno'. (207); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Valvula'. (207); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Cama'. (207); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+[SQL: 
+            SELECT
+                Fundo               AS fundo,
+                Sector              AS sector,
+                Modulo              AS modulo,
+                Turno               AS turno,
+                Valvula             AS valvula,
+                Cama                AS cama,
+                Es_Test_Block       AS es_test_block,
+                Codigo_SAP_Campo    AS codigo_sap_campo,
+                Es_Vigente          AS es_vigente
+            FROM Silver.Dim_Geografia
+            WHERE Es_Vigente = 1
+            ORDER BY Fundo, Sector, Modulo, Turno, Valvula, Cama
+            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+        ]
+[parameters: (0, 10000)]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+[33m[WARNING ][0m 20:48:50 | servicios.servicio_auth | Intento de login fallido  [request_id=631fa675 usuario=admin]
+[33m[WARNING ][0m 20:49:14 | servicios.servicio_auth | Intento de login fallido  [request_id=a246a8e8 usuario=admin]
+
+============================================================
+[2026-04-30 09:29:12.056624] INICIO
+============================================================
+INFO:     Started server process [30500]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 14:29:14 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 14:29:30 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 20:28:35 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [30500]
