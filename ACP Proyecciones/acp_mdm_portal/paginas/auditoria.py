@@ -24,26 +24,14 @@ import streamlit as st
 from utils.api_client import get_api, mostrar_error_api
 from utils.auth import tiene_permiso
 from utils.componentes import badge_html, estado_vacio_html, mostrar_kpis
+from utils.constantes import (
+    ESTADO_COLORES as _ESTADO_COLORES,
+    ESTADO_ICONOS as _ESTADO_ICONOS,
+    LIMITE_HISTORIAL_DEFAULT as _LIMITE_DEFAULT,
+    OPCIONES_LIMITE_HISTORIAL,
+    PAGE_SIZE_DEFAULT as _PAGE_SIZE,
+)
 from utils.formato import crear_tarjeta_kpi, header_pagina, renderizar_tabla_premium
-
-# ── Constantes ────────────────────────────────────────────────────────────────
-
-_LIMITE_DEFAULT = 200
-_PAGE_SIZE      = 15
-
-_ESTADO_COLORES: dict[str, str] = {
-    "OK":       "OK",
-    "ERROR":    "❌ Falló",
-    "RUNNING":  "EN_REVISIÓN",
-    "SKIPPED":  "PENDIENTE",
-}
-
-_ESTADO_ICONOS: dict[str, str] = {
-    "OK":      "✅",
-    "ERROR":   "❌",
-    "RUNNING": "🔄",
-    "SKIPPED": "⏭️",
-}
 
 
 # ── Helpers de datos ──────────────────────────────────────────────────────────
@@ -162,7 +150,7 @@ def _render_filtros(df: pd.DataFrame) -> pd.DataFrame:
                 fecha_desde = fecha_hasta = None
 
         with col_d:
-            limite = st.selectbox("Límite", [50, 100, 200, 500], index=2, key="aud_limite", label_visibility="collapsed")
+            limite = st.selectbox("Límite", OPCIONES_LIMITE_HISTORIAL, index=2, key="aud_limite", label_visibility="collapsed")
 
     # Aplicar filtros
     dff = df.copy()

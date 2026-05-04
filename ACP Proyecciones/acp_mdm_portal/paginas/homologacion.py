@@ -5,12 +5,15 @@ Muestra sugerencias automáticas de homologación pendientes y el historial
 de decisiones tomadas. Sin dependencia de streamlit_lottie.
 """
 
+import html as html_lib
+
 import pandas as pd
 import streamlit as st
 
 from utils.auth import tiene_permiso
 from utils.api_client import get_api, patch_api, post_api
 from utils.componentes import estado_vacio_html, seccion_tabla_con_guardar
+from utils.constantes import PAGE_SIZE_DEFAULT
 from utils.formato import crear_paginacion_ui, header_pagina
 
 
@@ -63,60 +66,41 @@ def cargar_historial_homologacion() -> pd.DataFrame:
     return pd.DataFrame()
 
 
-def obtener_opciones_maestras(campo: str) -> list[str]:
-    campo = campo.lower()
-    opciones = set()
-    res = None
+@st.cache_data(ttl=300, show_spinner=False)
+def _cargar_geografia_completa() -> list[dict]:
+    """Cache único del catálogo de geografía — TTL 5 min. Evita 6 llamadas duplicadas."""
+    res = get_api("/catalogos/geografia?tamano=10000")
+    if not res.ok or not isinstance(res.data, dict):
+        return []
+    return res.data.get("datos") or []
 
-    if "variedad" in campo:
+
+def obtener_opciones_maestras(campo: str) -> list[str]:
+    from utils.constantes import CAMPOS_GEOGRAFIA
+    campo_lower = campo.lower()
+    opciones: set = set()
+
+    if "variedad" in campo_lower:
         res = get_api("/catalogos/variedades?tamano=10000")
-        if not res.ok: return []
-        if isinstance(res.data, dict):
+        if res.ok and isinstance(res.data, dict):
             opciones = {d.get("nombre_canonico") for d in res.data.get("datos", []) if d.get("nombre_canonico")}
 
-    elif any(x in campo for x in ["personal", "nombre", "responsable", "trabajador"]):
+    elif any(x in campo_lower for x in ["personal", "nombre", "responsable", "trabajador"]):
         res = get_api("/catalogos/personal?tamano=10000")
-        if not res.ok: return []
-        if isinstance(res.data, dict):
+        if res.ok and isinstance(res.data, dict):
             opciones = {d.get("nombre_completo") for d in res.data.get("datos", []) if d.get("nombre_completo")}
 
-    elif "fundo" in campo:
-        res = get_api("/catalogos/geografia?tamano=10000")
-        if not res.ok: return []
-        if isinstance(res.data, dict):
-            opciones = {d.get("fundo") for d in res.data.get("datos", []) if d.get("fundo")}
+    else:
+        # Una sola llamada cacheada para todos los campos de geografía
+        clave_geo = next(
+            (llave for patron, llave in CAMPOS_GEOGRAFIA.items() if patron in campo_lower),
+            None,
+        )
+        if clave_geo:
+            datos_geo = _cargar_geografia_completa()
+            opciones = {d.get(clave_geo) for d in datos_geo if d.get(clave_geo)}
 
-    elif "sector" in campo:
-        res = get_api("/catalogos/geografia?tamano=10000")
-        if not res.ok: return []
-        if isinstance(res.data, dict):
-            opciones = {d.get("sector") for d in res.data.get("datos", []) if d.get("sector")}
-
-    elif "modulo" in campo or "módulo" in campo:
-        res = get_api("/catalogos/geografia?tamano=10000")
-        if not res.ok: return []
-        if isinstance(res.data, dict):
-            opciones = {d.get("modulo") for d in res.data.get("datos", []) if d.get("modulo")}
-
-    elif "turno" in campo:
-        res = get_api("/catalogos/geografia?tamano=10000")
-        if not res.ok: return []
-        if isinstance(res.data, dict):
-            opciones = {d.get("turno") for d in res.data.get("datos", []) if d.get("turno")}
-
-    elif "valvula" in campo or "válvula" in campo:
-        res = get_api("/catalogos/geografia?tamano=10000")
-        if not res.ok: return []
-        if isinstance(res.data, dict):
-            opciones = {d.get("valvula") for d in res.data.get("datos", []) if d.get("valvula")}
-
-    elif "cama" in campo:
-        res = get_api("/catalogos/geografia?tamano=10000")
-        if not res.ok: return []
-        if isinstance(res.data, dict):
-            opciones = {d.get("cama") for d in res.data.get("datos", []) if d.get("cama")}
-
-    return sorted(list(opciones))
+    return sorted(opciones - {None})
 
 
 # ── Render ────────────────────────────────────────────────────────────────────
@@ -190,16 +174,16 @@ def render() -> None:
                             res = post_api("/reinyeccion/ejecutar", payload={})
                         if res.ok and isinstance(res.data, dict):
                             n = res.data.get("reinyectados", 0)
-                            msg = res.data.get("mensaje", "")
+                            msg = html_lib.escape(str(res.data.get("mensaje", "")))
                             detalle = res.data.get("detalle", [])
                             st.toast(f"✅ {n} registro(s) reactivados en Bronce.", icon="🎉")
                             st.success(msg)
                             for linea in detalle:
-                                st.caption(linea)
+                                st.caption(html_lib.escape(str(linea)))
                             st.cache_data.clear()
                             st.rerun()
                         else:
-                            err = res.error or "Error desconocido"
+                            err = html_lib.escape(str(res.error or "Error desconocido"))
                             st.error(f"❌ Fallo en la reinyección: {err}")
 
         st.markdown("<br>", unsafe_allow_html=True)
@@ -270,8 +254,8 @@ def render() -> None:
 
         # Leemos el state para saber la página exacta antes de renderizar la tabla
         page = st.session_state.get('pg_pendientes_edit', 1)
-        start_idx = (page - 1) * 15
-        end_idx = start_idx + 15
+        start_idx = (page - 1) * PAGE_SIZE_DEFAULT
+        end_idx = start_idx + PAGE_SIZE_DEFAULT
         df_page = df_edit.iloc[start_idx:end_idx].copy()
 
         st.markdown("<br>", unsafe_allow_html=True)
@@ -364,9 +348,9 @@ def render() -> None:
                             st.cache_data.clear()
                             st.rerun()
 
-            crear_paginacion_ui(count, 15, "pendientes_edit")
+            crear_paginacion_ui(count, PAGE_SIZE_DEFAULT, "pendientes_edit")
 
         else:
             st.info("🔒 Vista de solo lectura. Tu rol no puede aprobar ni rechazar sugerencias.", icon="⚠️")
             st.dataframe(df_page, hide_index=True, width='stretch')
-            crear_paginacion_ui(count, 15, "pendientes_edit")
+            crear_paginacion_ui(count, PAGE_SIZE_DEFAULT, "pendientes_edit")

@@ -7,26 +7,20 @@ from utils.formato import header_pagina, renderizar_tabla_premium
 from utils.api_client import get_api, mostrar_error_api
 
 def cargar_cuarentena() -> pd.DataFrame:
-    _RENOMBRES = {
-        "tabla_origen": "Tabla Origen",
-        "id_registro": "ID",
-        "columna_origen": "Columna Origen",
-        "valor_raw": "Valor Raw",
-        "nombre_archivo": "Archivo",
-        "fecha_ingreso": "Fecha ingreso",
-        "estado": "Estado",
-        "motivo": "Motivo",
-    }
+    from utils.constantes import RENOMBRES_CUARENTENA
     resultado = get_api("/cuarentena?pagina=1&tamano=10000")
-    if resultado.ok and isinstance(resultado.data, dict):
-        datos = resultado.data.get("datos", [])
-        if not datos:
-            return pd.DataFrame(columns=list(_RENOMBRES.values()))
-
-        df = pd.DataFrame(datos)
-        df.rename(columns=_RENOMBRES, inplace=True)
-        return df
-    return pd.DataFrame(columns=list(_RENOMBRES.values()))
+    cols_vacias = list(RENOMBRES_CUARENTENA.values())
+    if not resultado.ok:
+        return pd.DataFrame(columns=cols_vacias)
+    data = resultado.data
+    if not isinstance(data, dict):
+        return pd.DataFrame(columns=cols_vacias)
+    datos = data.get("datos") or []
+    if not isinstance(datos, list) or not datos:
+        return pd.DataFrame(columns=cols_vacias)
+    df = pd.DataFrame(datos)
+    df.rename(columns=RENOMBRES_CUARENTENA, inplace=True)
+    return df
 
 def _exportar_excel(df: pd.DataFrame) -> bytes:
     buffer = io.BytesIO()
