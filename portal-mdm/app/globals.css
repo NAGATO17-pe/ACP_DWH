@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+/* =============================================================================
+   Design Tokens — Portal MDM (Dark Enterprise / Data-Dense)
+   Defaults are dark. Light tokens defined separately under [data-theme="light"].
+   ========================================================================== */
+:root,
+:root[data-theme="dark"] {
+  /* Surfaces */
+  --color-bg: #0f172a;
+  --color-surface: #1e293b;
+  --color-surface-2: #334155;
+  --color-border: #1e3a5f;
+
+  /* Action */
+  --color-primary: #2563eb;
+  --color-primary-2: #0369a1;
+  --color-primary-foreground: #f8fafc;
+
+  /* State */
+  --color-warning: #d97706;
+  --color-success: #059669;
+  --color-destructive: #dc2626;
+  --color-info: #0284c7;
+
+  /* Text */
+  --color-text: #f8fafc;
+  --color-text-muted: #94a3b8;
+
+  /* Focus ring */
+  --color-ring: #60a5fa;
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* Motion */
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --motion-slow: 300ms;
+}
+
+:root[data-theme="light"] {
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-2: #f1f5f9;
+  --color-border: #e2e8f0;
+  --color-primary: #2563eb;
+  --color-primary-2: #0369a1;
+  --color-primary-foreground: #ffffff;
+  --color-warning: #b45309;
+  --color-success: #047857;
+  --color-destructive: #b91c1c;
+  --color-info: #0369a1;
+  --color-text: #0f172a;
+  --color-text-muted: #475569;
+  --color-ring: #2563eb;
+}
+
+/* Map design tokens to Tailwind 4 theme so they are usable as utilities
+   (e.g. bg-bg, bg-surface, text-text, border-border, ring-ring). */
+@theme inline {
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-surface-2: var(--color-surface-2);
+  --color-border: var(--color-border);
+
+  --color-primary: var(--color-primary);
+  --color-primary-2: var(--color-primary-2);
+  --color-primary-foreground: var(--color-primary-foreground);
+
+  --color-warning: var(--color-warning);
+  --color-success: var(--color-success);
+  --color-destructive: var(--color-destructive);
+  --color-info: var(--color-info);
+
+  --color-text: var(--color-text);
+  --color-text-muted: var(--color-text-muted);
+  --color-ring: var(--color-ring);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo,
+    monospace;
+}
+
+/* Base layer */
+html,
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv02", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Tabular numerics for data-dense surfaces */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Visible focus ring (>= 2px), respects keyboard usage */
+:where(a, button, [role="button"], input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Selection */
+::selection {
+  background: color-mix(in oklab, var(--color-primary) 35%, transparent);
+  color: var(--color-text);
+}
+
+/* Scrollbar (subtle, dark) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-surface-2) transparent;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
