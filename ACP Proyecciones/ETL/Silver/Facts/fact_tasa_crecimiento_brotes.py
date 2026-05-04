@@ -202,6 +202,7 @@ class ProcesadorTasaCrecimientoBrotes(BaseFactProcessor):
                 self.ids_procesados.append(id_origen)
             payload.append({
                 'ID_Geografia':       resultado_geo['id_geografia'],
+                '_id_modulo_catalogo': resultado_geo.get('id_modulo_catalogo'),
                 'ID_Tiempo':          obtener_id_tiempo(fecha_evento),
                 'ID_Variedad':        id_var,
                 'ID_Personal':        id_personal,
@@ -224,10 +225,16 @@ class ProcesadorTasaCrecimientoBrotes(BaseFactProcessor):
 
 
 def cargar_fact_tasa_crecimiento_brotes(engine: Engine) -> dict:
-    columna_id = _validar_layout_migrado(engine)
-    proc = ProcesadorTasaCrecimientoBrotes(engine, columna_id)
+    proc = ProcesadorTasaCrecimientoBrotes(engine, columna_id='ID_Tasa_Crecimiento')
 
-    df = _leer_bronce(engine, columna_id)
+    cols_raw = [
+        'Codigo_Origen_Raw', 'Semana_Raw', 'Dia_Raw', 'Fecha_Raw', 'DNI_Raw',
+        'Evaluador_Raw', 'Modulo_Raw', 'Turno_Raw', 'Valvula_Raw', 'Condicion_Raw',
+        'Estado_Vegetativo_Raw', 'Variedad_Raw', 'Cama_Raw', 'Tipo_Tallo_Raw',
+        'Ensayo_Raw', 'Medida_Raw', 'Fecha_Poda_Aux_Raw', 'Campana_Raw',
+        'Observacion_Raw', 'Tipo_Evaluacion_Raw'
+    ]
+    df = proc.leer_bronce(cols_raw)
     if df.empty:
         return _finalizar_resumen_fact(proc.resumen)
     proc.resumen['leidos'] = len(df)
@@ -236,7 +243,7 @@ def cargar_fact_tasa_crecimiento_brotes(engine: Engine) -> dict:
         conexion = contexto._conexion_activa()
         df, cuar_var = homologar_columna(
             df, 'Variedad_Raw', 'Variedad_Canonica', TABLA_ORIGEN, conexion,
-            columna_id_origen='ID_Registro_Origen',
+            columna_id_origen='ID_Tasa_Crecimiento',
         )
         df = proc.pre_limpiar_duplicados_batch(df, [
             'Modulo_Raw', 'Fecha_Raw', 'Variedad_Raw', 

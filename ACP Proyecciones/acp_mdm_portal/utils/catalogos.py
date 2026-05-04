@@ -7,7 +7,7 @@ import streamlit as st
 
 from utils.api_client import get_api
 from utils.componentes import seccion_tabla_con_guardar
-from utils.formato import header_pagina
+from utils.formato import header_pagina, crear_panel_metricas_premium
 
 
 def cargar_catalogo(endpoint: str) -> pd.DataFrame:
@@ -39,12 +39,12 @@ def render_catalogo(
 
     df = df.rename(columns=renombres)
 
-    total_columnas = columnas_metricas or len(metricas)
-    columnas = st.columns(total_columnas)
-    for columna, (label, fn_valor) in zip(columnas, metricas):
-        columna.metric(label, fn_valor(df))
-
-    st.markdown("<hr style='margin:16px 0;'>", unsafe_allow_html=True)
+    # Transformar métricas al formato premium
+    metricas_premium = [
+        {"label": label.split(" Total ")[-1] if " Total " in label else label, "value": str(fn_valor(df))}
+        for label, fn_valor in metricas
+    ]
+    crear_panel_metricas_premium(metricas_premium)
     seccion_tabla_con_guardar(
         df,
         key=clave_tabla,

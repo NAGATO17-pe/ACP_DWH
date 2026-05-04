@@ -24,6 +24,7 @@ from datetime import datetime
 from typing import Any
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 from utils.api_client import get_api
 from utils.auth import tiene_permiso
@@ -372,9 +373,437 @@ def _render_autorefresh() -> None:
             st.rerun()
 
 
+# ── Dashboard SSR — Telemetría en Vivo ────────────────────────────────────────
+
+def _generar_dashboard_ssr(token: str) -> str:
+    """
+    Retorna un documento HTML completo que abre un EventSource al endpoint SSE
+    /health/telemetria/stream y actualiza 4 métricas en tiempo real:
+      · Latencia SQL Server (ms)
+      · Corridas activas (PENDIENTE/EJECUTANDO)
+      · Comandos en cola
+      · Timestamp del servidor
+    """
+    return f"""<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+  body {{
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px;
+    height: 100vh;
+    overflow: hidden;
+    color: #F8FAFC;
+  }}
+
+  /* ── Status bar ── */
+  .status-bar {{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.72rem;
+    color: #94A3B8;
+    padding: 8px 14px;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(8px);
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  }}
+  .status-dot {{
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #CBD5E1;
+    transition: background 0.4s ease;
+    flex-shrink: 0;
+  }}
+  .status-dot.live {{ background: #10B981; box-shadow: 0 0 0 3px rgba(16,185,129,0.2); }}
+  .status-dot.error {{ background: #EF4444; }}
+  .status-timestamp {{ margin-left: auto; font-family: monospace; font-size: 0.7rem; color: #94A3B8; }}
+
+  /* ── Cards grid ── */
+  .cards {{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    flex: 1;
+  }}
+  .card {{
+    background: rgba(30, 41, 59, 0.5);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 14px;
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+  }}
+  .card::before {{
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--card-color, #E2E8F0);
+    border-radius: 12px 12px 0 0;
+  }}
+  .card .icon {{ font-size: 1.6rem; opacity: 0.75; }}
+  .card .label {{
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94A3B8;
+    font-weight: 700;
+    text-align: center;
+  }}
+  .card .value {{
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--card-color, #F8FAFC);
+    line-height: 1;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 20px rgba(255,255,255,0.1);
+  }}
+  .card .sub {{
+    font-size: 0.65rem;
+    color: #CBD5E1;
+    text-align: center;
+  }}
+
+  /* Colores por card */
+  .card-latencia  {{ --card-color: #10B981; }}
+  .card-corridas  {{ --card-color: #3B82F6; }}
+  .card-cola      {{ --card-color: #F59E0B; }}
+  .card-tiempo    {{ --card-color: #8B5CF6; }}
+
+  /* Animación de pulso en actualización */
+  @keyframes valuePulse {{
+    0%   {{ transform: scale(1);   opacity: 1;   }}
+    50%  {{ transform: scale(1.08); opacity: 0.7; }}
+    100% {{ transform: scale(1);   opacity: 1;   }}
+  }}
+  .pulse {{ animation: valuePulse 0.35s ease; }}
+
+  /* Badge de estado en corridas */
+  .badge-activo {{
+    background: rgba(59,130,246,0.12);
+    color: #1D4ED8;
+    border-radius: 99px;
+    padding: 2px 8px;
+    font-size: 0.62rem;
+    font-weight: 700;
+  }}
+  .badge-idle {{
+    background: rgba(16,185,129,0.12);
+    color: #065F46;
+    border-radius: 99px;
+    padding: 2px 8px;
+    font-size: 0.62rem;
+    font-weight: 700;
+  }}
+</style>
+</head>
+<body>
+
+<!-- Status bar -->
+<div class="status-bar">
+  <div class="status-dot" id="dot"></div>
+  <span id="status-txt">Conectando al backend…</span>
+  <span class="status-timestamp" id="srv-ts">—</span>
+</div>
+
+<!-- 4 Metric cards -->
+<div class="cards">
+
+  <div class="card card-latencia">
+    <span class="icon">🗄️</span>
+    <div class="label">Latencia SQL</div>
+    <div class="value" id="val-latencia">—</div>
+    <div class="sub">ms (round-trip)</div>
+  </div>
+
+  <div class="card card-corridas">
+    <span class="icon">⚙️</span>
+    <div class="label">Corridas Activas</div>
+    <div class="value" id="val-corridas">—</div>
+    <div class="sub" id="badge-corridas">PENDIENTE / EJECUTANDO</div>
+  </div>
+
+  <div class="card card-cola">
+    <span class="icon">📬</span>
+    <div class="label">Cola de Comandos</div>
+    <div class="value" id="val-cola">—</div>
+    <div class="sub" id="badge-cola">pendientes · procesando</div>
+  </div>
+
+  <div class="card card-tiempo">
+    <span class="icon">🕐</span>
+    <div class="label">Hora Servidor</div>
+    <div class="value" id="val-hora" style="font-size:1.1rem;">—</div>
+    <div class="sub">UTC · Sincronizado</div>
+  </div>
+
+</div>
+
+<script>
+const SSE_URL  = "http://127.0.0.1:8000/health/telemetria/stream";
+const TOKEN    = "{token}";
+
+const dot       = document.getElementById('dot');
+const statusTxt = document.getElementById('status-txt');
+const srvTs     = document.getElementById('srv-ts');
+
+const elLatencia = document.getElementById('val-latencia');
+const elCorridas = document.getElementById('val-corridas');
+const elBadgeCor = document.getElementById('badge-corridas');
+const elCola     = document.getElementById('val-cola');
+const elBadgeCola= document.getElementById('badge-cola');
+const elHora     = document.getElementById('val-hora');
+
+function animarCambio(el, nuevoValor) {{
+  if (el.textContent === nuevoValor) return;
+  el.textContent = nuevoValor;
+  el.classList.remove('pulse');
+  void el.offsetWidth; // reflow para reiniciar animación
+  el.classList.add('pulse');
+  el.addEventListener('animationend', () => el.classList.remove('pulse'), {{ once: true }});
+}}
+
+function conectar() {{
+  const headers = TOKEN ? {{ 'Authorization': 'Bearer ' + TOKEN }} : {{}};
+  // EventSource nativo no soporta headers personalizados en algunos browsers,
+  // pero el endpoint de telemetría no requiere autenticación.
+  const es = new EventSource(SSE_URL);
+
+  es.addEventListener('telemetria', (e) => {{
+    try {{
+      const data = JSON.parse(e.data);
+
+      // Status bar
+      dot.className = 'status-dot ' + (data.conectado ? 'live' : 'error');
+      statusTxt.textContent = data.conectado
+        ? `Conectado · SQL Server ${{data.version_sql || ''}}`
+        : '⚠️ Sin conexión a SQL Server';
+
+      // Timestamp del servidor (extraer solo HH:MM:SS de ISO)
+      if (data.timestamp) {{
+        const ts = new Date(data.timestamp);
+        srvTs.textContent = ts.toISOString().substring(11, 19) + ' UTC';
+        animarCambio(elHora, ts.toISOString().substring(11, 19));
+      }}
+
+      // Latencia
+      const lat = data.latencia_ms;
+      animarCambio(elLatencia, lat !== null && lat !== undefined ? String(lat) : '—');
+
+      // Corridas activas
+      const cor = data.corridas_activas ?? 0;
+      animarCambio(elCorridas, String(cor));
+      elBadgeCor.innerHTML = cor > 0
+        ? `<span class="badge-activo">${{cor}} en ejecución</span>`
+        : '<span class="badge-idle">Sistema libre</span>';
+
+      // Cola de comandos
+      const pend = data.comandos_pendientes ?? 0;
+      const proc = data.comandos_procesando ?? 0;
+      animarCambio(elCola, String(pend + proc));
+      elBadgeCola.textContent = `${{pend}} pend. · ${{proc}} proc.`;
+
+    }} catch(err) {{
+      console.error('Error parseando telemetría:', err);
+    }}
+  }});
+
+  es.addEventListener('error', (e) => {{
+    dot.className = 'status-dot error';
+    statusTxt.textContent = '⚠️ Reconectando…';
+    // EventSource reintenta automáticamente
+  }});
+}}
+
+conectar();
+</script>
+</body>
+</html>"""
+
+
+
+def _generar_dashboard_calidad_ssr(token: str) -> str:
+    """
+    Dashboard SSR para Observabilidad de Calidad.
+    Se conecta a /health/calidad/stream y muestra errores de hoy, top tipos y fundos.
+    """
+    return f"""<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+  body {{
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    height: 100vh;
+    overflow: hidden;
+    color: #F8FAFC;
+  }}
+  .header {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding-bottom: 12px;
+  }}
+  .title {{ font-size: 0.95rem; font-weight: 700; color: #F8FAFC; font-family: 'Outfit', sans-serif; }}
+  .status {{ font-size: 0.7rem; color: #94A3B8; display: flex; align-items: center; gap: 6px; }}
+  .dot {{ width: 8px; height: 8px; border-radius: 50%; background: #475569; }}
+  .dot.live {{ background: #10B981; box-shadow: 0 0 0 3px rgba(16,185,129,0.2); }}
+
+  .grid {{
+    display: grid;
+    grid-template-columns: 1.2fr 2fr 2fr;
+    gap: 20px;
+    height: 100%;
+  }}
+  .card {{
+    background: rgba(30, 41, 59, 0.45);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  }}
+  .card-label {{ font-size: 0.65rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; }}
+  .big-val {{ font-family: 'Outfit', sans-serif; font-size: 3.8rem; font-weight: 700; color: #EF4444; line-height: 1; text-shadow: 0 0 30px rgba(239,68,68,0.2); }}
+  .list-item {{
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-size: 0.78rem;
+  }}
+  .list-item:last-child {{ border: 0; }}
+  .item-name {{ color: #CBD5E1; font-weight: 500; }}
+  .item-count {{ background: rgba(255,255,255,0.05); padding: 2px 10px; border-radius: 6px; font-weight: 700; color: #F59E0B; }}
+  
+  @keyframes pulse {{
+    0% {{ opacity: 1; }}
+    50% {{ opacity: 0.5; }}
+    100% {{ opacity: 1; }}
+  }}
+  .updating {{ animation: pulse 0.5s ease-in-out; }}
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="title">🛡️ Observabilidad de Calidad (Capa Bronce)</div>
+    <div class="status">
+      <div class="dot" id="dot"></div>
+      <span id="status-txt">Sincronizando...</span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- Card 1: Total hoy -->
+    <div class="card">
+      <div class="card-label">🚨 Errores de Hoy</div>
+      <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+        <div class="big-val" id="val-total">0</div>
+      </div>
+      <div style="font-size:0.65rem; color:#94A3B8; text-align:center;">Registros rechazados hoy</div>
+    </div>
+
+    <!-- Card 2: Top Tipos -->
+    <div class="card">
+      <div class="card-label">📊 Tipos de Error Críticos</div>
+      <div id="list-tipos" style="flex:1;">
+        <div style="color:#CBD5E1; font-size:0.7rem; padding-top:20px; text-align:center;">Esperando datos...</div>
+      </div>
+    </div>
+
+    <!-- Card 3: Top Fundos -->
+    <div class="card">
+      <div class="card-label">📍 Fundos con Incidencias</div>
+      <div id="list-fundos" style="flex:1;">
+        <div style="color:#CBD5E1; font-size:0.7rem; padding-top:20px; text-align:center;">Esperando datos...</div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const SSE_URL = "http://127.0.0.1:8000/health/calidad/stream";
+const dot = document.getElementById('dot');
+const statusTxt = document.getElementById('status-txt');
+const valTotal = document.getElementById('val-total');
+const listTipos = document.getElementById('list-tipos');
+const listFundos = document.getElementById('list-fundos');
+
+function updateList(container, data, keyName) {{
+  if (!data || data.length === 0) {{
+    container.innerHTML = '<div style="color:#CBD5E1; font-size:0.7rem; padding-top:20px; text-align:center;">Sin incidencias hoy ✨</div>';
+    return;
+  }}
+  container.innerHTML = data.map(item => `
+    <div class="list-item">
+      <span class="item-name" title="${{item[keyName]}}">${{item[keyName]}}</span>
+      <span class="item-count">${{item.Cuenta}}</span>
+    </div>
+  `).join('');
+}}
+
+function conectar() {{
+  const es = new EventSource(SSE_URL);
+
+  es.addEventListener('calidad', (e) => {{
+    const data = JSON.parse(e.data);
+    dot.className = 'dot live';
+    statusTxt.textContent = 'En vivo · Actualizado ' + new Date().toLocaleTimeString();
+    
+    // Animar cambio
+    valTotal.classList.add('updating');
+    valTotal.textContent = data.total_hoy;
+    setTimeout(() => valTotal.classList.remove('updating'), 500);
+
+    updateList(listTipos, data.top_tipos, 'Tipo_Error_Raw');
+    updateList(listFundos, data.top_fundos, 'Fundo_Raw');
+  }});
+
+  es.addEventListener('error', () => {{
+    dot.className = 'dot';
+    statusTxt.textContent = '⚠️ Reconectando...';
+  }});
+}}
+
+conectar();
+</script>
+</body>
+</html>"""
+
+
 # ── Render principal ──────────────────────────────────────────────────────────
 
 def render() -> None:
+
+
     header_pagina("🖥️", "Sistema · Health", "Estado en tiempo real de todos los subsistemas ACP")
 
     if not tiene_permiso("leer"):
@@ -432,29 +861,65 @@ def render() -> None:
     """, unsafe_allow_html=True)
 
     # ── 3. Tarjetas de subsistemas ─────────────────────────────────────────────
-    st.markdown("### 🔌 Estado de subsistemas")
-    cols = st.columns(len(_SUBSISTEMAS))
-    for col, sub in zip(cols, _SUBSISTEMAS):
-        with col:
-            _render_tarjeta_subsistema(sub, resultados[sub["key"]])
+    # ── 3. Contenido Principal en Pestañas ──────────────────────────────────────
+    tab_gen, tab_cal = st.tabs(["🖥️ Estado General", "📊 Calidad de Datos (Real-time)"])
 
-    st.markdown("<div style='height:20px;'></div>", unsafe_allow_html=True)
+    with tab_gen:
+        st.markdown("### 🔌 Estado de subsistemas")
+        cols = st.columns(len(_SUBSISTEMAS))
+        for col, sub in zip(cols, _SUBSISTEMAS):
+            with col:
+                _render_tarjeta_subsistema(sub, resultados[sub["key"]])
 
-    # ── 4. Panels de detalle ───────────────────────────────────────────────────
-    st.markdown("### 🔍 Diagnóstico detallado")
+        st.markdown("<div style='height:20px;'></div>", unsafe_allow_html=True)
 
-    col_bd, col_lock = st.columns(2)
-    with col_bd:
-        _render_panel_bd(datos_full)
-    with col_lock:
-        _render_panel_lock(datos_lock)
+        # ── 4. Panels de detalle ───────────────────────────────────────────────────
+        st.markdown("### 🔍 Diagnóstico detallado")
 
-    st.markdown("<div style='height:16px;'></div>", unsafe_allow_html=True)
-    _render_panel_control(datos_control)
+        col_bd, col_lock = st.columns(2)
+        with col_bd:
+            _render_panel_bd(datos_full)
+        with col_lock:
+            _render_panel_lock(datos_lock)
 
-    # ── 5. Historial de la sesión ──────────────────────────────────────────────
-    st.markdown("<div style='height:16px;'></div>", unsafe_allow_html=True)
-    _render_historial()
+        st.markdown("<div style='height:16px;'></div>", unsafe_allow_html=True)
+        _render_panel_control(datos_control)
+
+        # ── 5. Historial de la sesión ──────────────────────────────────────────────
+        st.markdown("<div style='height:16px;'></div>", unsafe_allow_html=True)
+        _render_historial()
+
+        # ── 7. Dashboard SSR — Telemetría en Vivo ──────────────────────────────
+        st.markdown("<div style='height:28px;'></div>", unsafe_allow_html=True)
+        st.markdown("### 📡 Telemetría en Vivo")
+        st.caption(
+            "Dashboard SSR — se conecta directamente al backend vía Server-Sent Events. "
+            "Actualiza latencia, corridas y cola cada 3 segundos **sin recargar el portal**."
+        )
+        token_jwt = st.session_state.get("jwt_token", "")
+        components.html(
+            _generar_dashboard_ssr(token_jwt),
+            height=320,
+            scrolling=False,
+        )
+
+    with tab_cal:
+        st.markdown("### 🛡️ Observabilidad de Calidad")
+        st.caption(
+            "Métricas en tiempo real basadas en la tabla de errores de capa Bronce. "
+            "Permite detectar anomalías de carga en el momento exacto en que ocurren."
+        )
+        token_jwt = st.session_state.get("jwt_token", "")
+        components.html(
+            _generar_dashboard_calidad_ssr(token_jwt),
+            height=380,
+            scrolling=False,
+        )
+        
+        st.info(
+            "💡 Esta información proviene de `Bronce.Seguimiento_Errores`. "
+            "Si ves un pico de errores en un Fundo específico, verifica el archivo de origen."
+        )
 
     # ── 6. Info de versión ─────────────────────────────────────────────────────
     version   = html.escape(str(datos_full.get("version",  "—")))
@@ -474,3 +939,4 @@ def render() -> None:
         <span style="margin-left:auto;">ACP Equipo de Proyecciones · 2026</span>
     </div>
     """, unsafe_allow_html=True)
+

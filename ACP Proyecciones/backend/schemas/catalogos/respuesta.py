@@ -4,6 +4,8 @@ schemas/catalogos/respuesta.py
 Schemas de SALIDA para catálogos MDM y Silver.
 Separados por modelo de dominio.
 """
+from datetime import datetime
+
 from pydantic import BaseModel
 
 class RespuestaVariedad(BaseModel):
@@ -13,6 +15,25 @@ class RespuestaVariedad(BaseModel):
     es_activa:       bool
 
     model_config = {"from_attributes": True}
+
+
+class RespuestaDimVariedad(BaseModel):
+    """Fila de Silver.Dim_Variedad (dimensión DWH homologada)."""
+    id_variedad:         int
+    nombre_variedad:     str
+    breeder:             str | None
+    es_activa:           bool
+    fecha_creacion:      datetime | None = None
+    fecha_modificacion:  datetime | None = None
+
+    model_config = {"from_attributes": True}
+
+
+class RespuestaOperacionVariedad(BaseModel):
+    """Respuesta de operaciones de escritura sobre Silver.Dim_Variedad."""
+    ok:      bool
+    mensaje: str
+    dato:    dict | None = None
 
 class RespuestaGeografia(BaseModel):
     """Fila de Silver.Dim_Geografia."""

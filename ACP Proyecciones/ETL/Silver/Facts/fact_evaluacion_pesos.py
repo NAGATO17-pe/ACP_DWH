@@ -166,8 +166,8 @@ class ProcesadorEvaluacionPesos(BaseFactProcessor):
                 )
                 continue
 
-            # Validar rango DQ: 0.5g – 8.0g
-            peso_val, error_peso = validar_peso_baya(peso)
+            # Validar rango DQ dinámico (desde Config.Parametros_Pipeline)
+            peso_val, error_peso = validar_peso_baya(peso, config=self.config_params)
             if error_peso:
                 self.registrar_rechazo(
                     id_origen,
@@ -192,6 +192,7 @@ class ProcesadorEvaluacionPesos(BaseFactProcessor):
                 self.ids_procesados.append(id_origen)
             payload.append({
                 'ID_Geografia':              resultado_geo['id_geografia'],
+                '_id_modulo_catalogo':         resultado_geo.get('id_modulo_catalogo'),
                 'ID_Tiempo':                 obtener_id_tiempo(fecha),
                 'ID_Variedad':               id_var,
                 'ID_Personal':               id_personal,
@@ -207,7 +208,15 @@ class ProcesadorEvaluacionPesos(BaseFactProcessor):
 def cargar_fact_evaluacion_pesos(engine: Engine) -> dict:
     proc = ProcesadorEvaluacionPesos(engine)
 
-    df = _leer_bronce(engine)
+    cols_raw = [
+        'Fecha_Raw', 'Fundo_Raw', 'Modulo_Raw', 'Valvula_Raw', 'Turno_Raw',
+        'Cama_Raw', 'Variedad_Raw', 'Evaluacion_Raw', 'DNI_Raw', 'PesoBaya_Raw',
+        'CantMuestra_Raw', 'BayasPequenas_Raw', 'PesoBayasPequenas_Raw',
+        'BayasGrandes_Raw', 'BayasFase1_Raw', 'PesoBayasFase1_Raw',
+        'BayasFase2_Raw', 'PesoBayasFase2_Raw', 'Cremas_Raw', 'PesoCremas_Raw',
+        'Maduras_Raw', 'PesoMaduras_Raw', 'Cosechables_Raw', 'PesoCosechables_Raw'
+    ]
+    df = proc.leer_bronce(cols_raw)
     if df.empty:
         return _finalizar_resumen_fact(proc.resumen)
     proc.resumen['leidos'] = len(df)

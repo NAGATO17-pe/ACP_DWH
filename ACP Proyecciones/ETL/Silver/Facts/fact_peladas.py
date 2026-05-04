@@ -155,6 +155,7 @@ class ProcesadorPeladas(BaseFactProcessor):
             self.ids_procesados.append(id_origen)
             payload.append({
                 'ID_Geografia':           resultado_geo['id_geografia'],
+                '_id_modulo_catalogo':      resultado_geo.get('id_modulo_catalogo'),
                 'ID_Tiempo':              obtener_id_tiempo(fecha),
                 'ID_Variedad':            id_var,
                 'ID_Personal':            id_personal,
@@ -181,7 +182,15 @@ class ProcesadorPeladas(BaseFactProcessor):
 def cargar_fact_peladas(engine: Engine) -> dict:
     proc = ProcesadorPeladas(engine)
 
-    df = _leer_bronce(engine)
+    cols_raw = [
+        'Fecha_Raw', 'Fundo_Raw', 'Modulo_Raw', 'Turno_Raw', 'Valvula_Raw',
+        'Variedad_Raw', 'DNI_Raw', 'Evaluador_Raw', 'Punto_Raw', 'Muestras_Raw',
+        'BotonesFlorales_Raw', 'Flores_Raw', 'BayasPequenas_Raw', 'BayasGrandes_Raw',
+        'Fase1_Raw', 'Fase2_Raw', 'BayasCremas_Raw', 'BayasMaduras_Raw',
+        'BayasCosechables_Raw', 'PlantasProductivas_Raw', 'PlantasNoProductivas_Raw',
+        'Valores_Raw'
+    ]
+    df = proc.leer_bronce(cols_raw)
     if df.empty:
         return _finalizar_resumen_fact(proc.resumen)
     proc.resumen['leidos'] = len(df)
@@ -189,7 +198,8 @@ def cargar_fact_peladas(engine: Engine) -> dict:
     with ContextoTransaccionalETL(engine) as contexto:
         conexion = contexto._conexion_activa()
         df, cuar_var = homologar_columna(
-            df, 'Variedad_Raw', 'Variedad_Canonica', TABLA_ORIGEN, conexion
+            df, 'Variedad_Raw', 'Variedad_Canonica', TABLA_ORIGEN, conexion,
+            columna_id_origen='ID_Peladas'
         )
         proc.resumen['cuarentena'].extend(cuar_var)
 

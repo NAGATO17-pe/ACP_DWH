@@ -41,6 +41,7 @@ from silver.facts.fact_induccion_floral import cargar_fact_induccion_floral
 from silver.facts.fact_tasa_crecimiento_brotes import cargar_fact_tasa_crecimiento_brotes
 from silver.facts.fact_sanidad_activo import cargar_fact_sanidad_activo
 from silver.facts.fact_ciclo_poda import cargar_fact_ciclo_poda
+from silver.facts.fact_sixweek import cargar_fact_sixweek
 
 from gold.marts import refrescar_marts_seleccionados, refrescar_todos_los_marts
 from auditoria.log import registrar_inicio, registrar_fin
@@ -139,6 +140,7 @@ CATALOGO_FACTS = construir_catalogo_facts({
     'Fact_Tasa_Crecimiento_Brotes': cargar_fact_tasa_crecimiento_brotes,
     'Fact_Sanidad_Activo':        cargar_fact_sanidad_activo,
     'Fact_Ciclo_Poda':            cargar_fact_ciclo_poda,
+    'Fact_Proyecciones_SixWeek':  cargar_fact_sixweek,
 })
 
 
@@ -317,6 +319,11 @@ def _ejecutar_sp_validar_camas(
             'Estado_Calidad_Cama': 'SIN_RESULTADO',
         }
     return dict(fila._mapping)
+
+
+def _ejecutar_sp_sincronizar_campanas(engine) -> None:
+    with engine.begin() as conexion:
+        conexion.execute(text("EXEC Silver.sp_Sincronizar_Periodos_Campana"))
 
 
 def _obtener_contexto_sql(engine) -> dict:
@@ -616,7 +623,7 @@ def ejecutar_reproceso_facts(
 def ejecutar() -> None:
     inicio = _encabezado()
     engine = obtener_engine()
-    total = 23
+    total = 25
     resumen = {}
     errores_pipeline: list[str] = []
     facts_con_error: list[str] = []
@@ -735,12 +742,25 @@ def ejecutar() -> None:
         if error_fact:
             errores_pipeline.append(error_fact)
             facts_con_error.append(nombre)
+        
+        # Sincronización de Campañas inmediatamente después de Poda
+        if nombre == 'Fact_Ciclo_Poda' and not error_fact:
+            _paso(10, total, 'Sincronizando bridge de campanas via SP...')
+            try:
+                _ejecutar_sp_sincronizar_campanas(engine)
+                resumen['SP_Campanas_Sync'] = 'OK'
+                # Limpiar cache de lookup para que los siguientes hechos vean la nueva bridge
+                limpiar_lookup()
+            except Exception as error:
+                _imprimir(f'  ERROR en SP_Sincronizar_Campanas: {error}')
+                resumen['SP_Campanas_Sync ERROR'] = str(error)
+                # No detenemos el pipeline, pero los siguientes hechos podrían fallar/rechazar
 
     if _gold_debe_bloquearse(facts_con_error, config_operativa['facts_bloqueantes_gold']):
-        _paso(22, total, 'Omitiendo Marts Gold por errores previos...')
+        _paso(23, total, 'Omitiendo Marts Gold por errores previos...')
         resumen['Gold estado'] = 'OMITIDO_POR_ERROR_EN_FACTS'
     else:
-        _paso(22, total, 'Refrescando Marts Gold...')
+        _paso(23, total, 'Refrescando Marts Gold...')
         try:
             resumen_marts = refrescar_todos_los_marts(engine, resumen_etl=resumen, facts_bloqueantes=frozenset(config_operativa['facts_bloqueantes_gold']))
             for mart, valor in resumen_marts.items():
@@ -751,7 +771,7 @@ def ejecutar() -> None:
             resumen['Gold ERROR'] = str(error)
             errores_pipeline.append(mensaje_error)
 
-    _paso(23, total, 'Finalizando...')
+    _paso(24, total, 'Finalizando...')
     if errores_pipeline:
         _registrar_errores_resumen(resumen, errores_pipeline)
     _resumen_final(inicio, resumen)
