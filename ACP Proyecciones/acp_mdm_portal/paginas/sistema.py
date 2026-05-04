@@ -26,14 +26,15 @@ from typing import Any
 import streamlit as st
 import streamlit.components.v1 as components
 
-from utils.api_client import get_api
+from utils.api_client import get_api, URL_BACKEND
 from utils.auth import tiene_permiso
 from utils.componentes import badge_html, estado_vacio_html
+from utils.constantes import AUTOREFRESH_OPCIONES, LOCK_ESTADOS as _LOCK_ESTADOS
 from utils.formato import crear_tarjeta_kpi, header_pagina
 
 # ── Constantes ────────────────────────────────────────────────────────────────
 
-_BASE_URL = "http://127.0.0.1:8000"
+_BASE_URL = URL_BACKEND
 
 _SUBSISTEMAS = [
     {
@@ -48,7 +49,7 @@ _SUBSISTEMAS = [
         "endpoint": "/health/ready",
         "label":    "Base de datos",
         "icono":    "🗄️",
-        "desc":     "Conexión activa con SQL Server · ACP_DataWarehose_Proyecciones.",
+        "desc":     "Conexión activa con SQL Server · ACP_DataWarehouse_Proyecciones.",
     },
     {
         "key":      "control",
@@ -66,13 +67,6 @@ _SUBSISTEMAS = [
     },
 ]
 
-_LOCK_ESTADOS: dict[str, tuple[str, str, str]] = {
-    "libre":    ("🟢", "#10B981", "Sin corridas activas. Listo para ejecutar."),
-    "ocupado":  ("🟡", "#F59E0B", "Una corrida está en ejecución actualmente."),
-    "vencido":  ("🔴", "#EF4444", "El lock lleva demasiado tiempo activo. Posible corrida colgada."),
-    "error":    ("🔴", "#EF4444", "No se pudo leer el estado del lock."),
-    "no_listo": ("⚪", "#6B7280", "Control-plane o BD no disponibles."),
-}
 
 _HISTORIAL_MAX = 10  # entradas de historial en la sesión
 
@@ -357,7 +351,7 @@ def _render_autorefresh() -> None:
         )
         intervalo = st.select_slider(
             "Intervalo",
-            options=[0, 15, 30, 60, 120],
+            options=AUTOREFRESH_OPCIONES,
             value=st.session_state.get("health_refresh_interval", 0),
             format_func=lambda x: "Off" if x == 0 else f"{x}s",
             key="health_refresh_interval",
