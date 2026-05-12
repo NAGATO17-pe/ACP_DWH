@@ -29,6 +29,7 @@ from typing import Any
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
+from utils.errores import ErrorCircuitBreakerCritico, ErrorCircuitBreakerError
 from mdm.lookup import (
     obtener_parametros_pipeline,
     obtener_reglas_validacion,
@@ -45,7 +46,10 @@ _log = logging.getLogger("ETL_Pipeline")
 
 
 class BaseFactProcessor:
-    LIMITE_RECHAZO = 5.0  # Umbral por defecto para alertas de calidad
+    # Niveles de calidad del circuit breaker (porcentaje de rechazo real sobre leídos)
+    LIMITE_WARNING  = 1.0   # Emite WARNING en log, continúa
+    LIMITE_ERROR    = 2.0   # Aborta el fact, bloquea Gold
+    LIMITE_CRITICO  = 5.0   # Aborta el pipeline completo
 
     def __init__(self, engine: Engine, tabla_origen: str, tabla_destino: str, columna_id: str = None):
         self.engine = engine
@@ -656,10 +660,40 @@ class BaseFactProcessor:
         # 4. Reporte final
         _log.info(f"-> {total_leidos} leidos | {self.resumen.get('insertados', 0)} insertados | {unique_ids_rechazados} rechazados reales | {int(porcentaje_rechazo)}% rechazo real")
 
-        bloqueo = False
-        if porcentaje_rechazo > self.LIMITE_RECHAZO:
-            bloqueo = True
-            _log.warning(f"AVISO: {porcentaje_rechazo:.1f}% de rechazo real ({unique_ids_rechazados}/{total_leidos} filas afectadas). Limite de calidad ({self.LIMITE_RECHAZO}%) superado, pero se continua por solicitud.")
+        # ── Circuit Breaker de calidad ─────────────────────────────────────────
+        nivel_bloqueo = None
+        if total_leidos > 0:
+            if porcentaje_rechazo >= self.LIMITE_CRITICO:
+                nivel_bloqueo = "CRITICO"
+                _log.error(
+                    f"[CIRCUIT BREAKER CRITICO] {self.tabla_destino}: "
+                    f"{porcentaje_rechazo:.1f}% rechazo >= {self.LIMITE_CRITICO}% — "
+                    f"ABORTANDO PIPELINE COMPLETO"
+                )
+                raise ErrorCircuitBreakerCritico(
+                    f"Circuit breaker CRITICO en {self.tabla_destino}: "
+                    f"{porcentaje_rechazo:.1f}% de rechazo ({unique_ids_rechazados}/{total_leidos}). "
+                    f"Umbral crítico: {self.LIMITE_CRITICO}%."
+                )
+            elif porcentaje_rechazo >= self.LIMITE_ERROR:
+                nivel_bloqueo = "ERROR"
+                _log.error(
+                    f"[CIRCUIT BREAKER ERROR] {self.tabla_destino}: "
+                    f"{porcentaje_rechazo:.1f}% rechazo >= {self.LIMITE_ERROR}% — "
+                    f"ABORTANDO FACT, GOLD BLOQUEADO"
+                )
+                raise ErrorCircuitBreakerError(
+                    f"Circuit breaker ERROR en {self.tabla_destino}: "
+                    f"{porcentaje_rechazo:.1f}% de rechazo ({unique_ids_rechazados}/{total_leidos}). "
+                    f"Umbral de error: {self.LIMITE_ERROR}%."
+                )
+            elif porcentaje_rechazo >= self.LIMITE_WARNING:
+                nivel_bloqueo = "WARNING"
+                _log.warning(
+                    f"[CIRCUIT BREAKER WARNING] {self.tabla_destino}: "
+                    f"{porcentaje_rechazo:.1f}% rechazo >= {self.LIMITE_WARNING}% — "
+                    f"continúa, pero revisar calidad."
+                )
 
         return {
             'Tabla_Destino': self.tabla_destino,
@@ -667,7 +701,7 @@ class BaseFactProcessor:
             'Filas_Insertadas': self.resumen.get('insertados', 0),
             'Nuevos_Casos_Cuarentena': unique_ids_rechazados,
             'cuarentena': self.resumen.get('cuarentena', []),
-            'Bloqueo_Integridad': bloqueo,
+            'Bloqueo_Integridad': nivel_bloqueo == "WARNING",
             'Dependencias_Incumplidas': [],
             'resueltos_por_tiebreaker': self.resumen.get('resueltos_por_tiebreaker', 0),
         }
