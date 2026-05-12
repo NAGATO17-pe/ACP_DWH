@@ -6,6 +6,7 @@ set "PYTHON_EXE=%BASE_DIR%.venv\Scripts\python.exe"
 set "ETL_DIR=%BASE_DIR%ETL"
 set "PIPELINE_SCRIPT=%ETL_DIR%\pipeline.py"
 set "PYTHONUTF8=1"
+set "PYTHONUNBUFFERED=1"
 set "EXIT_CODE=99"
 
 :: Fecha en formato YYYYMMDD para nombre del log (wmic es independiente del idioma regional)
@@ -50,11 +51,7 @@ if not exist "%PIPELINE_SCRIPT%" (
 :: Se usa un helper Python inline que hace tee real (consola + archivo) sin perder el exit code
 pushd "%ETL_DIR%"
 
-if "%~1"=="" (
-    "%PYTHON_EXE%" "%PIPELINE_SCRIPT%"
-) else (
-    "%PYTHON_EXE%" "%PIPELINE_SCRIPT%" "%~1" "%~2" "%~3" "%~4" "%~5" "%~6" "%~7" "%~8" "%~9"
-)
+"%PYTHON_EXE%" "%PIPELINE_SCRIPT%" %*
 set "EXIT_CODE=!ERRORLEVEL!"
 
 popd

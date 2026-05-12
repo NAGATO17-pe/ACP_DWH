@@ -170,37 +170,49 @@ def _agregar_cuarentena(
     })
 
 
-SQL_INSERT_CLIMA_REPORTE = text("""
-    INSERT INTO Silver.Fact_Telemetria_Clima (
-        Sector_Climatico, ID_Tiempo,
-        Temperatura_Max_C, Temperatura_Min_C,
-        Humedad_Relativa_Pct, Precipitacion_mm,
-        VPD, Radiacion_Solar,
-        Fecha_Evento, Fecha_Sistema
-    ) VALUES (
-        :sector_climatico, :id_tiempo,
-        :temp_max, :temp_min,
-        :humedad, :precipitacion,
-        NULL, NULL,
-        :fecha_evento, SYSDATETIME()
-    )
-""")
-
-SQL_INSERT_CLIMA_VARIABLES = text("""
-    INSERT INTO Silver.Fact_Telemetria_Clima (
-        Sector_Climatico, ID_Tiempo,
-        Temperatura_Max_C, Temperatura_Min_C,
-        Humedad_Relativa_Pct, Precipitacion_mm,
-        VPD, Radiacion_Solar,
-        Fecha_Evento, Fecha_Sistema
-    ) VALUES (
-        :sector_climatico, :id_tiempo,
-        :temp_max, :temp_min,
-        :humedad, NULL,
-        :vpd, :radiacion,
-        :fecha_evento, SYSDATETIME()
-    )
-""")
+# NOTA ARQUITECTURA: Variables_Meteorologicas usa MERGE en lugar de INSERT puro.
+# Esto garantiza que si Reporte_Clima ya insertó el registro (mismo Sector+Fecha),
+# los campos VPD y Radiacion_Solar se actualicen en lugar de ignorarse silenciosamente.
+# MERGE: si existe -> UPDATE VPD/Radiacion; si no existe -> INSERT completo.
+SQL_MERGE_CLIMA_VARIABLES = """
+    MERGE Silver.Fact_Telemetria_Clima AS tgt
+    USING (
+        SELECT
+            :sector_climatico AS Sector_Climatico,
+            :id_tiempo        AS ID_Tiempo,
+            :id_campana       AS ID_Campana,
+            :temp_max         AS Temperatura_Max_C,
+            :temp_min         AS Temperatura_Min_C,
+            :humedad          AS Humedad_Relativa_Pct,
+            :vpd              AS VPD,
+            :radiacion        AS Radiacion_Solar,
+            :fecha_evento     AS Fecha_Evento
+    ) AS src
+    ON tgt.Sector_Climatico = src.Sector_Climatico
+   AND tgt.ID_Tiempo        = src.ID_Tiempo
+    WHEN MATCHED THEN
+        UPDATE SET
+            ID_Campana            = ISNULL(tgt.ID_Campana, src.ID_Campana),
+            VPD                   = COALESCE(src.VPD,           tgt.VPD),
+            Radiacion_Solar       = COALESCE(src.Radiacion_Solar, tgt.Radiacion_Solar),
+            Temperatura_Max_C     = COALESCE(src.Temperatura_Max_C, tgt.Temperatura_Max_C),
+            Temperatura_Min_C     = COALESCE(src.Temperatura_Min_C, tgt.Temperatura_Min_C),
+            Humedad_Relativa_Pct  = COALESCE(src.Humedad_Relativa_Pct, tgt.Humedad_Relativa_Pct)
+    WHEN NOT MATCHED THEN
+        INSERT (
+            Sector_Climatico, ID_Tiempo, ID_Campana,
+            Temperatura_Max_C, Temperatura_Min_C,
+            Humedad_Relativa_Pct, Precipitacion_mm,
+            VPD, Radiacion_Solar,
+            Fecha_Evento, Fecha_Sistema
+        ) VALUES (
+            src.Sector_Climatico, src.ID_Tiempo, src.ID_Campana,
+            src.Temperatura_Max_C, src.Temperatura_Min_C,
+            src.Humedad_Relativa_Pct, NULL,
+            src.VPD, src.Radiacion_Solar,
+            src.Fecha_Evento, SYSDATETIME()
+        );
+"""
 
 
 def _clave_logica_clima(registro: dict) -> tuple:
@@ -236,22 +248,36 @@ def _resolver_duplicados_clima(
                 ids_insertados.append(grupo[0]['id_origen'])
             continue
 
-        firmas = {
-            _firma_metricas_clima(registro, campos_metricas)
-            for registro in grupo
-        }
-
-        if len(firmas) == 1:
-            registro_base = grupo[0]
-            registros_validos.append(registro_base)
-            if registro_base['id_origen'] is not None:
-                ids_insertados.append(registro_base['id_origen'])
+        # Intento de Fusión Inteligente
+        # 1. Extraer valores no nulos por cada métrica
+        consolidado = {campo: [r[campo] for r in grupo if r.get(campo) is not None] for campo in campos_metricas}
+        
+        # 2. Verificar conflictos reales (más de un valor distinto para la misma métrica)
+        hay_conflicto = False
+        for campo, valores in consolidado.items():
+            if len(set(valores)) > 1:
+                hay_conflicto = True
+                break
+        
+        if not hay_conflicto:
+            # Fusión segura: tomamos el primer valor encontrado (o None) para cada campo
+            registro_fusionado = grupo[0].copy()
+            for campo in campos_metricas:
+                registro_fusionado[campo] = consolidado[campo][0] if consolidado[campo] else None
+            
+            registros_validos.append(registro_fusionado)
+            # Marcamos todos los IDs del grupo como insertados (fisiológicamente representados por el fusionado)
+            for r in grupo:
+                if r['id_origen'] is not None:
+                    ids_insertados.append(r['id_origen'])
             continue
 
+        # Si hay conflicto real, se rechazan todos a cuarentena
         sector_climatico, fecha_evento = clave
         motivo = (
-            f'Duplicado logico conflictivo en {descripcion_origen}: '
-            f'multiples mediciones para mismo Sector_Climatico + Fecha_Evento'
+            f'Conflicto de métricas en {descripcion_origen}: '
+            f'valores distintos para el mismo Sector/Fecha. '
+            f'Detalle: { {k: list(set(v)) for k, v in consolidado.items() if len(set(v)) > 1} }'
         )
         for registro in grupo:
             _agregar_cuarentena(
@@ -465,29 +491,33 @@ def cargar_fact_telemetria_clima(engine: Engine) -> dict:
                 TABLA_CLIMA, 'ID_Reporte_Clima', ids_clima_rechazados, estado='RECHAZADO'
             )
 
-        if payload_vars:
-            _proc_vars = BaseFactProcessor(engine, TABLA_VARIABLES, TABLA_DESTINO)
-            _proc_vars.columnas_clave_unica = ['Sector_Climatico', 'ID_Tiempo']
-            _proc_vars._ejecutar_insercion_masiva_segura(
-                contexto,
-                [
-                    {
-                        'Sector_Climatico': r['sector_climatico'],
-                        'ID_Tiempo':        r['id_tiempo'],
-                        'Temperatura_Max_C': r['temp_max'],
-                        'Temperatura_Min_C': r['temp_min'],
-                        'Humedad_Relativa_Pct': r['humedad'],
-                        'Precipitacion_mm': None,
-                        'VPD':              r['vpd'],
-                        'Radiacion_Solar':  r['radiacion'],
-                        'Fecha_Evento':     r['fecha_evento'],
-                        'id_origen_rastreo': r['id_origen'],
-                    }
-                    for r in payload_vars
-                ],
-                '#Temp_TelemetriaClima_Variables',
+        # Fase 35 Fix: Usar MERGE para que Variables_Meteorologicas actualice
+        # VPD y Radiacion_Solar aunque Reporte_Clima ya haya insertado el registro.
+        from mdm.lookup import obtener_id_campana
+        conn_activa = contexto._conexion_activa()
+        merged = 0
+        for r in payload_vars:
+            # Resolver campana para clima (sin geo ni variedad)
+            id_campana = obtener_id_campana(None, None, r['fecha_evento'], engine)
+
+            conn_activa.execute(
+                text(SQL_MERGE_CLIMA_VARIABLES),
+                {
+                    'sector_climatico': r['sector_climatico'],
+                    'id_tiempo':        r['id_tiempo'],
+                    'id_campana':       id_campana,
+                    'temp_max':         r['temp_max'],
+                    'temp_min':         r['temp_min'],
+                    'humedad':          r['humedad'],
+                    'vpd':              r['vpd'],
+                    'radiacion':        r['radiacion'],
+                    'fecha_evento':     r['fecha_evento'],
+                }
             )
-            resumen['insertados'] += _proc_vars.resumen['insertados']
+            if r['id_origen'] is not None:
+                ids_vars_insertados.append(r['id_origen'])
+            merged += 1
+        resumen['insertados'] += merged
 
         if ids_vars_insertados:
             contexto.marcar_estado_carga(

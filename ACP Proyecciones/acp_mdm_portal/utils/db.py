@@ -30,7 +30,7 @@ def obtener_engine():
     load_dotenv()
 
     servidor = os.getenv('DB_SERVIDOR', 'LCP-PAG-PRACTIC')
-    base     = os.getenv('DB_NOMBRE', 'ACP_DataWarehose_Proyecciones')
+    base     = os.getenv('DB_NOMBRE', 'ACP_DataWarehouse_Proyecciones')
     usuario  = os.getenv('DB_USUARIO')
     clave    = os.getenv('DB_CLAVE')
     driver   = os.getenv('DB_DRIVER', 'ODBC Driver 17 for SQL Server')
