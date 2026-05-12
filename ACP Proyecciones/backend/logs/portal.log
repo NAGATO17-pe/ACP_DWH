@@ -1,0 +1,333 @@
+
+============================================================
+[2026-04-27 10:45:37.297235] INICIO
+============================================================
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.16.50.27:8501
+  External URL: http://190.223.54.2:8501
+
+  Stopping...
+
+============================================================
+[2026-04-27 10:46:16.065837] INICIO
+============================================================
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.16.50.27:8501
+  External URL: http://190.223.54.2:8501
+
+  Stopping...
+
+============================================================
+[2026-04-27 12:17:00.847645] INICIO
+============================================================
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.16.50.27:8501
+  External URL: http://190.223.54.2:8501
+
+  Stopping...
+
+============================================================
+[2026-04-27 13:20:53.741408] INICIO
+============================================================
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.16.50.27:8501
+  External URL: http://190.223.54.2:8501
+
+  Stopping...
+
+============================================================
+[2026-04-27 15:48:48.943191] INICIO
+============================================================
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.16.50.27:8501
+  External URL: http://190.223.54.2:8501
+
+  Stopping...
+
+============================================================
+[2026-04-29 10:57:03.933550] INICIO
+============================================================
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.16.50.29:8501
+  External URL: http://190.223.54.2:8501
+
+2026-04-29 11:14:49.452 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-04-29 11:14:57.246 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-04-29 11:14:59.252 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-04-29 11:15:00.335 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-04-29 11:15:03.077 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+  Stopping...
+
+============================================================
+[2026-04-29 11:15:55.946637] INICIO
+============================================================
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.16.50.29:8501
+  External URL: http://190.223.54.2:8501
+
+2026-04-29 11:19:44.596 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+  Stopping...
+
+============================================================
+[2026-04-29 11:32:00.445995] INICIO
+============================================================
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.16.50.29:8501
+  External URL: http://190.223.54.2:8501
+
+  Stopping...
+
+============================================================
+[2026-04-29 11:56:02.083760] INICIO
+============================================================
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.16.50.29:8501
+  External URL: http://190.223.54.2:8501
+
+  Stopping...
+
+============================================================
+[2026-04-29 12:15:31.768279] INICIO
+============================================================
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.16.50.29:8501
+  External URL: http://190.223.54.2:8501
+
+  Stopping...
+
+============================================================
+[2026-04-29 12:16:58.715626] INICIO
+============================================================
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.16.50.29:8501
+  External URL: http://190.223.54.2:8501
+
+  Stopping...
+
+============================================================
+[2026-04-29 12:20:38.437017] INICIO
+============================================================
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.16.50.29:8501
+  External URL: http://190.223.54.2:8501
+
+  Stopping...
+
+============================================================
+[2026-04-29 14:11:20.272805] INICIO
+============================================================
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.16.50.29:8501
+  External URL: http://190.223.54.2:8501
+
+2026-04-29 14:12:30.696 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-04-29 14:12:30.697 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-04-29 14:16:19.465 An update to the [server] config option section was detected. To have these changes be reflected, please restart streamlit.
+2026-04-29 14:16:19.465 
+Warning: the config option 'server.enableCORS=false' is not compatible with
+'server.enableXsrfProtection=true'.
+As a result, 'server.enableCORS' is being overridden to 'true'.
+
+More information:
+In order to protect against CSRF attacks, we send a cookie with each request.
+To do so, we must specify allowable origins, which places a restriction on
+cross-origin resource sharing.
+
+If cross origin resource sharing is required, please disable server.enableXsrfProtection.
+            
+2026-04-29 14:18:23.716 304 GET / (::1) 0.66ms
+2026-04-29 14:18:23.843 304 GET /_stcore/health (::1) 0.72ms
+2026-04-29 14:18:23.844 304 GET /_stcore/host-config (::1) 0.62ms
+2026-04-29 14:18:23.856 101 GET /_stcore/stream (::1) 1.43ms
+2026-04-29 14:18:23.868 200 GET /favicon.png (::1) 6.39ms
+2026-04-29 14:18:49.513 200 GET /media/0fb5ea9ba23d19d97aa66d68406ecad4dfbe35054192619a0ee48533.csv (::1) 1.03ms
+2026-04-29 14:19:29.319 304 GET / (::1) 0.69ms
+2026-04-29 14:19:29.576 304 GET /_stcore/host-config (::1) 0.98ms
+2026-04-29 14:19:29.577 304 GET /_stcore/health (::1) 0.44ms
+2026-04-29 14:19:29.617 101 GET /_stcore/stream (::1) 1.15ms
+2026-04-29 14:20:36.072 304 GET / (::1) 0.69ms
+2026-04-29 14:20:36.317 304 GET /_stcore/health (::1) 0.65ms
+2026-04-29 14:20:36.318 304 GET /_stcore/host-config (::1) 0.48ms
+2026-04-29 14:20:36.337 101 GET /_stcore/stream (::1) 1.14ms
+2026-04-29 14:21:16.308 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-04-29 14:21:16.310 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-04-29 14:21:17.045 200 GET /static/js/Slider.BrkNAuxL.js (::1) 13.61ms
+2026-04-29 14:21:17.053 200 GET /static/js/withCalculatedWidth.C7Q8zdoQ.js (::1) 21.38ms
+2026-04-29 14:21:17.178 200 GET /static/js/IFrame.XAqDW6_G.js (::1) 8.78ms
+2026-04-29 14:21:17.182 200 GET /static/js/IFrameUtil.CiJyrZfZ.js (::1) 3.17ms
+2026-04-29 14:22:48.696 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-04-29 14:22:48.697 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-04-29 14:24:28.047 304 GET / (::1) 0.90ms
+2026-04-29 14:24:28.218 304 GET /_stcore/health (::1) 0.82ms
+2026-04-29 14:24:28.220 304 GET /_stcore/host-config (::1) 1.03ms
+2026-04-29 14:24:28.239 101 GET /_stcore/stream (::1) 1.30ms
+2026-04-29 14:24:54.135 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-04-29 14:24:54.137 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+  Stopping...
+
+============================================================
+[2026-04-29 14:32:25.867494] INICIO
+============================================================
+2026-04-29 14:32:27.890 
+Warning: the config option 'server.enableCORS=false' is not compatible with
+'server.enableXsrfProtection=true'.
+As a result, 'server.enableCORS' is being overridden to 'true'.
+
+More information:
+In order to protect against CSRF attacks, we send a cookie with each request.
+To do so, we must specify allowable origins, which places a restriction on
+cross-origin resource sharing.
+
+If cross origin resource sharing is required, please disable server.enableXsrfProtection.
+            
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.16.50.29:8501
+  External URL: http://190.223.54.2:8501
+
+2026-04-29 14:39:39.781 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-04-29 14:39:39.782 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+  Stopping...
+
+============================================================
+[2026-04-29 14:43:27.372885] INICIO
+============================================================
+2026-04-29 14:43:28.616 
+Warning: the config option 'server.enableCORS=false' is not compatible with
+'server.enableXsrfProtection=true'.
+As a result, 'server.enableCORS' is being overridden to 'true'.
+
+More information:
+In order to protect against CSRF attacks, we send a cookie with each request.
+To do so, we must specify allowable origins, which places a restriction on
+cross-origin resource sharing.
+
+If cross origin resource sharing is required, please disable server.enableXsrfProtection.
+            
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.16.50.29:8501
+  External URL: http://190.223.54.2:8501
+
+2026-04-29 15:48:38.267 Uncaught app execution
+Traceback (most recent call last):
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\streamlit\runtime\scriptrunner\exec_code.py", line 129, in exec_func_with_error_handling
+    result = func()
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 689, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\acp_mdm_portal\app.py", line 169, in <module>
+    pg.render()
+    ~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\acp_mdm_portal\paginas\auditoria.py", line 419, in render
+    _render_kpis(df)
+    ~~~~~~~~~~~~^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\acp_mdm_portal\paginas\auditoria.py", line 117, in _render_kpis
+    crear_panel_metricas_premium(
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+NameError: name 'crear_panel_metricas_premium' is not defined
+
+============================================================
+[2026-04-30 09:29:12.856711] INICIO
+============================================================
+2026-04-30 09:29:14.927 
+Warning: the config option 'server.enableCORS=false' is not compatible with
+'server.enableXsrfProtection=true'.
+As a result, 'server.enableCORS' is being overridden to 'true'.
+
+More information:
+In order to protect against CSRF attacks, we send a cookie with each request.
+To do so, we must specify allowable origins, which places a restriction on
+cross-origin resource sharing.
+
+If cross origin resource sharing is required, please disable server.enableXsrfProtection.
+            
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://172.16.50.24:8501
+  External URL: http://190.223.54.2:8501
+
+2026-04-30 09:55:42.882 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+2026-04-30 09:55:42.883 Please replace `st.components.v1.html` with `st.iframe`.
+
+`st.components.v1.html` will be removed after 2026-06-01.
+  Stopping...

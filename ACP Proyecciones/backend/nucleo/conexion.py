@@ -31,6 +31,8 @@ def obtener_engine() -> Engine:
     Retorna el Engine SQLAlchemy singleton para el backend.
     Se construye a partir de settings — sin hardcodear nada.
     """
+    trust = "yes" if settings.entorno == "dev" else "no"
+
     if settings.db_usuario:
         cadena_pyodbc = (
             f"DRIVER={{{settings.db_driver}}};"
@@ -38,7 +40,9 @@ def obtener_engine() -> Engine:
             f"DATABASE={settings.db_nombre};"
             f"UID={settings.db_usuario};"
             f"PWD={settings.db_clave};"
-            f"TrustServerCertificate=yes;"
+            f"Encrypt=yes;"
+            f"TrustServerCertificate={trust};"
+            f"APP=ACP_Backend;"
         )
     else:
         cadena_pyodbc = (
@@ -46,7 +50,9 @@ def obtener_engine() -> Engine:
             f"SERVER={settings.db_servidor};"
             f"DATABASE={settings.db_nombre};"
             f"Trusted_Connection=yes;"
-            f"TrustServerCertificate=yes;"
+            f"Encrypt=yes;"
+            f"TrustServerCertificate={trust};"
+            f"APP=ACP_Backend;"
         )
 
     cadena_url = (

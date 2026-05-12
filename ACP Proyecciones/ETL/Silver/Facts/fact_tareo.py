@@ -13,8 +13,8 @@ from sqlalchemy import text
 
 from config.parametros import TOKENS_FECHA_NO_OPERATIVA, TOKENS_SUPERVISOR_NO_OPERATIVO
 from utils.contexto_transaccional import ContextoTransaccionalETL
-from utils.fechas import obtener_id_tiempo
 from mdm.lookup import obtener_id_actividad
+from utils.fechas import obtener_id_tiempo
 from silver.facts._base_processor import BaseFactProcessor
 from silver.facts._helpers_fact_comunes import finalizar_resumen_fact as _finalizar_resumen_fact
 
@@ -107,6 +107,7 @@ class ProcesadorTareo(BaseFactProcessor):
                 self.ids_procesados.append(id_origen)
             payload.append({
                 'ID_Geografia':           resultado_geo['id_geografia'],
+                '_id_modulo_catalogo':      resultado_geo.get('id_modulo_catalogo'),
                 'ID_Tiempo':              obtener_id_tiempo(fecha),
                 'ID_Personal':            id_personal,
                 'ID_Actividad_Operativa': id_actividad,
@@ -123,7 +124,12 @@ class ProcesadorTareo(BaseFactProcessor):
 def cargar_fact_tareo(engine: Engine) -> dict:
     proc = ProcesadorTareo(engine)
 
-    df = _leer_bronce(engine)
+    cols_raw = [
+        'Fecha_Raw', 'Fundo_Raw', 'Modulo_Raw', 'DNIResponsable_Raw',
+        'IDPersonalGeneral_Raw', 'Labor_Raw', 'HorasTrabajadas_Raw',
+        'IDPlanilla_Raw'
+    ]
+    df = proc.leer_bronce(cols_raw)
     if df.empty:
         return _finalizar_resumen_fact(proc.resumen)
     proc.resumen['leidos'] = len(df)

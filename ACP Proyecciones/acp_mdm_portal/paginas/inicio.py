@@ -7,18 +7,11 @@ from datetime import datetime
 
 from utils.auth import tiene_permiso
 from utils.componentes import health_status_panel, seccion_tabla_con_guardar
-from utils.formato import crear_tarjeta_kpi, header_pagina
+from utils.formato import crear_tarjeta_kpi, header_pagina, crear_panel_metricas_premium
 from utils.api_client import get_api, mostrar_error_api, post_api, stream_api, delete_api
 
 # ── Constantes de fases ETL ──────────────────────────────────────────────────
 _RE_PASO = re.compile(r"^\[(\d+)/(\d+)\]\s+(.+)$")
-
-FASES_ETL = {
-    "config": {"nombre": "Configuración", "color": "#64748B", "js_role": "raw",    "rango": (1, 2),  "icono": "⚙️"},
-    "bronce": {"nombre": "Bronze Core",   "color": "#cd7f32", "js_role": "bronze", "rango": (3, 3),  "icono": "🥉"},
-    "silver": {"nombre": "Silver Cortex", "color": "#e2e8f0", "js_role": "silver", "rango": (4, 20), "icono": "🔷"},
-    "gold":   {"nombre": "Golden Synapse","color": "#ffd700", "js_role": "gold",   "rango": (21, 99),"icono": "🏆"},
-}
 
 def _detectar_fase(paso_num: int) -> str:
     for clave, fase in FASES_ETL.items():
@@ -33,6 +26,7 @@ def _generar_monitor_canvas(
     token: str,
     phase_init: str = "raw",
     altura: int = 420,
+    backend_url: str = "",
 ) -> str:
     """
     Retorna un documento HTML completo con la red neuronal canvas animada.
@@ -257,7 +251,7 @@ function injectParticles(amount) {{
 async function startWebStream() {{
     if(!'{id_corrida}') return;
     try {{
-        const res = await fetch("http://127.0.0.1:8000/api/v1/etl/corridas/{id_corrida}/eventos", {{
+        const res = await fetch("{backend_url}/api/v1/etl/corridas/{id_corrida}/eventos", {{
             headers: {{ 
                 "Authorization": "Bearer {token}",
                 "Accept": "text/event-stream"
@@ -497,27 +491,34 @@ def _generar_stepper_html(pasos: list[dict], paso_activo_idx: int) -> str:
     return f'<div class="stepper-panel">{items_html}</div>'
 
 
-@st.cache_data(ttl=60, show_spinner=False)
-def _cargar_resumen_ultima_carga() -> pd.DataFrame:
+def _cargar_resumen_ultima_carga() -> tuple[pd.DataFrame, str | None]:
+    """Consulta directa al backend — sin caché. Retorna (df, error_msg)."""
     resultado = get_api("/etl/corridas")
     if resultado.ok and isinstance(resultado.data, list):
         corridas = resultado.data
         if corridas:
-            return pd.DataFrame(corridas)
-    # Valores de mockups para UI si no hay log:
-    return pd.DataFrame()
-
-def _cargar_log_reciente() -> pd.DataFrame:
-    resultado = get_api("/etl/corridas")
-    if resultado.ok and isinstance(resultado.data, list):
-        return pd.DataFrame(resultado.data)
-    return pd.DataFrame()
+            return pd.DataFrame(corridas), None
+        return pd.DataFrame(), None   # Backend OK pero sin corridas aún
+    # Error real de conectividad — lo devolvemos para mostrarlo al usuario
+    return pd.DataFrame(), resultado.error or "No se pudo conectar al backend."
 
 def render():
+    # Limpiar estado fantasma: en_ejecucion=True sin ID de corrida activa
+    if st.session_state.get("etl_en_ejecucion") and not st.session_state.get("etl_id_corrida"):
+        st.session_state["etl_en_ejecucion"] = False
+
     header_pagina("🏠", "Inicio", "Estado del pipeline · Data Warehouse ACP")
     conectado = health_status_panel()
 
-    df_estado = _cargar_resumen_ultima_carga()
+    df_estado, error_carga = _cargar_resumen_ultima_carga()
+
+    # —— Mostrar error de conectividad si el backend no respondio ————————————
+    if error_carga:
+        st.warning(
+            f"⚠️ **Backend no disponible.** {error_carga}  \n"
+            "Verifica que el servidor FastAPI esté corriendo en `http://127.0.0.1:8000`.",
+            icon="📡",
+        )
 
     total_ok = 0
     total_rechaz = 0
@@ -526,10 +527,15 @@ def render():
 
     if not df_estado.empty and "estado" in df_estado.columns:
         if "fecha_inicio" in df_estado.columns:
-            try:
-                ultima_carga = pd.to_datetime(df_estado.iloc[0]["fecha_inicio"]).strftime("%Y-%m-%d %H:%M")
-            except Exception:
-                ultima_carga = str(df_estado.iloc[0]["fecha_inicio"])[:16]
+            val = df_estado.iloc[0]["fecha_inicio"]
+            if val is None or (hasattr(val, '__class__') and str(val) in ('NaT', 'nan', 'None')):
+                ultima_carga = "Sin datos"
+            else:
+                try:
+                    ts = pd.to_datetime(val)
+                    ultima_carga = "Sin datos" if pd.isna(ts) else ts.strftime("%Y-%m-%d %H:%M")
+                except Exception:
+                    ultima_carga = str(val)[:16]
         else:
             ultima_carga = "Sin datos"
         
@@ -538,12 +544,7 @@ def render():
         total_rechaz = int(df_estado["filas_rechazadas"].sum()) if "filas_rechazadas" in df_estado.columns else 0
 
         # Mapeo reverso para que la tabla de historial se vea bien
-        df_estado = df_estado.rename(columns={
-            "id_log": "ID", "nombre_proceso": "Proceso", "tabla_destino": "Tabla",
-            "nombre_archivo": "Archivo", "fecha_inicio": "Inicio", "fecha_fin": "Fin",
-            "estado": "Estado", "filas_insertadas": "Filas OK", "filas_rechazadas": "Rechaz.",
-            "duracion_segundos": "Seg.", "mensaje_error": "Error"
-        })
+        df_estado = df_estado.rename(columns=RENOMBRES_LOG_ETL)
         # Data Engineer: Proceso siempre = ETL_Pipeline y Archivo duplica Tabla → eliminar
         df_estado = df_estado.drop(columns=["Proceso", "Archivo"], errors="ignore")
         # Truncar timestamps a HH:MM:SS (misma fecha en la mayoría de corridas)
@@ -557,13 +558,15 @@ def render():
         cols_order = ["ID", "Tabla", "Estado", "Filas OK", "Rechaz.", "Seg.", "Inicio", "Error"]
         df_estado = df_estado[[c for c in cols_order if c in df_estado.columns]]
 
-    html_kpis = f"""<div class="kpi-container" style="margin-bottom: 32px;">
-    {crear_tarjeta_kpi("Ultima carga", ultima_carga, "🕒", "info")}
-    {crear_tarjeta_kpi("Filas OK (Aprox)", f"{total_ok:,}", "✅", "success")}
-    {crear_tarjeta_kpi("Rechazadas", f"{total_rechaz:,}", "❌", "danger" if total_rechaz > 0 else "")}
-    {crear_tarjeta_kpi("Corridas con error", str(tablas_con_error), "⚠️", "warning" if tablas_con_error > 0 else "success")}
-    </div>"""
-    st.markdown(html_kpis, unsafe_allow_html=True)
+    # Usar panel de métricas premium compacto (Zenith)
+    crear_panel_metricas_premium(
+        metricas=[
+            {"label": "Última carga", "value": ultima_carga, "color": "#F59E0B"},
+            {"label": "Filas OK", "value": f"{total_ok:,}", "color": "#10B981"},
+            {"label": "Rechazadas", "value": f"{total_rechaz:,}", "color": "#EF4444" if total_rechaz > 0 else "#94A3B8"},
+            {"label": "Con error", "value": str(tablas_con_error), "color": "#EF4444" if tablas_con_error > 0 else "#10B981"}
+        ]
+    )
 
     st.markdown("### ⚡ Centro de Comando MDM")
     with st.container(border=True):
@@ -577,11 +580,10 @@ def render():
                 help="El archivo se copiará al directorio de entrada del ETL antes de lanzar el proceso.",
             )
             if archivo_subido is not None:
-                # ✔ CARPETA CORRECTA: el ETL lee de 'data/entrada'  (no 'inbound')
-                destino_dir = os.path.join(
-                    os.path.dirname(__file__), "..", "..", "ETL", "data", "entrada"
+                _default_etl_dir = os.path.normpath(
+                    os.path.join(os.path.dirname(__file__), "..", "..", "ETL", "data", "entrada")
                 )
-                destino_dir = os.path.normpath(destino_dir)
+                destino_dir = os.getenv("ETL_INPUT_DIR", _default_etl_dir)
                 os.makedirs(destino_dir, exist_ok=True)
                 destino_path = os.path.join(destino_dir, archivo_subido.name)
                 with open(destino_path, "wb") as f:
@@ -652,67 +654,73 @@ def render():
             # Renderizar estado inicial del monitor canvas UNA VEZ
             with st.expander("👁️ Ocultar / Mostrar Animación Neural", expanded=True):
                 components.html(
-                    _generar_monitor_canvas(id_corrida, token_jwt),
+                    _generar_monitor_canvas(id_corrida, token_jwt, backend_url=URL_BACKEND),
                     height=420,
                     scrolling=False,
                 )
 
             # Bucle de streaming SSE con parsing inteligente
-            for linea in stream_api(id_corrida):
-                log_acum += linea + "\n"
+            try:
+                for linea in stream_api(id_corrida):
+                    log_acum += linea + "\n"
 
-                # Detectar paso [XX/YY]
-                match = _RE_PASO.match(linea.strip())
-                if match:
-                    paso_num    = int(match.group(1))
-                    total_pasos = int(match.group(2))
-                    descripcion = match.group(3).strip()
-                    fase_actual = _detectar_fase(paso_num)
-                    hora_actual = datetime.now().strftime("%H:%M:%S")
+                    # Detectar paso [XX/YY]
+                    match = _RE_PASO.match(linea.strip())
+                    if match:
+                        paso_num    = int(match.group(1))
+                        total_pasos = int(match.group(2))
+                        descripcion = match.group(3).strip()
+                        fase_actual = _detectar_fase(paso_num)
+                        hora_actual = datetime.now().strftime("%H:%M:%S")
 
-                    pasos_lista.append({
-                        "num": paso_num,
-                        "total": total_pasos,
-                        "desc": descripcion,
-                        "fase": fase_actual,
-                        "hora": hora_actual,
-                        "error": False,
-                    })
+                        pasos_lista.append({
+                            "num": paso_num,
+                            "total": total_pasos,
+                            "desc": descripcion,
+                            "fase": fase_actual,
+                            "hora": hora_actual,
+                            "error": False,
+                        })
 
-                    # Ya no re-renderizamos el monitor visual acá para evitar parpadeos
-                    # El Canvas gestionará su propia UI leyendo los eventos SSE en paralelo.
+                        # Ya no re-renderizamos el monitor visual acá para evitar parpadeos
+                        # El Canvas gestionará su propia UI leyendo los eventos SSE en paralelo.
 
-                    # Progreso real basado en pasos del pipeline
-                    pct = min(99, int((paso_num / max(total_pasos, 1)) * 100))
-                    progreso.progress(pct, text=f"Paso {paso_num}/{total_pasos} — {descripcion[:50]}")
+                        # Progreso real basado en pasos del pipeline
+                        pct = min(99, int((paso_num / max(total_pasos, 1)) * 100))
+                        progreso.progress(pct, text=f"Paso {paso_num}/{total_pasos} — {descripcion[:50]}")
 
-                # Detectar errores
-                linea_lower = linea.lower().strip()
-                if "[FIN]" in linea and "éxito" in linea_lower:
-                    estado_final = "OK"
-                elif "error" in linea_lower and paso_num > 0:
-                    estado_final = "ERROR"
-                    if pasos_lista:
-                        pasos_lista[-1]["error"] = True
-                elif "[TIMEOUT]" in linea:
-                    estado_final = "TIMEOUT"
+                    # Detectar errores
+                    linea_lower = linea.lower().strip()
+                    if "[FIN]" in linea and "éxito" in linea_lower:
+                        estado_final = "OK"
+                    elif "error" in linea_lower and paso_num > 0:
+                        estado_final = "ERROR"
+                        if pasos_lista:
+                            pasos_lista[-1]["error"] = True
+                    elif "[TIMEOUT]" in linea:
+                        estado_final = "TIMEOUT"
 
-                # Actualizar log técnico (desplegable)
-                with log_expander_box.container():
-                    with st.expander("🔧 Log técnico", expanded=False):
-                        st.code(log_acum[-3000:], language="bash")
+                    # Actualizar log técnico (desplegable)
+                    with log_expander_box.container():
+                        with st.expander("🔧 Log técnico", expanded=False):
+                            st.code(log_acum[-3000:], language="bash")
 
-            progreso.progress(100, text="✅ Pipeline finalizado.")
-            st.session_state["etl_en_ejecucion"] = False
-            st.session_state["etl_log"]          = log_acum
-            st.session_state["etl_estado_final"] = estado_final
-            
-            # Guardamos estado visual del monitor para el reporte post-ejecucion
-            st.session_state["etl_pasos_lista"] = pasos_lista
-            st.session_state["etl_fase_actual"] = fase_actual
-            st.session_state["etl_paso_num"]    = paso_num
-            st.session_state["etl_total_pasos"] = total_pasos
-            
+                progreso.progress(100, text="✅ Pipeline finalizado.")
+
+            except Exception as exc:
+                estado_final = "ERROR"
+                log_acum += f"\n[ERROR INESPERADO EN STREAMING] {exc}\n"
+
+            finally:
+                # Garantiza reset de estado sin importar qué ocurrió (incluso cierre de pestaña)
+                st.session_state["etl_en_ejecucion"] = False
+                st.session_state["etl_log"]          = log_acum
+                st.session_state["etl_estado_final"] = estado_final
+                st.session_state["etl_pasos_lista"]  = pasos_lista
+                st.session_state["etl_fase_actual"]  = fase_actual
+                st.session_state["etl_paso_num"]     = paso_num
+                st.session_state["etl_total_pasos"]  = total_pasos
+
             st.rerun()
 
     # ── Resultado post-ejecución ─────────────────────────────────────────────

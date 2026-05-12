@@ -85,7 +85,10 @@ const Btn = ({ children, onClick, variant='primary', size='md', icon, style, dis
     ? {background:hov?t.accentHov:t.btnPrimary,color:t.btnPrimaryText,border:'none'}
     : {background:hov?t.accentLight:'transparent',color:t.accentText,border:`1px solid ${t.divider}`};
   return (
-    <button onClick={onClick} disabled={disabled}
+    <button onClick={(e) => {
+          if (onClick) onClick(e);
+          else if (window.showToast) window.showToast(typeof children === 'string' ? `Función "${children}" en desarrollo` : 'Función en desarrollo', 'info');
+        }} disabled={disabled}
       onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
       style={{display:'inline-flex',alignItems:'center',gap:6,padding:pad,borderRadius:8,
         fontSize:fs,fontWeight:600,cursor:disabled?'default':'pointer',transition:'all .18s',...base,...style}}>

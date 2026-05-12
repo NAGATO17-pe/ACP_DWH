@@ -156,7 +156,10 @@ const Homologacion = () => {
   const t = useTheme();
   const { filters } = useFilters();
   const [items, setItems] = useState(MOCK.duplicates);
-  const action = (id, newEstado) => setItems(prev => prev.map(d => d.id===id?{...d,estado:newEstado}:d));
+  const action = (id, newEstado) => {
+    setItems(prev => prev.map(d => d.id===id?{...d,estado:newEstado}:d));
+    if (window.showToast) window.showToast(`Estado actualizado a ${newEstado}`, 'success');
+  };
 
   const filtered = items.filter(d => {
     if (filters.tipo!=='todos' && d.tipo!==filters.tipo) return false;
@@ -336,7 +339,10 @@ const ETLAudit = () => {
 const Reglas = () => {
   const t = useTheme();
   const [rules, setRules] = useState(MOCK.reglas);
-  const toggle = (id) => setRules(prev=>prev.map(r=>r.id===id?{...r,activa:!r.activa}:r));
+  const toggle = (id) => {
+    setRules(prev=>prev.map(r=>r.id===id?{...r,activa:!r.activa}:r));
+    if (window.showToast) window.showToast(`Estado de regla actualizado`, 'success');
+  };
   return (
     <div className="fade-in">
       <SectionHeader title="Reglas & Restricciones"

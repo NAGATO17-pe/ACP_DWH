@@ -13,12 +13,18 @@ from utils.sql_lotes import TAM_LOTE_DEFECTO
 
 
 def _normalizar_payload_cuarentena(tabla_origen: str, fila: dict, fecha_ingreso: datetime) -> dict:
+    motivo_raw = str(fila.get('motivo', 'Sin motivo') or 'Sin motivo')
+    tipo_regla_raw = str(fila.get('tipo_regla', 'DQ') or 'DQ')
+    tabla_raw = str(tabla_origen or 'DESCONOCIDA')
+    campo_raw = str(fila.get('columna', 'DESCONOCIDA') or 'DESCONOCIDA')
+    valor_raw = str(fila.get('valor', '') or '')
+
     return {
-        'tabla_origen': tabla_origen,
-        'campo_origen': str(fila.get('columna', 'DESCONOCIDA') or 'DESCONOCIDA'),
-        'valor_recibido': str(fila.get('valor', '')),
-        'motivo': str(fila.get('motivo', 'Sin motivo') or 'Sin motivo'),
-        'tipo_regla': str(fila.get('tipo_regla', 'DQ') or 'DQ'),
+        'tabla_origen': tabla_raw[:100],
+        'campo_origen': campo_raw[:100],
+        'valor_recibido': valor_raw[:500],
+        'motivo': (motivo_raw[:197] + '...') if len(motivo_raw) > 200 else motivo_raw,
+        'tipo_regla': tipo_regla_raw[:20],
         'score': fila.get('score_levenshtein', None),
         'id_registro_origen': fila.get('id_registro_origen', None),
         'fecha_ingreso': fecha_ingreso,

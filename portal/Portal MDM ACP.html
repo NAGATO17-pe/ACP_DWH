@@ -445,7 +445,10 @@
         ? { background: hov ? t.accentHov : t.btnPrimary, color: t.btnPrimaryText, border: 'none' }
         : { background: hov ? t.accentLight : 'transparent', color: t.accentText, border: `1px solid ${t.divider}` };
       return (
-        <button onClick={onClick} disabled={disabled}
+        <button onClick={(e) => {
+          if (onClick) onClick(e);
+          else if (window.showToast) window.showToast(typeof children === 'string' ? `Función "${children}" en desarrollo` : 'Función en desarrollo', 'info');
+        }} disabled={disabled}
           onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 6, padding: pad, borderRadius: 8,
@@ -1348,7 +1351,10 @@
       const t = useTheme();
       const { filters } = useFilters();
       const [items, setItems] = useState(MOCK.duplicates);
-      const action = (id, newEstado) => setItems(prev => prev.map(d => d.id === id ? { ...d, estado: newEstado } : d));
+      const action = (id, newEstado) => {
+        setItems(prev => prev.map(d => d.id === id ? { ...d, estado: newEstado } : d));
+        if (window.showToast) window.showToast(`Estado actualizado a ${newEstado}`, 'success');
+      };
 
       const filtered = items.filter(d => {
         if (filters.tipo !== 'todos' && d.tipo !== filters.tipo) return false;
@@ -1532,7 +1538,10 @@
     const Reglas = () => {
       const t = useTheme();
       const [rules, setRules] = useState(MOCK.reglas);
-      const toggle = (id) => setRules(prev => prev.map(r => r.id === id ? { ...r, activa: !r.activa } : r));
+      const toggle = (id) => {
+        setRules(prev => prev.map(r => r.id === id ? { ...r, activa: !r.activa } : r));
+        if (window.showToast) window.showToast(`Estado de regla actualizado`, 'success');
+      };
       return (
         <div className="fade-in">
           <SectionHeader title="Reglas & Restricciones"
@@ -1946,7 +1955,7 @@
         e.preventDefault();
         if (!user || !pass) { setError('Por favor ingresa usuario y contraseña.'); return; }
         setError(''); setLoading(true);
-        setTimeout(() => { setLoading(false); onLogin(); }, 1200);
+        setTimeout(() => { setLoading(false); onLogin(); if (window.showToast) window.showToast('Sesión iniciada correctamente', 'success'); }, 1200);
       };
 
       const inp = focused => ({
@@ -2129,6 +2138,16 @@
       const [active, setActive] = useState(saved.active || 'dashboard');
       const [tweaksVis, setTweaksVis] = useState(false);
       const [loggedIn, setLoggedIn] = useState(!!saved.loggedIn);
+      const [toasts, setToasts] = useState([]);
+
+      useEffect(() => {
+        window.showToast = (msg, type = 'info') => {
+          const id = Date.now() + Math.random();
+          setToasts(p => [...p, { id, msg, type }]);
+          setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), 3000);
+        };
+        return () => { delete window.showToast; };
+      }, []);
 
       const theme = THEMES[tweaks.theme] || THEMES.verdeGlass;
       const isExec = tweaks.portalMode === 'executive';
@@ -2183,6 +2202,21 @@
               </div>
             </div>
             <TweaksPanel tweaks={tweaks} setTweaks={setTweaks} visible={tweaksVis} />
+            <div style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 9999, display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {toasts.map(t => (
+                <div key={t.id} className="slide-in" style={{
+                  background: t.type === 'success' ? theme.okLight : (t.type === 'error' ? theme.errLight : theme.card),
+                  color: t.type === 'success' ? theme.ok : (t.type === 'error' ? theme.err : theme.text),
+                  border: `1px solid ${t.type === 'success' ? theme.ok : (t.type === 'error' ? theme.err : theme.cardBorder)}`,
+                  padding: '12px 20px', borderRadius: 8, boxShadow: theme.shadow, fontWeight: 600, fontSize: 13,
+                  backdropFilter: theme.blur, WebkitBackdropFilter: theme.blur, minWidth: 200,
+                  display: 'flex', alignItems: 'center', gap: 8
+                }}>
+                  <Icon name={t.type === 'success' ? 'checkC' : (t.type === 'error' ? 'alertC' : 'info')} size={16} />
+                  {t.msg}
+                </div>
+              ))}
+            </div>
           </FiltersProvider>
         </ThemeCtx.Provider>
       );

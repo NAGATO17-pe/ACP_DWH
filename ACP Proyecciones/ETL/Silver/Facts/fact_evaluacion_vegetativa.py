@@ -206,6 +206,7 @@ class ProcesadorEvaluacionVegetativa(BaseFactProcessor):
 
             payload.append({
                 'ID_Geografia':                    resultado_geo['id_geografia'],
+                '_id_modulo_catalogo':               resultado_geo.get('id_modulo_catalogo'),
                 'ID_Tiempo':                       id_tiempo,
                 'ID_Variedad':                     id_var,
                 'ID_Personal':                     id_personal,
@@ -229,10 +230,15 @@ class ProcesadorEvaluacionVegetativa(BaseFactProcessor):
 
 
 def cargar_fact_evaluacion_vegetativa(engine: Engine) -> dict:
-    columna_id = _validar_layout_migrado(engine)
-    proc = ProcesadorEvaluacionVegetativa(engine, columna_id)
+    proc = ProcesadorEvaluacionVegetativa(engine, columna_id='ID_Evaluacion_Vegetativa')
 
-    df = _leer_bronce(engine, columna_id)
+    cols_raw = [
+        'Fecha_Raw', 'DNI_Raw', 'Fecha_Subida_Raw', 'Nombres_Raw',
+        'Consumidor_Raw', 'Modulo_Raw', 'Turno_Raw', 'Valvula_Raw',
+        'Evaluacion_Raw', 'Cama_Raw', 'Descripcion_Raw',
+        'N_Plantas_Evaluadas_Raw', 'N_Plantas_en_Floracion_Raw'
+    ]
+    df = proc.leer_bronce(cols_raw)
     if df.empty:
         return _finalizar_resumen_fact(proc.resumen)
     proc.resumen['leidos'] = len(df)
@@ -242,7 +248,7 @@ def cargar_fact_evaluacion_vegetativa(engine: Engine) -> dict:
 
         df, cuar_var = homologar_columna(
             df, 'Descripcion_Raw', 'Variedad_Canonica', TABLA_ORIGEN, conexion,
-            columna_id_origen='ID_Registro_Origen',
+            columna_id_origen='ID_Evaluacion_Vegetativa',
         )
         proc.resumen['cuarentena'].extend(cuar_var)
 

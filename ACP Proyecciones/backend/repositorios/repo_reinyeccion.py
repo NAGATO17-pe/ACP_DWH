@@ -28,22 +28,45 @@ from nucleo.logging import obtener_logger
 
 log = obtener_logger(__name__)
 
-# Mapa canónico: nombre normalizado de origen → tabla Bronce real + columna PK
-# Se usará para construir el UPDATE dinámicamente de forma segura.
-_TABLAS_BRONCE: dict[str, dict[str, str]] = {
-    "bronce.peladas":                  {"tabla": "Bronce.Peladas",                  "pk": "ID_Peladas"},
-    "bronce.tasa_crecimiento_brotes":  {"tabla": "Bronce.Tasa_Crecimiento_Brotes",  "pk": "ID_Brote"},
-    "bronce.evaluacion_pesos":         {"tabla": "Bronce.Evaluacion_Pesos",         "pk": "ID_Evaluacion"},
-    "bronce.evaluacion_vegetativa":    {"tabla": "Bronce.Evaluacion_Vegetativa",    "pk": "ID_Evaluacion"},
-    "bronce.conteo_fenologico":        {"tabla": "Bronce.Conteo_Fenologico",        "pk": "ID_Conteo"},
-    "bronce.induccion_floral":         {"tabla": "Bronce.Induccion_Floral",         "pk": "ID_Induccion"},
-    "bronce.maduracion":               {"tabla": "Bronce.Maduracion",               "pk": "ID_Maduracion"},
-    "bronce.fisiologia":               {"tabla": "Bronce.Fisiologia",               "pk": "ID_Fisiologia"},
-    "bronce.ciclo_poda":               {"tabla": "Bronce.Ciclo_Poda",               "pk": "ID_Ciclo"},
-    "bronce.cosecha_sap":              {"tabla": "Bronce.Cosecha_SAP",              "pk": "ID_Cosecha"},
-    "bronce.sanidad_activo":           {"tabla": "Bronce.Sanidad_Activo",           "pk": "ID_Sanidad"},
-    "bronce.tareo":                    {"tabla": "Bronce.Consolidado_Tareos",       "pk": "ID_Tareo"},
-    "bronce.telemetria_clima":         {"tabla": "Bronce.Telemetria_Clima",         "pk": "ID_Clima"},
+# Mapa canónico: nombre normalizado del origen lógico que aparece en
+# MDM.Cuarentena.Tabla_Origen → lista de tablas Bronce físicas con su PK real.
+# Cada origen puede mapear a una o varias tablas físicas (caso clima, cosecha y poda).
+# Verificado contra INFORMATION_SCHEMA en LCP-PAG-PRACTIC el 2026-04-27.
+_TABLAS_BRONCE: dict[str, list[dict[str, str]]] = {
+    "bronce.peladas":                  [{"tabla": "Bronce.Peladas",                  "pk": "ID_Peladas"}],
+    "bronce.tasa_crecimiento_brotes":  [{"tabla": "Bronce.Tasa_Crecimiento_Brotes",  "pk": "ID_Tasa_Crecimiento"}],
+    "bronce.evaluacion_pesos":         [{"tabla": "Bronce.Evaluacion_Pesos",         "pk": "ID_Evaluacion_Pesos"}],
+    "bronce.evaluacion_vegetativa":    [{"tabla": "Bronce.Evaluacion_Vegetativa",    "pk": "ID_Evaluacion_Vegetativa"}],
+    "bronce.conteo_fruta":             [{"tabla": "Bronce.Conteo_Fruta",             "pk": "ID_Conteo_Fruta"}],
+    "bronce.induccion_floral":         [{"tabla": "Bronce.Induccion_Floral",         "pk": "ID_Induccion_Floral"}],
+    "bronce.maduracion":               [{"tabla": "Bronce.Maduracion",               "pk": "ID_Maduracion"}],
+    "bronce.fisiologia":               [{"tabla": "Bronce.Fisiologia",               "pk": "ID_Fisiologia"}],
+    "bronce.tareo":                    [{"tabla": "Bronce.Consolidado_Tareos",       "pk": "ID_Tareo"}],
+    "bronce.consolidado_tareos":       [{"tabla": "Bronce.Consolidado_Tareos",       "pk": "ID_Tareo"}],
+    # Origen lógico clima → 2 tablas físicas (manifiesto Fact_Telemetria_Clima)
+    "bronce.clima": [
+        {"tabla": "Bronce.Reporte_Clima",            "pk": "ID_Reporte_Clima"},
+        {"tabla": "Bronce.Variables_Meteorologicas", "pk": "ID_Variables_Met"},
+    ],
+    "bronce.reporte_clima":            [{"tabla": "Bronce.Reporte_Clima",            "pk": "ID_Reporte_Clima"}],
+    "bronce.variables_meteorologicas": [{"tabla": "Bronce.Variables_Meteorologicas", "pk": "ID_Variables_Met"}],
+    # Origen lógico cosecha SAP → 2 tablas físicas (manifiesto Fact_Cosecha_SAP)
+    "bronce.cosecha_sap": [
+        {"tabla": "Bronce.Reporte_Cosecha", "pk": "ID_Reporte_Cosecha"},
+        {"tabla": "Bronce.Data_SAP",        "pk": "ID_Data_SAP"},
+    ],
+    "bronce.reporte_cosecha":          [{"tabla": "Bronce.Reporte_Cosecha",          "pk": "ID_Reporte_Cosecha"}],
+    "bronce.data_sap":                 [{"tabla": "Bronce.Data_SAP",                 "pk": "ID_Data_SAP"}],
+    # Origen lógico ciclo poda → 2 tablas físicas (manifiesto Fact_Ciclo_Poda)
+    "bronce.ciclo_poda": [
+        {"tabla": "Bronce.Evaluacion_Calidad_Poda", "pk": "ID_Evaluacion_Poda"},
+        {"tabla": "Bronce.Ciclos_Fenologicos",      "pk": "ID_Ciclo_Fenologico"},
+    ],
+    "bronce.evaluacion_calidad_poda":  [{"tabla": "Bronce.Evaluacion_Calidad_Poda",  "pk": "ID_Evaluacion_Poda"}],
+    "bronce.ciclos_fenologicos":       [{"tabla": "Bronce.Ciclos_Fenologicos",       "pk": "ID_Ciclo_Fenologico"}],
+    # Sanidad — el manifiesto usa Bronce.Seguimiento_Errores como fuente
+    "bronce.sanidad_activo":           [{"tabla": "Bronce.Seguimiento_Errores",      "pk": "ID_Seguimiento_Errores"}],
+    "bronce.seguimiento_errores":      [{"tabla": "Bronce.Seguimiento_Errores",      "pk": "ID_Seguimiento_Errores"}],
 }
 
 
@@ -123,31 +146,33 @@ def reinyectar_en_bronce(registros: list[dict]) -> dict:
     try:
         with obtener_engine().begin() as con:
             for tabla_key, ids in por_tabla.items():
-                meta = _TABLAS_BRONCE[tabla_key]
-                tabla_sql = meta["tabla"]
-                pk_sql = meta["pk"]
-
-                # Construimos placeholders de forma segura
+                # Construimos placeholders de forma segura una sola vez por origen
                 placeholders = ", ".join(f":id_{i}" for i in range(len(ids)))
                 params_ids = {f"id_{i}": v for i, v in enumerate(ids)}
 
-                resultado = con.execute(
-                    text(f"""
-                        UPDATE {tabla_sql}
-                        SET Estado_Carga = 'CARGADO'
-                        WHERE {pk_sql} IN ({placeholders})
-                          AND Estado_Carga = 'RECHAZADO'
-                    """),
-                    params_ids,
-                )
-                n = resultado.rowcount
-                reinyectados += n
-                detalle.append(f"✅ {tabla_sql}: {n} registros reactivados de {len(ids)} candidatos.")
+                # Un origen lógico puede mapear a varias tablas físicas (clima, cosecha, poda).
+                # Probamos cada destino: el ID solo existirá en la tabla correcta.
+                for destino in _TABLAS_BRONCE[tabla_key]:
+                    tabla_sql = destino["tabla"]
+                    pk_sql = destino["pk"]
 
-                log.info(
-                    "Reinyección completada para tabla",
-                    extra={"tabla": tabla_sql, "actualizados": n, "candidatos": len(ids)},
-                )
+                    resultado = con.execute(
+                        text(f"""
+                            UPDATE {tabla_sql}
+                            SET Estado_Carga = 'CARGADO'
+                            WHERE {pk_sql} IN ({placeholders})
+                              AND Estado_Carga = 'RECHAZADO'
+                        """),
+                        params_ids,
+                    )
+                    n = resultado.rowcount
+                    reinyectados += n
+                    detalle.append(f"✅ {tabla_sql}: {n} registros reactivados de {len(ids)} candidatos.")
+
+                    log.info(
+                        "Reinyección completada para tabla",
+                        extra={"tabla": tabla_sql, "actualizados": n, "candidatos": len(ids)},
+                    )
 
     except SQLAlchemyError:
         log.exception("Error durante reinyección en Bronce")
