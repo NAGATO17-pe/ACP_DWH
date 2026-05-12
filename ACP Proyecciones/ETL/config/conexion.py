@@ -38,13 +38,18 @@ def _construir_cadena_pyodbc() -> str:
     clave    = os.getenv('DB_CLAVE')
     driver   = os.getenv('DB_DRIVER', 'ODBC Driver 17 for SQL Server')
 
+    entorno = os.getenv('ACP_ENTORNO', 'dev')
+    trust   = 'yes' if entorno == 'dev' else 'no'
+
     if not usuario:
         return (
             f'DRIVER={{{driver}}};'
             f'SERVER={servidor};'
             f'DATABASE={base};'
             f'Trusted_Connection=yes;'
-            f'TrustServerCertificate=yes;'
+            f'Encrypt=yes;'
+            f'TrustServerCertificate={trust};'
+            f'APP=ACP_ETL_Pipeline;'
         )
     return (
         f'DRIVER={{{driver}}};'
@@ -52,7 +57,9 @@ def _construir_cadena_pyodbc() -> str:
         f'DATABASE={base};'
         f'UID={usuario};'
         f'PWD={clave};'
-        f'TrustServerCertificate=yes;'
+        f'Encrypt=yes;'
+        f'TrustServerCertificate={trust};'
+        f'APP=ACP_ETL_Pipeline;'
     )
 
 
@@ -83,8 +90,9 @@ def obtener_engine() -> Engine:
         _engine = create_engine(
             cadena_url,
             fast_executemany=True,
-            pool_size=5,
-            max_overflow=2,
+            pool_size=20,
+            max_overflow=10,
+            pool_timeout=30,
             pool_pre_ping=True,
             pool_recycle=1800,
         )
