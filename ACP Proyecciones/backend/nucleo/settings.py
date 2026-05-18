@@ -81,7 +81,7 @@ class Settings(BaseSettings):
 
     # ── Servidor ───────────────────────────────────────────────────────────────
     host: str = Field(default="0.0.0.0", alias="ACP_HOST")
-    puerto: int = Field(default=8000, alias="ACP_PUERTO")
+    puerto: int = Field(default=8810, alias="ACP_PUERTO")
     workers: int = Field(default=1, alias="ACP_WORKERS")
     reload: bool = Field(default=False, alias="ACP_RELOAD")
 
@@ -90,8 +90,10 @@ class Settings(BaseSettings):
         default=[
             "http://localhost:3000",
             "http://127.0.0.1:3000",
-            "http://localhost:8501",   # Streamlit default
+            "http://localhost:8501",
             "http://127.0.0.1:8501",
+            "http://localhost:8510",
+            "http://127.0.0.1:8510",
         ],
         alias="ACP_CORS_ORIGENES",
         description="Lista JSON de orígenes permitidos, ej: '[\"http://mi-host:3000\"]'",

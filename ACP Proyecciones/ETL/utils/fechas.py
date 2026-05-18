@@ -5,11 +5,16 @@ Utilidades para parseo y normalización de fechas.
 Los Excel de campo llegan con formatos inconsistentes.
 """
 
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import re
 from typing import Optional
 
+import pandas as pd
+
 from config.parametros import obtener
+
+
+_EXCEL_BASE_DATE = datetime(1899, 12, 30)
 
 
 FORMATOS_ACEPTADOS = [
@@ -123,7 +128,6 @@ def parsear_serie_fechas(serie: 'pd.Series') -> 'pd.Series':
     Mucho más rápido que aplicar parsear_fecha fila a fila.
     Usa inferencia automática de formato; los valores no parseables quedan NaT.
     """
-    import pandas as pd
     # Primer intento rápido con inferencia de formato
     serie_texto = serie.astype('string')
     mascara_iso = serie_texto.str.fullmatch(r'\d{4}-\d{2}-\d{2}', na=False)
@@ -154,18 +158,15 @@ def parsear_serie_fechas(serie: 'pd.Series') -> 'pd.Series':
     # Rellenar los NaT con intento de número de serie Excel
     mascara_nat = resultado.isna() & serie.notna()
     if mascara_nat.any():
-        import pandas as _pd
-        from datetime import datetime as _dt, timedelta
-        BASE = _dt(1899, 12, 30)
         def _desde_serial(v):
             try:
                 serial = int(float(str(v).strip()))
                 if 30000 < serial < 60000:
-                    return BASE + timedelta(days=serial)
+                    return _EXCEL_BASE_DATE + timedelta(days=serial)
             except (ValueError, TypeError):
                 pass
             return None
-        resultado_serial = _pd.to_datetime(
+        resultado_serial = pd.to_datetime(
             serie[mascara_nat].map(_desde_serial),
             errors='coerce'
         )
@@ -202,11 +203,11 @@ def parsear_fecha(valor: str | None) -> Optional[datetime]:
     # Excel a veces entrega float (número de serie de fecha)
     try:
         numero = float(valor)
-        # Número de serie de Excel → fecha
-        return datetime.fromordinal(
-            datetime(1899, 12, 30).toordinal() + int(numero)
-        )
-    except ValueError:
+        # Número de serie de Excel → fecha. Conservamos la parte decimal para la hora.
+        from datetime import timedelta
+        base = datetime(1899, 12, 30)
+        return base + timedelta(days=numero)
+    except (ValueError, TypeError):
         pass
 
     # Fallback conservador solo para formatos no contemplados.
@@ -309,6 +310,11 @@ def es_fecha_valida_campana(fecha: datetime | date | None,
     fecha_fin    = datetime.strptime(fin,    '%Y-%m-%d').date()
 
     fecha_date = fecha.date() if isinstance(fecha, datetime) else fecha
+
+    # Validacion quirurgica: evitar fechas futuras extremas (error de dedo comun)
+    anio_limite = datetime.now().year + 1
+    if fecha_date.year > anio_limite:
+        return False
 
     return fecha_inicio <= fecha_date <= fecha_fin
 

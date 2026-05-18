@@ -123,13 +123,14 @@ CREATE TABLE Gold.Mart_Ciclo_Poda (
     Variedad NVARCHAR(100),
     Semana_ISO INT,
     Tipo_Evaluacion NVARCHAR(100),
-    Tallos_Planta_Prom DECIMAL(8,2),
-    Longitud_Tallo_Prom DECIMAL(8,2),
-    Diametro_Tallo_Prom DECIMAL(8,2),
-    Ramilla_Planta_Prom DECIMAL(8,2),
-    Tocones_Planta_Prom DECIMAL(8,2),
-    Cortes_Defectuosos_Prom DECIMAL(8,2),
-    Altura_Poda_Prom DECIMAL(8,2),
+    Tallos_Planta_Total DECIMAL(8,2),
+    Longitud_Tallo_Total DECIMAL(8,2),
+    Diametro_Tallo_Total DECIMAL(8,2),
+    Ramilla_Planta_Total DECIMAL(8,2),
+    Tocones_Planta_Total DECIMAL(8,2),
+    Cortes_Defectuosos_Total DECIMAL(8,2),
+    Altura_Poda_Total DECIMAL(8,2),
+    N_Muestras INT NOT NULL DEFAULT 0,
     Fecha_Actualizacion DATETIME2 DEFAULT SYSDATETIME()
 );
 

@@ -23,6 +23,9 @@
       "Read(//c/Users/chernandez/anaconda3/bin/**)",
       "Read(//c/Users/chernandez/miniconda3/bin/**)",
       "Bash(python -m py_compile acp_mdm_portal/utils/motor_proyecciones.py acp_mdm_portal/paginas/proyecciones.py)"
+      "Bash(python -c ' *)"
+      "Bash(rm -rf \"D:/Proyecto2026/ACP_DWH/ACP Proyecciones/.claude/worktrees/romantic-brahmagupta-c85d85/ACP Proyecciones/backend/broker\")",
+      "Bash(rm -f \"D:/Proyecto2026/ACP_DWH/ACP Proyecciones/.claude/worktrees/romantic-brahmagupta-c85d85/ACP Proyecciones/backend/servicios/pipeline_runner.py\")"
     ]
   }
 }

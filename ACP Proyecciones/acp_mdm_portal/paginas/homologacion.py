@@ -5,12 +5,17 @@ Muestra sugerencias automáticas de homologación pendientes y el historial
 de decisiones tomadas. Sin dependencia de streamlit_lottie.
 """
 
+import html as html_lib
+
 import pandas as pd
 import streamlit as st
 
 from utils.auth import tiene_permiso
 from utils.api_client import get_api, patch_api, post_api
+from utils.componentes import estado_vacio_html, seccion_tabla_con_guardar, banner_aviso
+from utils.formato import crear_paginacion_ui, header_pagina, crear_panel_metricas_premium
 from utils.componentes import estado_vacio_html, seccion_tabla_con_guardar
+from utils.constantes import PAGE_SIZE_DEFAULT
 from utils.formato import crear_paginacion_ui, header_pagina
 
 
@@ -19,7 +24,7 @@ from utils.formato import crear_paginacion_ui, header_pagina
 def cargar_sugerencias_pendientes() -> pd.DataFrame:
     resultado = get_api("/cuarentena?pagina=1&tamano=10000&estado=PENDIENTE")
     if not resultado.ok:
-        st.error("Error al cargar sugerencias pendientes. Si el problema persiste, inicia sesión nuevamente.")
+        banner_aviso("Error al cargar sugerencias pendientes. Si el problema persiste, inicia sesión nuevamente.")
         st.stop()
         
     if isinstance(resultado.data, dict):
@@ -42,7 +47,7 @@ def cargar_sugerencias_pendientes() -> pd.DataFrame:
 def cargar_historial_homologacion() -> pd.DataFrame:
     resultado = get_api("/cuarentena?pagina=1&tamano=10000&estado=RESUELTO")
     if not resultado.ok:
-        st.error("Error al cargar historial. Verifica tu conexión de red.")
+        banner_aviso("Error al cargar historial. Verifica tu conexión de red.")
         st.stop()
         
     if isinstance(resultado.data, dict):
@@ -63,60 +68,41 @@ def cargar_historial_homologacion() -> pd.DataFrame:
     return pd.DataFrame()
 
 
-def obtener_opciones_maestras(campo: str) -> list[str]:
-    campo = campo.lower()
-    opciones = set()
-    res = None
+@st.cache_data(ttl=300, show_spinner=False)
+def _cargar_geografia_completa() -> list[dict]:
+    """Cache único del catálogo de geografía — TTL 5 min. Evita 6 llamadas duplicadas."""
+    res = get_api("/catalogos/geografia?tamano=10000")
+    if not res.ok or not isinstance(res.data, dict):
+        return []
+    return res.data.get("datos") or []
 
-    if "variedad" in campo:
+
+def obtener_opciones_maestras(campo: str) -> list[str]:
+    from utils.constantes import CAMPOS_GEOGRAFIA
+    campo_lower = campo.lower()
+    opciones: set = set()
+
+    if "variedad" in campo_lower:
         res = get_api("/catalogos/variedades?tamano=10000")
-        if not res.ok: return []
-        if isinstance(res.data, dict):
+        if res.ok and isinstance(res.data, dict):
             opciones = {d.get("nombre_canonico") for d in res.data.get("datos", []) if d.get("nombre_canonico")}
 
-    elif any(x in campo for x in ["personal", "nombre", "responsable", "trabajador"]):
+    elif any(x in campo_lower for x in ["personal", "nombre", "responsable", "trabajador"]):
         res = get_api("/catalogos/personal?tamano=10000")
-        if not res.ok: return []
-        if isinstance(res.data, dict):
+        if res.ok and isinstance(res.data, dict):
             opciones = {d.get("nombre_completo") for d in res.data.get("datos", []) if d.get("nombre_completo")}
 
-    elif "fundo" in campo:
-        res = get_api("/catalogos/geografia?tamano=10000")
-        if not res.ok: return []
-        if isinstance(res.data, dict):
-            opciones = {d.get("fundo") for d in res.data.get("datos", []) if d.get("fundo")}
+    else:
+        # Una sola llamada cacheada para todos los campos de geografía
+        clave_geo = next(
+            (llave for patron, llave in CAMPOS_GEOGRAFIA.items() if patron in campo_lower),
+            None,
+        )
+        if clave_geo:
+            datos_geo = _cargar_geografia_completa()
+            opciones = {d.get(clave_geo) for d in datos_geo if d.get(clave_geo)}
 
-    elif "sector" in campo:
-        res = get_api("/catalogos/geografia?tamano=10000")
-        if not res.ok: return []
-        if isinstance(res.data, dict):
-            opciones = {d.get("sector") for d in res.data.get("datos", []) if d.get("sector")}
-
-    elif "modulo" in campo or "módulo" in campo:
-        res = get_api("/catalogos/geografia?tamano=10000")
-        if not res.ok: return []
-        if isinstance(res.data, dict):
-            opciones = {d.get("modulo") for d in res.data.get("datos", []) if d.get("modulo")}
-
-    elif "turno" in campo:
-        res = get_api("/catalogos/geografia?tamano=10000")
-        if not res.ok: return []
-        if isinstance(res.data, dict):
-            opciones = {d.get("turno") for d in res.data.get("datos", []) if d.get("turno")}
-
-    elif "valvula" in campo or "válvula" in campo:
-        res = get_api("/catalogos/geografia?tamano=10000")
-        if not res.ok: return []
-        if isinstance(res.data, dict):
-            opciones = {d.get("valvula") for d in res.data.get("datos", []) if d.get("valvula")}
-
-    elif "cama" in campo:
-        res = get_api("/catalogos/geografia?tamano=10000")
-        if not res.ok: return []
-        if isinstance(res.data, dict):
-            opciones = {d.get("cama") for d in res.data.get("datos", []) if d.get("cama")}
-
-    return sorted(list(opciones))
+    return sorted(opciones - {None})
 
 
 # ── Render ────────────────────────────────────────────────────────────────────
@@ -145,10 +131,11 @@ def render() -> None:
         alta_conf = len(df[df["Score"] >= 0.85]) if "Score" in df.columns else 0
         baja_conf = total - alta_conf
 
-        c1, c2, c3 = st.columns(3)
-        c1.metric("📋 Total pendientes",       total)
-        c2.metric("🟢 Alta confianza (≥0.85)", alta_conf)
-        c3.metric("🟡 Baja confianza (<0.85)", baja_conf)
+        crear_panel_metricas_premium([
+            {"label": "Total pendientes",       "value": str(total),     "color": "#e8a020"},
+            {"label": "Alta confianza (≥0.85)", "value": str(alta_conf), "color": "#2db87a"},
+            {"label": "Baja confianza (<0.85)", "value": str(baja_conf), "color": "#8fa897"},
+        ])
 
         # ── HERRAMIENTA: Re-Inyección MDM ────────────────────────────────────
         if tiene_permiso("escribir"):
@@ -173,33 +160,32 @@ def render() -> None:
                     """
                 )
                 if candidatos == 0:
-                    st.info("ℹ️ No hay registros RESUELTOS pendientes de reinyección en este momento.", icon="🟢")
+                    banner_aviso("No hay registros RESUELTOS pendientes de reinyección en este momento.")
                 else:
-                    st.warning(
-                        f"⚠️ ¡Atención! Esta acción modificará `{candidatos}` filas en la capa Bronce. "
-                        f"Asegúrate de haber aprobado las correcciones antes de continuar.",
-                        icon="🟡",
+                    banner_aviso(
+                        f"Esta acción modificará **{candidatos}** filas en la capa Bronce. "
+                        f"Asegúrate de haber aprobado las correcciones antes de continuar."
                     )
                     if st.button(
                         f"🔄 Re-encolar {candidatos} registro(s) al Pipeline",
                         key="btn_reinyectar",
                         type="primary",
-                        use_container_width=True,
+                        width="stretch",
                     ):
                         with st.spinner("⏳ Reinyectando en Bronce..."):
                             res = post_api("/reinyeccion/ejecutar", payload={})
                         if res.ok and isinstance(res.data, dict):
                             n = res.data.get("reinyectados", 0)
-                            msg = res.data.get("mensaje", "")
+                            msg = html_lib.escape(str(res.data.get("mensaje", "")))
                             detalle = res.data.get("detalle", [])
                             st.toast(f"✅ {n} registro(s) reactivados en Bronce.", icon="🎉")
                             st.success(msg)
                             for linea in detalle:
-                                st.caption(linea)
+                                st.caption(html_lib.escape(str(linea)))
                             st.cache_data.clear()
                             st.rerun()
                         else:
-                            err = res.error or "Error desconocido"
+                            err = html_lib.escape(str(res.error or "Error desconocido"))
                             st.error(f"❌ Fallo en la reinyección: {err}")
 
         st.markdown("<br>", unsafe_allow_html=True)
@@ -245,7 +231,7 @@ def render() -> None:
             opciones_combo = obtener_opciones_maestras(campo_sel)
 
         if campo_sel == "Todos":
-            st.info("💡 **Paso 1:** Filtra por un 'Campo' específico (arriba a la derecha) para poder corregir los registros con los valores Oficiales del Data Warehouse.", icon="🔍")
+            banner_aviso("**Paso 1:** Filtra por un campo específico para corregir registros con los valores oficiales del Data Warehouse.")
             col_correccion = st.column_config.TextColumn(
                 "Corrección ✍️", 
                 help="Filtra por campo arriba para activar las opciones maestras."
@@ -270,8 +256,8 @@ def render() -> None:
 
         # Leemos el state para saber la página exacta antes de renderizar la tabla
         page = st.session_state.get('pg_pendientes_edit', 1)
-        start_idx = (page - 1) * 15
-        end_idx = start_idx + 15
+        start_idx = (page - 1) * PAGE_SIZE_DEFAULT
+        end_idx = start_idx + PAGE_SIZE_DEFAULT
         df_page = df_edit.iloc[start_idx:end_idx].copy()
 
         st.markdown("<br>", unsafe_allow_html=True)
@@ -314,7 +300,7 @@ def render() -> None:
             st.markdown("<hr style='margin: 16px 0; border: none; border-top: 1px solid #4ade8055;'>", unsafe_allow_html=True)
             b1, b2 = st.columns([1, 1])
             with b1:
-                if st.button("💾 Guardar Seleccionados", key="btn_aplicar", type="primary", use_container_width=True):
+                if st.button("💾 Guardar Seleccionados", key="btn_aplicar", type="primary", width="stretch"):
                     seleccionados = edited[edited["Seleccionar"] == True]
                     if len(seleccionados) == 0:
                         st.toast("Bloqueado: Selecciona al menos un registro en la tabla.", icon="⚠️")
@@ -346,7 +332,7 @@ def render() -> None:
                             st.rerun()
 
             with b2:
-                if st.button("🗑️ Rechazar Seleccionados", key="btn_rechazar", use_container_width=True):
+                if st.button("🗑️ Rechazar Seleccionados", key="btn_rechazar", width="stretch"):
                     seleccionados = edited[edited["Seleccionar"] == True]
                     if len(seleccionados) == 0:
                         st.toast("Bloqueado: Selecciona al menos un registro en la tabla.", icon="⚠️")
@@ -364,9 +350,9 @@ def render() -> None:
                             st.cache_data.clear()
                             st.rerun()
 
-            crear_paginacion_ui(count, 15, "pendientes_edit")
+            crear_paginacion_ui(count, PAGE_SIZE_DEFAULT, "pendientes_edit")
 
         else:
-            st.info("🔒 Vista de solo lectura. Tu rol no puede aprobar ni rechazar sugerencias.", icon="⚠️")
+            banner_aviso("Vista de solo lectura. Tu rol no puede aprobar ni rechazar sugerencias.")
             st.dataframe(df_page, hide_index=True, width='stretch')
-            crear_paginacion_ui(count, 15, "pendientes_edit")
+            crear_paginacion_ui(count, PAGE_SIZE_DEFAULT, "pendientes_edit")

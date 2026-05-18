@@ -18,20 +18,19 @@ log = obtener_logger(__name__)
 
 _CATALOGOS = {
     "variedades": {
-        "sql_count": "SELECT COUNT(*) FROM MDM.Catalogo_Variedades",
         "sql_datos": """
             SELECT
                 Nombre_Canonico AS nombre_canonico,
                 Breeder         AS breeder,
-                Es_Activa       AS es_activa
-            FROM MDM.Catalogo_Variedades
+                Es_Activa       AS es_activa,
+                COUNT(*) OVER() AS total_rows
+            FROM MDM.Catalogo_Variedades WITH (NOLOCK)
             ORDER BY Es_Activa DESC, Nombre_Canonico
             OFFSET :offset ROWS FETCH NEXT :tamano ROWS ONLY
         """,
         "mensaje_error": "Error al listar variedades MDM",
     },
     "dim_variedades": {
-        "sql_count": "SELECT COUNT(*) FROM Silver.Dim_Variedad",
         "sql_datos": """
             SELECT
                 ID_Variedad        AS id_variedad,
@@ -39,35 +38,41 @@ _CATALOGOS = {
                 Breeder            AS breeder,
                 Es_Activa          AS es_activa,
                 Fecha_Creacion     AS fecha_creacion,
-                Fecha_Modificacion AS fecha_modificacion
-            FROM Silver.Dim_Variedad
+                Fecha_Modificacion AS fecha_modificacion,
+                COUNT(*) OVER()    AS total_rows
+            FROM Silver.Dim_Variedad WITH (NOLOCK)
             ORDER BY Es_Activa DESC, Nombre_Variedad
             OFFSET :offset ROWS FETCH NEXT :tamano ROWS ONLY
         """,
         "mensaje_error": "Error al listar Dim_Variedad Silver",
     },
     "geografia": {
-        "sql_count": "SELECT COUNT(*) FROM Silver.Dim_Geografia WHERE Es_Vigente = 1",
         "sql_datos": """
             SELECT
-                Fundo               AS fundo,
-                Sector              AS sector,
-                Modulo              AS modulo,
-                Turno               AS turno,
-                Valvula             AS valvula,
-                Cama                AS cama,
-                Es_Test_Block       AS es_test_block,
-                Codigo_SAP_Campo    AS codigo_sap_campo,
-                Es_Vigente          AS es_vigente
-            FROM Silver.Dim_Geografia
-            WHERE Es_Vigente = 1
-            ORDER BY Fundo, Sector, Modulo, Turno, Valvula, Cama
+                fn.Fundo            AS fundo,
+                sc.Sector           AS sector,
+                md.Modulo           AS modulo,
+                tr.Turno            AS turno,
+                vl.Valvula          AS valvula,
+                cm.Cama_Normalizada AS cama,
+                g.Es_Test_Block      AS es_test_block,
+                g.Codigo_SAP_Campo   AS codigo_sap_campo,
+                g.Es_Vigente         AS es_vigente,
+                COUNT(*) OVER()     AS total_rows
+            FROM Silver.Dim_Geografia g WITH (NOLOCK)
+            JOIN Silver.Dim_Fundo_Catalogo fn WITH (NOLOCK) ON g.ID_Fundo_Catalogo = fn.ID_Fundo_Catalogo
+            JOIN Silver.Dim_Sector_Catalogo sc WITH (NOLOCK) ON g.ID_Sector_Catalogo = sc.ID_Sector_Catalogo
+            JOIN Silver.Dim_Modulo_Catalogo md WITH (NOLOCK) ON g.ID_Modulo_Catalogo = md.ID_Modulo_Catalogo
+            JOIN Silver.Dim_Turno_Catalogo tr WITH (NOLOCK) ON g.ID_Turno_Catalogo = tr.ID_Turno_Catalogo
+            JOIN Silver.Dim_Valvula_Catalogo vl WITH (NOLOCK) ON g.ID_Valvula_Catalogo = vl.ID_Valvula_Catalogo
+            JOIN Silver.Dim_Cama_Catalogo cm WITH (NOLOCK) ON g.ID_Cama_Catalogo = cm.ID_Cama_Catalogo
+            WHERE g.Es_Vigente = 1
+            ORDER BY fn.Fundo, sc.Sector, md.Modulo, tr.Turno, vl.Valvula, cm.Cama_Normalizada
             OFFSET :offset ROWS FETCH NEXT :tamano ROWS ONLY
         """,
-        "mensaje_error": "Error al listar geografÃ­a",
+        "mensaje_error": "Error al listar geografía",
     },
     "personal": {
-        "sql_count": "SELECT COUNT(*) FROM Silver.Dim_Personal",
         "sql_datos": """
             SELECT
                 DNI                 AS dni,
@@ -76,8 +81,9 @@ _CATALOGOS = {
                 Sexo                AS sexo,
                 ID_Planilla         AS id_planilla,
                 Pct_Asertividad     AS pct_asertividad,
-                Dias_Ausentismo     AS dias_ausentismo
-            FROM Silver.Dim_Personal
+                Dias_Ausentismo     AS dias_ausentismo,
+                COUNT(*) OVER()     AS total_rows
+            FROM Silver.Dim_Personal WITH (NOLOCK)
             ORDER BY Nombre_Completo
             OFFSET :offset ROWS FETCH NEXT :tamano ROWS ONLY
         """,
@@ -92,22 +98,32 @@ _TTL_CUARENTENA = 120   # 2 minutos — datos operativos
 
 def _paginar(
     con,
-    sql_count: str,
     sql_datos: str,
     params: dict,
     pagina: int,
     tamano: int,
 ) -> dict:
     """
-    Helper interno: ejecuta count + query paginada y retorna el envelope estándar.
+    Helper interno: ejecuta query paginada y retorna el envelope estándar.
+    Extrae el total del campo 'total_rows' inyectado vía COUNT(*) OVER().
     """
-    total = con.execute(text(sql_count), params).scalar() or 0
     filas = con.execute(text(sql_datos), params).fetchall()
+    
+    total = 0
+    datos = []
+    if filas:
+        total = filas[0]._mapping["total_rows"]
+        # Convertimos a dict y removemos la columna técnica total_rows
+        for fila in filas:
+            d = dict(fila._mapping)
+            d.pop("total_rows", None)
+            datos.append(d)
+
     return {
         "total":  total,
         "pagina": pagina,
         "tamano": tamano,
-        "datos":  [dict(fila._mapping) for fila in filas],
+        "datos":  datos,
     }
 
 
@@ -119,7 +135,6 @@ def _listar_catalogo(nombre_catalogo: str, pagina: int = 1, tamano: int = 20) ->
         with obtener_engine().connect() as con:
             return _paginar(
                 con,
-                sql_count=configuracion["sql_count"],
                 sql_datos=configuracion["sql_datos"],
                 params=params,
                 pagina=pagina,

@@ -1,0 +1,4 @@
+{"timestamp": "2026-05-14 15:32:57,102", "level": "INFO", "service": "acp-etl", "message": "DWH Geographic Phenology - ETL Pipeline"}
+{"timestamp": "2026-05-14 15:32:57,102", "level": "INFO", "service": "acp-etl", "message": "Inicio: 2026-05-14 15:32:57"}
+{"timestamp": "2026-05-14 15:32:57,154", "level": "INFO", "service": "acp-etl", "message": "[01/25] Verificando conexion SQL Server..."}
+{"timestamp": "2026-05-14 15:33:45,387", "level": "INFO", "service": "acp-etl", "message": "Sin conexion. Pipeline detenido."}

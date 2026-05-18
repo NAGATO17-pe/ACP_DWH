@@ -17,9 +17,11 @@ from sqlalchemy import text
 
 _log = logging.getLogger("ETL_Pipeline")
 
-# Escenario "Base" de proyecciones: es el escenario oficial de producción en Dim_Escenario_Proyeccion.
-# Valor persistido en Silver.Fact_Proyecciones.ID_Escenario para el plan de cosecha activo.
-_ID_ESCENARIO_BASE = 4
+from config.parametros import obtener_int as obtener_param_int
+
+# Escenario "Base" de proyecciones: es el escenario oficial de producción.
+def _obtener_escenario_base() -> int:
+    return obtener_param_int('ESCENARIO_PROYECCION_OFICIAL', 4)
 
 MARTS = [
     'Gold.Mart_Cosecha',
@@ -93,8 +95,7 @@ def refrescar_mart_cosecha(conexion) -> int:
             cs.Kg_Brutos,
             cs.Kg_Neto_MP, -- Kg_Neto_Real
             cs.Kg_Neto_MP, -- Kg_Neto_MP
-            p.Kg_Proyectados, -- Kg_Proyectados
-            p.Kg_Proyectados, -- Kg_Proyectado
+            p.Kg_Proyectados,
             cs.Cantidad_Jabas,
             c.Sustrato,
             CAST(cs.Fecha_Evento AS NVARCHAR),
@@ -112,8 +113,8 @@ def refrescar_mart_cosecha(conexion) -> int:
             ON  p.ID_Tiempo = cs.ID_Tiempo
             AND p.ID_Variedad = cs.ID_Variedad
             AND p.ID_Geografia = cs.ID_Geografia
-            AND p.ID_Escenario = {_ID_ESCENARIO_BASE}
-    """))
+            AND p.ID_Escenario = :id_escenario
+    """), {"id_escenario": _obtener_escenario_base()})
     return _contar(conexion, 'Gold.Mart_Cosecha')
 
 
@@ -139,8 +140,7 @@ def refrescar_mart_proyecciones(conexion) -> int:
             v.Nombre_Variedad,
             p.Fecha_Cutoff,
             p.Kg_Proyectados,
-            p.MAPE, -- MAPE
-            p.MAPE, -- Error_MAPE
+            p.MAPE,
             p.Version_Modelo,
             p.Flag_Override,
             p.Motivo_Override,
@@ -497,19 +497,21 @@ def refrescar_mart_ciclo_poda(conexion) -> int:
         INSERT INTO Gold.Mart_Ciclo_Poda (
             ID_Tiempo, ID_Geografia, ID_Variedad, ID_Campana,
             Fundo, Modulo, Variedad, Semana_ISO,
-            Tipo_Evaluacion, Tallos_Planta_Prom, Longitud_Tallo_Prom,
-            Diametro_Tallo_Prom, Ramilla_Planta_Prom, Tocones_Planta_Prom,
-            Cortes_Defectuosos_Prom, Altura_Poda_Prom,
+            Tipo_Evaluacion,
+            Tallos_Planta_Total, Longitud_Tallo_Total,
+            Diametro_Tallo_Total, Ramilla_Planta_Total,
+            Tocones_Planta_Total, Cortes_Defectuosos_Total,
+            Altura_Poda_Total, N_Muestras,
             Fecha_Actualizacion
         )
         SELECT
             p.ID_Tiempo, p.ID_Geografia, p.ID_Variedad, ISNULL(p.ID_Campana, 0),
             fc.Fundo, mc.Modulo, v.Nombre_Variedad, t.Semana_ISO,
             p.Tipo_Evaluacion,
-            AVG(p.Promedio_Tallos_Planta), AVG(p.Promedio_Longitud_Tallo),
-            AVG(p.Promedio_Diametro_Tallo), AVG(p.Promedio_Ramilla_Planta),
-            AVG(p.Promedio_Tocones_Planta), AVG(p.Promedio_Cortes_Defectuosos),
-            AVG(p.Promedio_Altura_Poda),
+            SUM(p.Tallos_Planta), SUM(p.Longitud_Tallo),
+            SUM(p.Diametro_Tallo), SUM(p.Ramilla_Planta),
+            SUM(p.Tocones_Planta), SUM(p.Cortes_Defectuosos),
+            SUM(p.Altura_Poda), COUNT(*),
             SYSDATETIME()
         FROM Silver.Fact_Ciclo_Poda p
         JOIN Silver.Dim_Tiempo t ON t.ID_Tiempo = p.ID_Tiempo

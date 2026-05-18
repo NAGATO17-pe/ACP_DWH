@@ -39,7 +39,7 @@ from silver.facts.fact_fisiologia import cargar_fact_fisiologia
 from silver.facts.fact_evaluacion_vegetativa import cargar_fact_evaluacion_vegetativa
 from silver.facts.fact_induccion_floral import cargar_fact_induccion_floral
 from silver.facts.fact_tasa_crecimiento_brotes import cargar_fact_tasa_crecimiento_brotes
-from silver.facts.fact_sanidad_activo import cargar_fact_sanidad_activo
+from silver.facts.fact_censo_plantas import cargar_fact_censo_plantas
 from silver.facts.fact_ciclo_poda import cargar_fact_ciclo_poda
 from silver.facts.fact_sixweek import cargar_fact_sixweek
 
@@ -59,11 +59,10 @@ from utils.ejecucion import (
     resolver_plan_reproceso,
 )
 from utils.metricas import formatear_resumen_fact, normalizar_resultado_fact
+from utils.errores import ErrorCircuitBreakerCritico, ErrorCircuitBreakerError
 
 
 import logging
-import sys
-from datetime import datetime
 from pathlib import Path
 
 class PrettyConsoleFormatter(logging.Formatter):
@@ -103,16 +102,28 @@ def setup_etl_logger():
     stream_handler.setFormatter(PrettyConsoleFormatter())
     logger.addHandler(stream_handler)
 
-    # 2. JSON oculto para auditoria
+    # 2. JSON con timestamp para auditoria — preserva historial de runs (O-3)
     try:
         log_dir = Path("logs")
         log_dir.mkdir(exist_ok=True)
-        file_handler = logging.FileHandler(log_dir / "etl_last_run.json", mode='w', encoding='utf-8')
+        ts_nombre = datetime.now().strftime("%Y%m%d_%H%M%S")
+        ruta_run = log_dir / f"etl_{ts_nombre}.json"
+        file_handler = logging.FileHandler(ruta_run, mode='w', encoding='utf-8')
         fmt = '{"timestamp": "%(asctime)s", "level": "%(levelname)s", "service": "acp-etl", "message": "%(message)s"}'
         file_handler.setFormatter(logging.Formatter(fmt))
         logger.addHandler(file_handler)
+    except Exception as error:
+        logger.warning("No se pudo crear file_handler de auditoria: %s", error)
+        # Symlink etl_last_run.json → archivo más reciente (Windows requiere privilégios)
+        symlink = log_dir / "etl_last_run.json"
+        try:
+            if symlink.exists() or symlink.is_symlink():
+                symlink.unlink()
+            symlink.symlink_to(ruta_run.name)
+        except OSError:
+            pass  # Sin privilegios de symlink en Windows — el archivo con timestamp existe igual
     except Exception:
-        pass # Fallback silent if no write permissions
+        pass  # Fallback silencioso si no hay permisos de escritura
 
     return logger
 
@@ -138,7 +149,7 @@ CATALOGO_FACTS = construir_catalogo_facts({
     'Fact_Evaluacion_Vegetativa': cargar_fact_evaluacion_vegetativa,
     'Fact_Induccion_Floral':      cargar_fact_induccion_floral,
     'Fact_Tasa_Crecimiento_Brotes': cargar_fact_tasa_crecimiento_brotes,
-    'Fact_Sanidad_Activo':        cargar_fact_sanidad_activo,
+    'Fact_Censo_Plantas':         cargar_fact_censo_plantas,
     'Fact_Ciclo_Poda':            cargar_fact_ciclo_poda,
     'Fact_Proyecciones_SixWeek':  cargar_fact_sixweek,
 })
@@ -232,6 +243,8 @@ class ErrorEjecucionPipeline(RuntimeError):
     def __init__(self, errores: list[str]) -> None:
         self.errores = list(errores)
         super().__init__(' | '.join(self.errores))
+
+
 
 
 def _encabezado() -> datetime:
@@ -506,6 +519,17 @@ def _ejecutar_fact(nombre: str, tabla_destino: str, funcion, engine, resumen: di
             'mensaje': '',
         })
         return None
+    except ErrorCircuitBreakerCritico as error:
+        # Rechazo >= LIMITE_CRITICO: abortar el pipeline completo, no continuar
+        _imprimir(f'  CIRCUIT BREAKER CRITICO en {nombre}: {error}')
+        resumen[f'{nombre} CIRCUIT_BREAKER'] = str(error)
+        registrar_fin(id_log, {
+            'estado': 'CIRCUIT_BREAKER_CRITICO',
+            'filas': 0,
+            'rechazadas': r.get('rechazados', 0),
+            'mensaje': str(error),
+        })
+        raise
     except Exception as error:
         mensaje_error = f'{nombre}: {error}'
         _imprimir(f'  ERROR en {mensaje_error}')
@@ -555,7 +579,7 @@ def ejecutar_reproceso_facts(
     _paso(paso_actual, total, 'Verificando conexion SQL Server...')
     if not verificar_conexion():
         _imprimir('Sin conexion. Pipeline detenido.')
-        sys.exit(1)
+        raise ErrorEjecucionPipeline(['Sin conexion a SQL Server'])
     contexto_sql = _obtener_contexto_sql(engine)
     resumen['Servidor SQL'] = contexto_sql.get('servidor')
     resumen['Base SQL'] = contexto_sql.get('base_datos')
@@ -631,7 +655,7 @@ def ejecutar() -> None:
     _paso(1, total, 'Verificando conexion SQL Server...')
     if not verificar_conexion():
         _imprimir('Sin conexion. Pipeline detenido.')
-        sys.exit(1)
+        raise ErrorEjecucionPipeline(['Sin conexion a SQL Server'])
     contexto_sql = _obtener_contexto_sql(engine)
     resumen['Servidor SQL'] = contexto_sql.get('servidor')
     resumen['Base SQL'] = contexto_sql.get('base_datos')
@@ -642,7 +666,7 @@ def ejecutar() -> None:
         verificar_objetos_criticos(engine)
     except RuntimeError as _e_esquema:
         _imprimir(str(_e_esquema))
-        sys.exit(1)
+        raise ErrorEjecucionPipeline([f'Verificacion de esquema fallida: {_e_esquema}'])
 
     _paso(3, total, 'Limpiando cache...')
     limpiar_lookup()
@@ -665,7 +689,9 @@ def ejecutar() -> None:
         _imprimir('  ERROR CRITICO EN BRONCE. Pipeline detenido antes de Silver/Gold.')
         _imprimir(f'  {error_critico_bronce.get("mensaje", "")}')
         _resumen_final(inicio, resumen)
-        sys.exit(1)
+        raise ErrorEjecucionPipeline([
+            f'Bronce critico: {error_critico_bronce.get("mensaje", "")}'
+        ])
 
     _paso(5, total, 'Cargando Dim_Personal (SCD1)...')
     r = cargar_dim_personal(engine)
@@ -703,14 +729,16 @@ def ejecutar() -> None:
                 )
                 _imprimir(f'  ERROR: {mensaje}')
                 resumen['SP_Cama inconsistencia'] = mensaje
-                sys.exit(1)
+                raise ErrorEjecucionPipeline([f'SP_Cama inconsistencia: {mensaje}'])
         else:
             resumen['SP_Cama estado'] = 'OMITIDO_SIN_TABLAS_CON_CAMA_EN_ESTA_CORRIDA'
             _imprimir('  SP_Cama omitido: no ingresaron tablas Bronce con cama en esta corrida.')
+    except ErrorEjecucionPipeline:
+        raise
     except Exception as error:
         _imprimir(f'  ERROR en SP_Cama_Upsert: {error}')
         resumen['SP_Cama_Upsert ERROR'] = str(error)
-        sys.exit(1)
+        raise ErrorEjecucionPipeline([f'SP_Cama_Upsert: {error}']) from error
 
     _paso(8, total, 'Validando calidad de cama via SP...')
     try:
@@ -727,11 +755,15 @@ def ejecutar() -> None:
             config_operativa['estados_bloqueantes_calidad_cama'],
         ):
             _imprimir(f"  ERROR: Calidad cama en estado {r.get('Estado_Calidad_Cama')}. Pipeline detenido.")
-            sys.exit(1)
+            raise ErrorEjecucionPipeline([
+                f"Calidad cama bloqueante: {r.get('Estado_Calidad_Cama')}"
+            ])
+    except ErrorEjecucionPipeline:
+        raise
     except Exception as error:
         _imprimir(f'  ERROR en SP_Cama_Validacion: {error}')
         resumen['SP_Cama_Validacion ERROR'] = str(error)
-        sys.exit(1)
+        raise ErrorEjecucionPipeline([f'SP_Cama_Validacion: {error}']) from error
 
     for nombre, meta_fact in CATALOGO_FACTS.items():
         numero = int(meta_fact['orden'])
@@ -754,7 +786,8 @@ def ejecutar() -> None:
             except Exception as error:
                 _imprimir(f'  ERROR en SP_Sincronizar_Campanas: {error}')
                 resumen['SP_Campanas_Sync ERROR'] = str(error)
-                # No detenemos el pipeline, pero los siguientes hechos podrían fallar/rechazar
+                errores_pipeline.append(f'SP_Sincronizar_Campanas: {error}')
+                facts_con_error.append('SP_Campanas_Sync')
 
     if _gold_debe_bloquearse(facts_con_error, config_operativa['facts_bloqueantes_gold']):
         _paso(23, total, 'Omitiendo Marts Gold por errores previos...')
@@ -782,19 +815,12 @@ def ejecutar() -> None:
 if __name__ == '__main__':
     argumentos = _parsear_argumentos()
 
-    try:
-        if argumentos.modo_ejecucion == MODO_EJECUCION_FACTS:
-            ejecutar_reproceso_facts(
-                facts_solicitadas=argumentos.facts,
-                incluir_dependencias=not argumentos.sin_dependencias,
-                refrescar_gold=not argumentos.sin_gold,
-                forzar_relectura_bronce=not argumentos.sin_relectura_bronce,
-            )
-        else:
-            ejecutar()
-    except ValueError as error:
-        _imprimir(f'ERROR DE VALIDACION: {error}')
-        sys.exit(1)
-    except Exception as error:
-        _imprimir(f'ERROR: {error}')
-        sys.exit(1)
+    if argumentos.modo_ejecucion == MODO_EJECUCION_FACTS:
+        ejecutar_reproceso_facts(
+            facts_solicitadas=argumentos.facts,
+            incluir_dependencias=not argumentos.sin_dependencias,
+            refrescar_gold=not argumentos.sin_gold,
+            forzar_relectura_bronce=not argumentos.sin_relectura_bronce,
+        )
+    else:
+        ejecutar()

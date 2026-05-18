@@ -7,12 +7,13 @@ Registra todos los routers, middlewares, manejadores de error
 y expone los health checks principal, liveness y readiness.
 
 Arranque directo:
-    uvicorn main:aplicacion --host 0.0.0.0 --port 8000
+    uvicorn main:aplicacion --host 0.0.0.0 --port 8810
 
 Arranque por módulo (dev con reload):
     python main.py
 """
 
+import asyncio
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
@@ -24,6 +25,7 @@ from nucleo.logging import configurar_logging, obtener_logger
 from nucleo.middleware import RequestIdMiddleware
 from nucleo.conexion import verificar_conexion
 from nucleo.excepciones import manejar_error_generico, manejar_error_http
+from servicios.listeners import registrar_listeners, desregistrar_listeners
 
 # ── Routers ───────────────────────────────────────────────────────────────────
 from api.rutas_health import enrutador_health
@@ -46,14 +48,27 @@ configurar_logging()
 log = obtener_logger(__name__)
 
 
+_MAX_REINTENTOS_BD = 3
+_ESPERA_REINTENTO_SEG = 5
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    Ciclo de vida del servidor:
-    - Al iniciar: valida conexión a SQL Server y logea el resultado.
-    - Al detener: logea el apagado limpio.
-    """
-    info = verificar_conexion()
+    registrar_listeners()
+
+    # Verificar conexión con reintentos (útil en contenedores donde SQL Server arranca lento)
+    info: dict = {"conectado": False}
+    for intento in range(1, _MAX_REINTENTOS_BD + 1):
+        info = await asyncio.to_thread(verificar_conexion)
+        if info["conectado"]:
+            break
+        log.warning(
+            "BD no disponible, reintentando...",
+            extra={"intento": intento, "max": _MAX_REINTENTOS_BD, "error": info.get("error")},
+        )
+        if intento < _MAX_REINTENTOS_BD:
+            await asyncio.sleep(_ESPERA_REINTENTO_SEG)
+
     if info["conectado"]:
         log.info(
             "Backend iniciado — BD conectada",
@@ -66,13 +81,16 @@ async def lifespan(app: FastAPI):
         )
     else:
         log.warning(
-            "Backend iniciado — SIN conexión a SQL Server",
+            "Backend iniciado — SIN conexión a SQL Server tras reintentos",
             extra={
                 "entorno": settings.entorno,
                 "error":   info.get("error", "desconocido"),
             },
         )
+
     yield
+
+    desregistrar_listeners()
     log.info("Backend detenido limpiamente")
 
 
@@ -96,8 +114,9 @@ aplicacion.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origenes,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
+    expose_headers=["X-Request-ID"],
 )
 
 # ── Manejadores de error ───────────────────────────────────────────────────────

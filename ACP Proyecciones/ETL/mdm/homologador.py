@@ -1,4 +1,4 @@
-﻿"""
+"""
 homologador.py
 ==============
 HomologaciÃ³n de texto libre via Levenshtein (rapidfuzz).
@@ -40,7 +40,10 @@ from utils.texto import (
 )
 
 
-UMBRAL_AUTO = 0.99
+import logging
+_log = logging.getLogger("ETL_Pipeline")
+
+UMBRAL_AUTO = 0.85
 
 
 def _clave_variedad(valor: str | None) -> str | None:
@@ -298,47 +301,91 @@ def registrar_homologacion(recurso_db: RecursoDB,
 
 
 def homologar_valor(valor: str | None,
-                    tabla_origen: str,
-                    campo_origen: str,
                     diccionario: pd.DataFrame,
-                    catalogo: pd.DataFrame,
-                    recurso_db: RecursoDB) -> tuple[str | None, str]:
+                    catalogo: pd.DataFrame) -> tuple[str | None, str, str | None, float]:
     """
-    Homologa un valor contra el diccionario canÃ³nico.
-    Retorna (valor_homologado, estado):
-      'EXACTO'      â†’ match exacto en diccionario aprobado
-      'LEVENSHTEIN' â†’ similitud >= 0.85, auto-aprobado
-      'CUARENTENA'  â†’ sin match â†’ revisiÃ³n humana
-      'NULO'        â†’ valor vacÃ­o o None
+    Homologa un valor contra el diccionario canónico.
+    Retorna (valor_homologado, estado, sugerencia_canonico, score).
     """
     if not valor or not str(valor).strip():
-        return None, 'NULO'
+        return None, 'NULO', None, 0.0
 
     valor = str(valor).strip()
 
     canonico = buscar_match_exacto(valor, diccionario)
     if canonico:
-        registrar_homologacion(recurso_db, tabla_origen, campo_origen,
-                               valor, canonico, 1.0, aprobado=True)
-        return canonico, 'EXACTO'
+        return canonico, 'EXACTO', canonico, 1.0
 
     canonico = buscar_match_catalogo(valor, catalogo)
     if canonico:
-        registrar_homologacion(recurso_db, tabla_origen, campo_origen,
-                               valor, canonico, 1.0, aprobado=True)
-        return canonico, 'CATALOGO'
+        return canonico, 'CATALOGO', canonico, 1.0
 
     canonico, score = buscar_match_levenshtein(valor, catalogo)
     if canonico:
-        registrar_homologacion(recurso_db, tabla_origen, campo_origen,
-                               valor, canonico, score, aprobado=True)
-        return canonico, 'LEVENSHTEIN'
+        return canonico, 'LEVENSHTEIN', canonico, score
 
     sugerencia, score = buscar_sugerencia_levenshtein(valor, catalogo)
-    registrar_homologacion(recurso_db, tabla_origen, campo_origen,
-                           valor, sugerencia or normalizar_variedad(valor) or valor,
-                           score, aprobado=False)
-    return None, 'CUARENTENA'
+    return None, 'CUARENTENA', (sugerencia or normalizar_variedad(valor) or valor), score
+
+
+def registrar_homologaciones_batch(recurso_db: RecursoDB,
+                                   tabla_origen: str,
+                                   campo_origen: str,
+                                   resoluciones: list[dict]) -> None:
+    """
+    Realiza una actualización/inserción masiva de resoluciones en el diccionario.
+    """
+    if not resoluciones:
+        return
+
+    # Agrupar por (Texto_Crudo, Valor_Canonico) para consolidar Veces_Aplicado
+    consolidado: dict[tuple, dict] = {}
+    for res in resoluciones:
+        key = (res['texto_crudo'], res['valor_canonico'])
+        if key not in consolidado:
+            consolidado[key] = res
+            consolidado[key]['veces'] = 1
+        else:
+            consolidado[key]['veces'] += 1
+
+    _log.info(f"  Registrando {len(consolidado)} resoluciones únicas en el diccionario...")
+    
+    ahora = datetime.now()
+    with administrar_recurso_db(recurso_db) as conexion:
+        for (texto, canonico), info in consolidado.items():
+            aprobado = info['estado'] != 'CUARENTENA'
+            aprobado_por = 'SISTEMA' if aprobado else 'PENDIENTE'
+            score = info['score']
+            veces = info['veces']
+
+            # Nota: para un sistema Senior, esto debería ser un MERGE masivo vía #Temp table.
+            # Por ahora lo mantenemos en un bucle pero dentro de UNA sola transacción.
+            conexion.execute(text("""
+                IF EXISTS (SELECT 1 FROM MDM.Diccionario_Homologacion WHERE Tabla_Origen = :t AND Texto_Crudo = :txt)
+                BEGIN
+                    UPDATE MDM.Diccionario_Homologacion
+                    SET Valor_Canonico = CASE WHEN :aprobado = 1 THEN :can ELSE ISNULL(Valor_Canonico, :can) END,
+                        Score_Levenshtein = :score,
+                        Aprobado_Por = CASE WHEN :aprobado = 1 THEN :usr ELSE Aprobado_Por END,
+                        Fecha_Aprobacion = CASE WHEN :aprobado = 1 THEN :fec ELSE Fecha_Aprobacion END,
+                        Veces_Aplicado = Veces_Aplicado + :v
+                    WHERE Tabla_Origen = :t AND Texto_Crudo = :txt
+                END
+                ELSE
+                BEGIN
+                    INSERT INTO MDM.Diccionario_Homologacion (
+                        Texto_Crudo, Valor_Canonico, Tabla_Origen, Campo_Origen,
+                        Score_Levenshtein, Aprobado_Por, Fecha_Aprobacion, Veces_Aplicado
+                    ) VALUES (
+                        :txt, :can, :t, :c, :score, :usr, 
+                        CASE WHEN :aprobado = 1 THEN :fec ELSE NULL END, :v
+                    )
+                END
+            """), {
+                't': tabla_origen, 'txt': texto, 'can': canonico, 'c': campo_origen,
+                'score': round(score, 4), 'usr': aprobado_por, 'fec': ahora, 
+                'v': veces, 'aprobado': 1 if aprobado else 0
+            })
 
 
 def homologar_columna(df: pd.DataFrame,
@@ -348,56 +395,71 @@ def homologar_columna(df: pd.DataFrame,
                        recurso_db: RecursoDB,
                        columna_id_origen: str | None = None) -> tuple[pd.DataFrame, list[dict]]:
     """
-    Homologa una columna completa del DataFrame.
-    Retorna (df con columna_destino, lista de cuarentenas).
+    Homologa una columna completa del DataFrame de forma eficiente.
     """
     if isinstance(recurso_db, Engine):
         engine = recurso_db
     else:
         engine = recurso_db.engine
 
+    _log.info(f"  Homologando columna '{columna_raw}' via MDM...")
     diccionario = cargar_diccionario(engine, tabla_origen)
     catalogo    = cargar_catalogo_variedades(engine)
+    
     cuarentenas = []
     resultados  = []
-    cache_resoluciones: dict[str, tuple[str | None, str]] = {}
+    pendientes_registro = []
+    cache_resoluciones: dict[str, tuple[str | None, str, str | None, float]] = {}
 
-    for _, fila in df.iterrows():
-        valor = fila.get(columna_raw)
+    valores_raw = df[columna_raw].tolist()
+    valores_id = df[columna_id_origen].tolist() if columna_id_origen and columna_id_origen in df.columns else [None] * len(df)
+
+    for i, (valor, valor_id) in enumerate(zip(valores_raw, valores_id)):
+        if pd.isna(valor):
+            valor = None
+            
         clave_cache = _clave_variedad(valor)
         if clave_cache is None:
             valor_token = '' if valor is None else str(valor).strip().lower()
             clave_cache = f'__RAW__::{valor_token}'
 
         if clave_cache in cache_resoluciones:
-            homologado, estado = cache_resoluciones[clave_cache]
+            homologado, estado, sugerencia, score = cache_resoluciones[clave_cache]
         else:
-            homologado, estado = homologar_valor(
-                valor, tabla_origen, columna_raw, diccionario, catalogo, recurso_db
-            )
-            cache_resoluciones[clave_cache] = (homologado, estado)
+            homologado, estado, sugerencia, score = homologar_valor(valor, diccionario, catalogo)
+            cache_resoluciones[clave_cache] = (homologado, estado, sugerencia, score)
+            
+            # Solo registramos en el diccionario la primera vez que vemos el valor en este batch
+            if estado != 'NULO':
+                pendientes_registro.append({
+                    'texto_crudo': str(valor).strip() if valor else '',
+                    'valor_canonico': sugerencia,
+                    'estado': estado,
+                    'score': score
+                })
 
         resultados.append(homologado)
 
         if estado == 'CUARENTENA':
             id_registro_origen = None
-            if columna_id_origen:
-                valor_id = fila.get(columna_id_origen)
-                if pd.notna(valor_id):
-                    try:
-                        id_registro_origen = int(valor_id)
-                    except (TypeError, ValueError):
-                        id_registro_origen = None
+            if pd.notna(valor_id):
+                try:
+                    id_registro_origen = int(valor_id)
+                except (TypeError, ValueError):
+                    id_registro_origen = None
 
             cuarentenas.append({
                 'columna':           columna_raw,
                 'valor':             valor,
                 'motivo':            'Variedad no reconocida — requiere revisión en MDM',
                 'tipo_regla':        'CATALOGO',
-                'score_levenshtein': None,
+                'score_levenshtein': round(score, 4),
                 'severidad':         'ALTO',
                 'id_registro_origen': id_registro_origen,
             })
+
+    # Registro masivo de resoluciones
+    registrar_homologaciones_batch(recurso_db, tabla_origen, columna_raw, pendientes_registro)
 
     df[columna_destino] = resultados
     return df, cuarentenas
