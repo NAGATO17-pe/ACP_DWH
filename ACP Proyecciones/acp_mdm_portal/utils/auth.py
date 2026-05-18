@@ -7,6 +7,8 @@ Este modulo solo administra la sesion local de Streamlit.
 
 from __future__ import annotations
 
+import base64
+import json
 import time
 
 import streamlit as st
@@ -48,19 +50,47 @@ def obtener_usuario() -> dict | None:
 
 
 
+# TTL de sesión local — sincronizar con ACP_JWT_TTL_MIN del backend (default 480 min = 8 h)
+_SESSION_MAX_SEG = 8 * 3600
+
+
+def _token_expirado() -> bool:
+    """Verifica si el token JWT local ha expirado por tiempo de sesión o por el campo exp."""
+    if time.time() - st.session_state.get("login_time", 0) > _SESSION_MAX_SEG:
+        return True
+    token = st.session_state.get("jwt_token", "")
+    if not token:
+        return True
+    try:
+        partes = token.split(".")
+        if len(partes) != 3:
+            return True
+        padding = partes[1] + "=" * (4 - len(partes[1]) % 4)
+        payload = json.loads(base64.urlsafe_b64decode(padding))
+        exp = payload.get("exp", 0)
+        if exp and time.time() > exp:
+            return True
+    except Exception:
+        return True
+    return False
+
 
 def cerrar_sesion() -> None:
-    for key in [
-        "autenticado",
-        "username",
-        "nombre_usuario",
-        "rol_usuario",
-        "avatar_usuario",
-        "login_error",
-        "login_time",
-        "jwt_token",
-    ]:
+    _claves_auth = [
+        "autenticado", "username", "nombre_usuario", "rol_usuario",
+        "avatar_usuario", "login_error", "login_time", "jwt_token",
+    ]
+    _claves_app = [
+        "etl_en_ejecucion", "etl_id_corrida", "etl_log", "etl_estado_final",
+        "etl_pasos_lista", "etl_fase_actual", "etl_paso_num", "etl_total_pasos",
+        "etl_archivo_listo", "health_historial", "health_refresh_interval",
+        "health_last_refresh", "current_page",
+    ]
+    for key in _claves_auth + _claves_app:
         st.session_state.pop(key, None)
+    for key in list(st.session_state.keys()):
+        if key.startswith(("pg_", "pend_", "nav_", "aud_", "editor_")):
+            st.session_state.pop(key, None)
 
 
 
@@ -236,3 +266,12 @@ def login_gate() -> bool:
         return _render_login()
     return True
 
+    if st.session_state.get("autenticado"):
+        if _token_expirado():
+            cerrar_sesion()
+            st.warning("Tu sesión ha expirado. Por favor inicia sesión nuevamente.")
+            _render_login()
+            return False
+        return True
+    _render_login()
+    return False

@@ -99,6 +99,36 @@ def listar_corridas(limite: int = 50, solo_activas: bool = False) -> list[dict]:
         log.exception("Error al listar corridas")
         raise ErrorBaseDatos()
 
+_ESTADOS_TERMINALES = ("OK", "ERROR", "CANCELADO", "TIMEOUT")
+
+_SQL_ACTUALIZAR_ESTADO_CORRIDA = text("""
+    UPDATE Control.Corrida
+    SET Estado = :estado,
+        Fecha_Inicio = CASE
+            WHEN :estado = 'EJECUTANDO' THEN :ahora
+            ELSE Fecha_Inicio
+        END,
+        Fecha_Fin = CASE
+            WHEN :estado IN ('OK','ERROR','CANCELADO','TIMEOUT') THEN :ahora
+            ELSE Fecha_Fin
+        END,
+        PID_Runner = CASE
+            WHEN :estado = 'EJECUTANDO' THEN :pid
+            WHEN :estado IN ('OK','ERROR','CANCELADO','TIMEOUT') THEN NULL
+            ELSE PID_Runner
+        END,
+        Mensaje_Final = CASE
+            WHEN :tiene_mensaje = 1 THEN :msg
+            ELSE Mensaje_Final
+        END,
+        ID_Log_Auditoria = CASE
+            WHEN :tiene_log = 1 THEN :id_log
+            ELSE ID_Log_Auditoria
+        END
+    WHERE ID_Corrida = :id
+""")
+
+
 def actualizar_estado_corrida(
     id_corrida: str,
     estado: EstadoCorrida,
@@ -106,32 +136,19 @@ def actualizar_estado_corrida(
     id_log_auditoria: int | None = None,
     pid_runner: int | None = None,
 ) -> None:
-    sets = ["Estado = :estado"]
-    params: dict = {"id": id_corrida, "estado": estado}
-
-    if estado == "EJECUTANDO":
-        sets.append("Fecha_Inicio = :ahora")
-        sets.append("PID_Runner = :pid")
-        params["ahora"] = datetime.now()
-        params["pid"]   = pid_runner
-    elif estado in ("OK", "ERROR", "CANCELADO", "TIMEOUT"):
-        sets.append("Fecha_Fin = :ahora")
-        sets.append("PID_Runner = NULL")
-        params["ahora"] = datetime.now()
-
-    if mensaje_final is not None:
-        sets.append("Mensaje_Final = :msg")
-        params["msg"] = mensaje_final[:1000]
-    if id_log_auditoria is not None:
-        sets.append("ID_Log_Auditoria = :id_log")
-        params["id_log"] = id_log_auditoria
-
+    params = {
+        "id": id_corrida,
+        "estado": estado,
+        "ahora": datetime.now(),
+        "pid": pid_runner,
+        "tiene_mensaje": 1 if mensaje_final is not None else 0,
+        "msg": (mensaje_final or "")[:1000],
+        "tiene_log": 1 if id_log_auditoria is not None else 0,
+        "id_log": id_log_auditoria,
+    }
     try:
         with obtener_engine().begin() as con:
-            con.execute(
-                text(f"UPDATE Control.Corrida SET {', '.join(sets)} WHERE ID_Corrida = :id"),
-                params,
-            )
+            con.execute(_SQL_ACTUALIZAR_ESTADO_CORRIDA, params)
     except SQLAlchemyError:
         log.exception("Error al actualizar estado de corrida", extra={"id_corrida": id_corrida})
 
@@ -181,6 +198,55 @@ def insertar_evento(id_corrida: str, mensaje: str, tipo: TipoEvento = "LOG") -> 
             )
     except SQLAlchemyError:
         log.warning("No se pudo persistir evento", extra={"id_corrida": id_corrida})
+
+def listar_eventos_y_estado(
+    id_corrida: str,
+    desde_id: int = 0,
+    limite: int = 500,
+) -> tuple[list[dict], str | None]:
+    """
+    Combina listado de eventos nuevos + estado actual de la corrida en una sola
+    query (CROSS JOIN). Reduce de 2-3 queries a 1 por ciclo de polling SSE.
+    Retorna (eventos, estado_corrida_o_None).
+    """
+    try:
+        with obtener_engine().connect() as con:
+            filas = con.execute(
+                text("""
+                    SELECT TOP (:limite)
+                        ce.ID_Evento    AS id_evento,
+                        ce.Tipo         AS tipo,
+                        ce.Mensaje      AS mensaje,
+                        ce.Fecha_Evento AS fecha_evento,
+                        c.Estado        AS estado_corrida
+                    FROM Control.Corrida_Evento ce
+                    INNER JOIN Control.Corrida c
+                        ON c.ID_Corrida = ce.ID_Corrida
+                    WHERE ce.ID_Corrida = :id AND ce.ID_Evento > :desde
+                    ORDER BY ce.ID_Evento ASC
+                """),
+                {"id": id_corrida, "desde": desde_id, "limite": limite},
+            ).fetchall()
+
+            estado: str | None = None
+            eventos: list[dict] = []
+            for fila in filas:
+                m = dict(fila._mapping)
+                estado = m.pop("estado_corrida", None) or estado
+                eventos.append(m)
+
+            if estado is None:
+                fila_estado = con.execute(
+                    text("SELECT Estado AS estado FROM Control.Corrida WHERE ID_Corrida = :id"),
+                    {"id": id_corrida},
+                ).fetchone()
+                estado = fila_estado.estado if fila_estado else None
+
+            return eventos, estado
+    except SQLAlchemyError:
+        log.exception("Error al listar eventos+estado", extra={"id_corrida": id_corrida})
+        return [], None
+
 
 def listar_eventos(id_corrida: str, desde_id: int = 0, limite: int = 500) -> list[dict]:
     try:

@@ -21,11 +21,29 @@ from fastapi import APIRouter, Depends, Query, Request
 from nucleo.auth import UsuarioActual, obtener_usuario_actual, require_rol
 from nucleo.http_utils import obtener_ip_cliente, obtener_request_id
 from schemas.cuarentena.peticion import PeticionRechazarCuarentena, PeticionResolverCuarentena
-from schemas.cuarentena.respuesta import RespuestaAccionCuarentena, RespuestaCuarentena, RespuestaPaginada
+from schemas.cuarentena.respuesta import (
+    RespuestaAccionCuarentena,
+    RespuestaCuarentena,
+    RespuestaPaginada,
+    RespuestaResumenCuarentena,
+)
 from servicios.servicio_auth import registrar_accion
 from servicios.servicio_cuarentena import listar_cuarentena, rechazar_registro, resolver_registro, obtener_resumen_cuarentena
+from servicios.servicio_cuarentena import listar_cuarentena, obtener_resumen_cuarentena, rechazar_registro, resolver_registro
 
 enrutador_cuarentena = APIRouter(prefix="/v1/cuarentena", tags=["Cuarentena"])
+
+
+@enrutador_cuarentena.get(
+    "/resumen",
+    response_model=RespuestaResumenCuarentena,
+    summary="Resumen de registros en cuarentena por estado",
+    description="Devuelve conteos agregados (total, pendientes, resueltos, descartados) con una sola query SQL.",
+    dependencies=[Depends(require_rol("viewer"))],
+)
+def resumen() -> RespuestaResumenCuarentena:
+    datos = obtener_resumen_cuarentena()
+    return RespuestaResumenCuarentena(**datos)
 
 
 @enrutador_cuarentena.get(

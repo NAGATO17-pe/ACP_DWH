@@ -21,16 +21,46 @@ log = obtener_logger(__name__)
 
 
 async def listar_cuarentena(
+_TTL_CACHE_LISTAR_SEG = 60
+
+
+def _clave_cache_listar(pagina: int, tamano: int, tabla_filtro: str | None) -> str:
+    return f"cuarentena:listar:p{pagina}:t{tamano}:f{tabla_filtro or 'todos'}"
+
+
+def listar_cuarentena(
     pagina: int = 1,
     tamano: int = 20,
     tabla_filtro: str | None = None,
 ) -> dict:
     return await asyncio.to_thread(
         repo.listar_pendientes,
+    """Read-through cache: TTL corto para reducir presion sobre MDM.Cuarentena."""
+    clave = _clave_cache_listar(pagina, tamano, tabla_filtro)
+    cacheado = cache.obtener(clave)
+    if cacheado is not None:
+        return cacheado
+
+    resultado = repo.listar_pendientes(
         pagina=pagina,
         tamano=tamano,
         tabla_filtro=tabla_filtro,
     )
+    try:
+        cache.guardar(clave, resultado, ttl_segundos=_TTL_CACHE_LISTAR_SEG)
+    except (TypeError, ValueError):
+        log.debug("Cache no serializable; salto guardado", extra={"clave": clave})
+    return resultado
+
+
+def obtener_resumen_cuarentena() -> dict:
+    conteos = repo.contar_por_estado()
+    return {
+        "total":      sum(conteos.values()),
+        "pendientes": conteos.get("PENDIENTE",  0),
+        "resueltos":  conteos.get("RESUELTO",   0),
+        "descartados": conteos.get("DESCARTADO", 0),
+    }
 
 
 async def resolver_registro(
