@@ -28,6 +28,7 @@ from typing import Literal
 from nucleo.etl_argumentos import construir_argumentos_pipeline, deserializar_comentario_etl
 from nucleo.auditoria import registrar_inicio_corrida, registrar_fin_corrida
 from nucleo.logging import obtener_logger
+from servicios.event_bus import EventBus
 import repositorios.repo_corridas as r_corrida
 import repositorios.repo_locks as r_lock
 
@@ -304,4 +305,20 @@ def ejecutar_corrida(
         "[RUNNER] Corrida finalizada",
         extra={"id_corrida": id_corrida, "estado": estado_final, "codigo": codigo_retorno},
     )
+
+    if estado_final == "OK":
+        EventBus.task_finished.send(
+            "ejecutor",
+            id_corrida=id_corrida,
+            estado=estado_final,
+            iniciado_por=iniciado_por,
+        )
+    else:
+        EventBus.task_failed.send(
+            "ejecutor",
+            id_corrida=id_corrida,
+            estado=estado_final,
+            error=msg_final,
+        )
+
     return estado_final

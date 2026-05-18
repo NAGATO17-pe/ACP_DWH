@@ -4,19 +4,21 @@ api/rutas_config.py
 Router /api/v1/config — Reglas de validación y parámetros del pipeline.
 
 Seguridad: analista_mdm+ (nivel 20). admin (40) pasa automáticamente.
-Nota: El rol 'editor' NO existe en la jerarquía — nunca usar.
 """
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Query, HTTPException, status
-from nucleo.auth import require_rol, obtener_usuario_actual
+from typing import Annotated
+from fastapi import APIRouter, Depends, Query, Request
+from nucleo.auth import UsuarioActual, require_rol, obtener_usuario_actual
+from nucleo.http_utils import obtener_ip_cliente, obtener_request_id
+from nucleo.excepciones import ErrorRecursoNoEncontrado
 from schemas.config.respuesta import (
     RespuestaPaginadaParametros,
     RespuestaPaginadaReglas,
 )
 from schemas.config.peticion import SolicitudActualizarParametro, SolicitudBatchParametros
-import repositorios.repo_config as repo
+import servicios.servicio_config as servicio
 
 enrutador_config = APIRouter(prefix="/v1/config", tags=["Configuración"])
 
@@ -27,11 +29,12 @@ enrutador_config = APIRouter(prefix="/v1/config", tags=["Configuración"])
     summary="Lista reglas de validación",
     dependencies=[Depends(require_rol("analista_mdm"))],
 )
-def obtener_reglas(
+async def obtener_reglas(
     pagina: int = Query(default=1, ge=1),
     tamano: int = Query(default=15, ge=1, le=10000),
 ) -> RespuestaPaginadaReglas:
-    return RespuestaPaginadaReglas(**repo.listar_reglas(pagina=pagina, tamano=tamano))
+    resultado = await servicio.listar_reglas(pagina=pagina, tamano=tamano)
+    return RespuestaPaginadaReglas(**resultado)
 
 
 @enrutador_config.get(
@@ -40,12 +43,12 @@ def obtener_reglas(
     summary="Lista parámetros del pipeline",
     dependencies=[Depends(require_rol("analista_mdm"))],
 )
-def obtener_parametros(
+async def obtener_parametros(
     pagina: int = Query(default=1, ge=1),
     tamano: int = Query(default=10, ge=1, le=10000),
 ) -> RespuestaPaginadaParametros:
-    return RespuestaPaginadaParametros(**repo.listar_parametros(pagina=pagina, tamano=tamano))
-
+    resultado = await servicio.listar_parametros(pagina=pagina, tamano=tamano)
+    return RespuestaPaginadaParametros(**resultado)
 
 
 @enrutador_config.patch(
@@ -53,17 +56,22 @@ def obtener_parametros(
     summary="Actualiza múltiples parámetros del pipeline",
     dependencies=[Depends(require_rol("analista_mdm"))],
 )
-def actualizar_parametros_batch(
+async def actualizar_parametros_batch(
     peticion: SolicitudBatchParametros,
-    usuario = Depends(obtener_usuario_actual),
+    request: Request,
+    usuario: Annotated[UsuarioActual, Depends(obtener_usuario_actual)],
 ):
     exitos = 0
     fallos = []
+    
     for p in peticion.parametros:
-        exito = repo.actualizar_parametro(
+        exito = await servicio.actualizar_parametro(
             nombre=p.nombre_parametro,
             valor=p.valor,
-            modificado_por=usuario.nombre_usuario
+            usuario=usuario.nombre_usuario,
+            endpoint=str(request.url),
+            request_id=obtener_request_id(request),
+            ip_origen=obtener_ip_cliente(request)
         )
         if exito:
             exitos += 1
@@ -75,24 +83,28 @@ def actualizar_parametros_batch(
         "fallos": fallos
     }
 
+
 @enrutador_config.patch(
     "/parametros/{nombre}",
     summary="Actualiza un solo parámetro del pipeline",
     dependencies=[Depends(require_rol("analista_mdm"))],
 )
-def actualizar_parametro(
+async def actualizar_parametro(
     nombre: str,
     peticion: SolicitudActualizarParametro,
-    usuario = Depends(obtener_usuario_actual),
+    request: Request,
+    usuario: Annotated[UsuarioActual, Depends(obtener_usuario_actual)],
 ):
-    exito = repo.actualizar_parametro(
+    exito = await servicio.actualizar_parametro(
         nombre=nombre,
         valor=peticion.valor,
-        modificado_por=usuario.nombre_usuario
+        usuario=usuario.nombre_usuario,
+        endpoint=str(request.url),
+        request_id=obtener_request_id(request),
+        ip_origen=obtener_ip_cliente(request)
     )
+    
     if not exito:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Parámetro '{nombre}' no encontrado"
-        )
+        raise ErrorRecursoNoEncontrado(f"Parámetro '{nombre}'")
+        
     return {"mensaje": f"Parámetro '{nombre}' actualizado con éxito"}

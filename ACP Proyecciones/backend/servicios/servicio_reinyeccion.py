@@ -2,45 +2,49 @@
 servicios/servicio_reinyeccion.py
 ==================================
 Servicio de orquestación para la Herramienta de Reinyección MDM.
-
-Responsabilidades:
-  - Obtener los candidatos RESUELTOS desde repo_reinyeccion.
-  - Delegar la actualización masiva en Bronce al repositorio.
-  - Invalidar caché de cuarentena post-reinyección.
-  - Registrar la acción en auditoría MDM.
+Todos los métodos son async — I/O delegado a asyncio.to_thread.
+Emite señal mdm_reinyeccion al EventBus al completar.
 """
 
 from __future__ import annotations
 
+import asyncio
+
 from nucleo.cache import cache
 from nucleo.logging import obtener_logger
+from servicios.event_bus import EventBus
 import repositorios.repo_reinyeccion as repo
 import repositorios.repo_auditoria as repo_auditoria
 
 log = obtener_logger(__name__)
 
 
-def contar_candidatos(tabla_filtro: str | None = None) -> int:
+async def contar_candidatos(tabla_filtro: str | None = None) -> int:
     """Retorna cuántos registros RESUELTOS están disponibles para reinyectar."""
-    return repo.contar_candidatos_reinyeccion(tabla_filtro=tabla_filtro)
+    return await asyncio.to_thread(
+        repo.contar_candidatos_reinyeccion,
+        tabla_filtro=tabla_filtro,
+    )
 
 
-def ejecutar_reinyeccion(
+async def ejecutar_reinyeccion(
     analista: str,
     tabla_filtro: str | None = None,
 ) -> dict:
     """
-    Flujo completo de reinyección:
-    1. Obtiene todos los candidatos RESUELTOS (con ID_Registro_Origen válido).
-    2. Actualiza masivamente Estado_Carga = 'CARGADO' en Bronce.
-    3. Invalida la caché de cuarentena para que las vistas se actualicen.
-    4. Registra la acción en auditoría MDM.
-
-    Retorna: {reinyectados, omitidos, detalle}
+    Flujo completo de reinyección (no bloqueante):
+    1. Obtiene candidatos RESUELTOS con ID_Registro_Origen válido.
+    2. Actualiza Estado_Carga = 'CARGADO' en Bronce (masivo).
+    3. Invalida caché global.
+    4. Registra en auditoría MDM.
+    5. Emite señal mdm_reinyeccion al EventBus.
     """
     log.info("Iniciando reinyección MDM", extra={"analista": analista, "filtro": tabla_filtro})
 
-    candidatos = repo.obtener_resueltos_pendientes(tabla_filtro=tabla_filtro)
+    candidatos = await asyncio.to_thread(
+        repo.obtener_resueltos_pendientes,
+        tabla_filtro=tabla_filtro,
+    )
 
     if not candidatos:
         log.info("Sin candidatos para reinyección", extra={"analista": analista})
@@ -50,14 +54,13 @@ def ejecutar_reinyeccion(
             "detalle": ["ℹ️ No hay registros RESUELTOS con ID de origen válido para reinyectar."],
         }
 
-    resultado = repo.reinyectar_en_bronce(candidatos)
+    resultado = await asyncio.to_thread(repo.reinyectar_en_bronce, candidatos)
 
-    # Invalidar caché para que el dashboard de cuarentena refleje el estado actualizado
-    cache.limpiar_todo()
+    await asyncio.to_thread(cache.limpiar_todo)
 
-    # Auditoría — un registro agregado por ejecución
     try:
-        repo_auditoria.insertar_decision_mdm(
+        await asyncio.to_thread(
+            repo_auditoria.insertar_decision_mdm,
             tabla_origen="REINYECCION_MASIVA",
             id_registro="BATCH",
             valor_canonico="",
@@ -71,6 +74,13 @@ def ejecutar_reinyeccion(
     except Exception:
         log.warning("No se pudo registrar auditoría de reinyección", exc_info=True)
 
+    EventBus.mdm_reinyeccion.send(
+        "servicio_reinyeccion",
+        reinyectados=resultado["reinyectados"],
+        omitidos=resultado["omitidos"],
+        analista=analista,
+        filtro=tabla_filtro,
+    )
     log.info(
         "Reinyección completada",
         extra={

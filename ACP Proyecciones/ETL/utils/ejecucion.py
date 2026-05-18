@@ -64,7 +64,7 @@ CONFIG_FACTS = OrderedDict({
         "fuentes_bronce": ("Bronce.Maduracion",),
         "dependencias": (DEPENDENCIA_DIM_PERSONAL, DEPENDENCIA_DIM_GEOGRAFIA),
         "marts": ("Gold.Mart_Maduracion",),
-        "releer_bronce_por_estado": False,
+        "releer_bronce_por_estado": True,
         "estrategia_rerun": "rebuild_total_fact",
     },
     "Fact_Peladas": {

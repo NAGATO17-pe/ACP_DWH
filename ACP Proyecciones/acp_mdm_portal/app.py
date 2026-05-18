@@ -10,6 +10,7 @@ import streamlit as st
 from utils.auth import cerrar_sesion, login_gate, obtener_usuario, tiene_permiso
 from utils.constantes import ROL_BADGES
 from utils.formato import aplicar_css
+from utils.sidebar_badges import render_sidebar_badges
 
 st.set_page_config(
     page_title="ACP MDM Portal",
@@ -80,6 +81,9 @@ with st.sidebar:
             "🔗  Homologación",
             "📋  Auditoría ETL",
         ],
+        "🌿 PROYECCIONES": [
+            "📈  Proyecciones 6W",
+        ],
         "📋 CATÁLOGOS MAESTROS": [
             "🍇  Variedades",
             "📍  Geografía",
@@ -106,7 +110,8 @@ with st.sidebar:
         lista_plana.extend(items)
 
     st.markdown('<div class="sidebar-section">Navegación del Portal</div>', unsafe_allow_html=True)
-    
+    render_sidebar_badges()
+
     pagina_activa = st.radio(
         "Seleccione Sección",
         options=lista_plana,
@@ -151,6 +156,7 @@ _RUTAS = {
     "Homologación":        "paginas.homologacion",
     "Auditoría ETL":       "paginas.auditoria",
     "Sistema · Health":    "paginas.sistema",
+    "Proyecciones 6W":     "paginas.proyecciones",
     "Variedades":          "paginas.catalogos.variedades",
     "Geografía":           "paginas.catalogos.geografia",
     "Personal":            "paginas.catalogos.personal",

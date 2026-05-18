@@ -2,16 +2,23 @@ import os
 import re
 import pandas as pd
 import streamlit as st
-import streamlit.components.v1 as components
 from datetime import datetime
 
 from utils.auth import tiene_permiso
-from utils.componentes import health_status_panel, seccion_tabla_con_guardar
-from utils.formato import crear_tarjeta_kpi, header_pagina, crear_panel_metricas_premium
-from utils.api_client import get_api, mostrar_error_api, post_api, stream_api, delete_api
+from utils.componentes import banner_aviso, estado_vacio_html, health_status_panel, seccion_tabla_con_guardar
+from utils.formato import EMERALD_ACCENT, GOLD_ACCENT, SLATE_400, header_pagina, crear_panel_metricas_premium
+from utils.api_client import get_api, mostrar_error_api, post_api, stream_api, delete_api, obtener_url_backend
 
 # ── Constantes de fases ETL ──────────────────────────────────────────────────
 _RE_PASO = re.compile(r"^\[(\d+)/(\d+)\]\s+(.+)$")
+
+# Nombres operacionales: sin metáforas de IA. Colores de la paleta del sistema.
+FASES_ETL = {
+    "config": {"nombre": "Configuración",        "color": "#4d6b54", "rango": (1, 2),  "icono": "⚙️"},
+    "bronce": {"nombre": "Carga Raw",             "color": "#e8a020", "rango": (3, 3),  "icono": "📥"},
+    "silver": {"nombre": "Transformación Silver", "color": "#8fa897", "rango": (4, 20), "icono": "⚗️"},
+    "gold":   {"nombre": "Capa Gold",             "color": "#2db87a", "rango": (21, 99),"icono": "✅"},
+}
 
 def _detectar_fase(paso_num: int) -> str:
     for clave, fase in FASES_ETL.items():
@@ -367,98 +374,110 @@ function draw() {{
   requestAnimationFrame(draw);
 }}
 
-window.addEventListener('resize', resize);
-resize();
-startWebStream(); // Inicia la escucha directa al backend
-draw();
-</script>
-</body>
-</html>"""
 
 
-
-
-
-def _generar_svg_neural(fase_actual: str, paso_actual: int, total_pasos: int) -> str:
-    """Genera el SVG animado de la Neurona de Datos con partículas coloreadas por fase."""
+def _generar_monitor_etl_html(fase_actual: str, paso_actual: int, total_pasos: int) -> str:
+    """
+    Genera el panel SVG del monitor de ejecución ETL.
+    4 nodos en flujo horizontal (Config → Raw → Silver → Gold) conectados a un hub DWH central.
+    Paleta del sistema: verde-tierra, ámbar, verde-cosecha.
+    """
     color = FASES_ETL.get(fase_actual, FASES_ETL["silver"])["color"]
     nombre = FASES_ETL.get(fase_actual, FASES_ETL["silver"])["nombre"]
+    icono  = FASES_ETL.get(fase_actual, FASES_ETL["silver"])["icono"]
     pct = min(100, int((paso_actual / max(total_pasos, 1)) * 100))
 
-    # Posiciones de nodos: Config(top-left), Bronce(top-right), Silver(bot-left), Gold(bot-right)
+    # Nodos en flujo horizontal: izquierda → derecha
     nodos = {
-        "config": (40,  45),
-        "bronce": (200, 45),
-        "silver": (40,  165),
-        "gold":   (200, 165),
+        "config": (38,  105),
+        "bronce": (105, 58),
+        "silver": (105, 152),
+        "gold":   (202, 105),
     }
     colores_nodos = {k: v["color"] for k, v in FASES_ETL.items()}
-    cx, cy = 120, 105  # Centro del DWH core
+    cx, cy = 155, 105  # Hub DWH desplazado a la derecha
 
-    # Generar las líneas de conexión
     lineas_svg = ""
     for clave, (nx, ny) in nodos.items():
-        opacidad = "0.6" if clave == fase_actual else "0.12"
-        grosor = "2" if clave == fase_actual else "1"
-        lineas_svg += f'<line x1="{nx}" y1="{ny}" x2="{cx}" y2="{cy}" stroke="{colores_nodos[clave]}" stroke-width="{grosor}" opacity="{opacidad}" stroke-dasharray="4,3"/>'
+        opacidad = "0.7" if clave == fase_actual else "0.15"
+        grosor   = "1.5" if clave == fase_actual else "1"
+        dash     = "" if clave == fase_actual else 'stroke-dasharray="4,4"'
+        lineas_svg += (
+            f'<line x1="{nx}" y1="{ny}" x2="{cx}" y2="{cy}" '
+            f'stroke="{colores_nodos[clave]}" stroke-width="{grosor}" '
+            f'opacity="{opacidad}" {dash}/>'
+        )
 
-    # Generar nodos externos
     nodos_svg = ""
     for clave, (nx, ny) in nodos.items():
         nc = colores_nodos[clave]
         es_activo = clave == fase_actual
-        r_ext = "14" if es_activo else "10"
-        op = "1" if es_activo else "0.3"
-        nodos_svg += f'<circle cx="{nx}" cy="{ny}" r="{r_ext}" fill="{nc}" opacity="{op}">'
-        if es_activo:
-            nodos_svg += f'<animate attributeName="r" values="{r_ext};{int(r_ext)+3};{r_ext}" dur="2s" repeatCount="indefinite"/>'
-        nodos_svg += '</circle>'
-        # Ícono label
-        icono_fase = FASES_ETL[clave]["icono"]
-        nodos_svg += f'<text x="{nx}" y="{ny + 4}" text-anchor="middle" font-size="11" fill="white" opacity="{op}">{icono_fase}</text>'
+        r = "13" if es_activo else "9"
+        op = "1" if es_activo else "0.28"
+        label = FASES_ETL[clave]["icono"]
 
-    # Partículas animadas: fluyen desde el nodo activo al centro DWH
+        nodos_svg += f'<circle cx="{nx}" cy="{ny}" r="{r}" fill="{nc}" opacity="{op}">'
+        if es_activo:
+            nodos_svg += (
+                f'<animate attributeName="r" values="{r};{int(r)+3};{r}" '
+                f'dur="2.4s" repeatCount="indefinite"/>'
+            )
+        nodos_svg += "</circle>"
+        nodos_svg += (
+            f'<text x="{nx}" y="{ny + 4}" text-anchor="middle" '
+            f'font-size="10" fill="white" opacity="{op}">{label}</text>'
+        )
+
+    # Partículas: fluyen del nodo activo al hub DWH
     particulas_svg = ""
     if fase_actual in nodos:
         sx, sy = nodos[fase_actual]
-        # Crear múltiples partículas con diferente delay
-        for i, delay in enumerate(["0s", "0.7s", "1.4s"]):
-            particulas_svg += f'''
-<circle r="3.5" fill="{color}" opacity="0.9">
-<animate attributeName="cx" values="{sx};{cx}" dur="2.1s" begin="{delay}" repeatCount="indefinite"/>
-<animate attributeName="cy" values="{sy};{cy}" dur="2.1s" begin="{delay}" repeatCount="indefinite"/>
-<animate attributeName="opacity" values="0;0.9;0.9;0" dur="2.1s" begin="{delay}" repeatCount="indefinite"/>
-<animate attributeName="r" values="3.5;2;0.5" dur="2.1s" begin="{delay}" repeatCount="indefinite"/>
-</circle>'''
+        for delay in ("0s", "0.8s", "1.6s"):
+            particulas_svg += f"""
+<circle r="3" fill="{color}" opacity="0.85">
+  <animate attributeName="cx" values="{sx};{cx}" dur="2s" begin="{delay}" repeatCount="indefinite"/>
+  <animate attributeName="cy" values="{sy};{cy}" dur="2s" begin="{delay}" repeatCount="indefinite"/>
+  <animate attributeName="opacity" values="0;0.85;0.85;0" dur="2s" begin="{delay}" repeatCount="indefinite"/>
+  <animate attributeName="r" values="3;1.5;0.5" dur="2s" begin="{delay}" repeatCount="indefinite"/>
+</circle>"""
 
-    svg = f'''
-<svg viewBox="0 0 240 210" xmlns="http://www.w3.org/2000/svg">
-  <!-- Conexiones -->
+    # Anillo de pulso del hub
+    hub_pulse = (
+        f'<circle cx="{cx}" cy="{cy}" r="26" fill="{color}" opacity="0.08">'
+        f'<animate attributeName="r" values="26;31;26" dur="3s" repeatCount="indefinite"/>'
+        f'</circle>'
+    )
+
+    svg = f"""<svg viewBox="0 0 240 210" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
   {lineas_svg}
-
-  <!-- Core DWH Hub -->
-  <circle cx="{cx}" cy="{cy}" r="28" fill="{color}" opacity="0.12">
-    <animate attributeName="r" values="28;32;28" dur="3s" repeatCount="indefinite"/>
-  </circle>
-  <circle cx="{cx}" cy="{cy}" r="22" fill="{color}" opacity="0.25">
-    <animate attributeName="opacity" values="0.25;0.45;0.25" dur="2s" repeatCount="indefinite"/>
-  </circle>
-  <circle cx="{cx}" cy="{cy}" r="16" fill="{color}" opacity="0.7"/>
-  <text x="{cx}" y="{cy + 1}" text-anchor="middle" font-size="8" fill="white" font-weight="bold" font-family="Inter,sans-serif">DWH</text>
-  <text x="{cx}" y="{cy + 10}" text-anchor="middle" font-size="6.5" fill="white" opacity="0.7" font-family="Inter,sans-serif">{pct}%</text>
-
-  <!-- Nodos de fase -->
+  {hub_pulse}
+  <circle cx="{cx}" cy="{cy}" r="20" fill="{color}" opacity="0.18"/>
+  <circle cx="{cx}" cy="{cy}" r="14" fill="{color}" opacity="0.65"/>
+  <text x="{cx}" y="{cy+1}" text-anchor="middle" font-size="7.5"
+        fill="white" font-weight="700" font-family="Inter,sans-serif">DWH</text>
+  <text x="{cx}" y="{cy+11}" text-anchor="middle" font-size="6"
+        fill="white" opacity="0.65" font-family="Inter,sans-serif">{pct}%</text>
   {nodos_svg}
-
-  <!-- Partículas activas -->
   {particulas_svg}
-</svg>'''
+</svg>"""
 
-    return f'''
-<div class="neural-viz">
-{svg}
-<div class="neural-phase-label" style="color: {color};">{nombre}</div>
-</div>'''
+    return f"""
+<div style="
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:rgba(26,46,30,0.35); border:1px solid rgba(255,255,255,0.07);
+    border-radius:14px; padding:12px 10px 8px 10px; height:100%;
+">
+  <div style="width:100%; flex:1; min-height:160px;">{svg}</div>
+  <div style="
+      margin-top:6px; font-size:0.72rem; font-weight:700;
+      font-family:'JetBrains Mono',monospace; letter-spacing:0.5px;
+      color:{color}; opacity:0.9; text-align:center;
+  ">{icono} {nombre.upper()}</div>
+  <div style="
+      font-size:0.65rem; color:rgba(255,255,255,0.3);
+      font-family:'Inter',sans-serif; margin-top:2px;
+  ">Paso {paso_actual} de {total_pasos}</div>
+</div>"""
 
 
 def _generar_stepper_html(pasos: list[dict], paso_activo_idx: int) -> str:
@@ -514,10 +533,9 @@ def render():
 
     # —— Mostrar error de conectividad si el backend no respondio ————————————
     if error_carga:
-        st.warning(
-            f"⚠️ **Backend no disponible.** {error_carga}  \n"
-            "Verifica que el servidor FastAPI esté corriendo en `http://127.0.0.1:8000`.",
-            icon="📡",
+        banner_aviso(
+            f"<b>Backend no disponible.</b> {error_carga} "
+            f"Verifica que el servidor FastAPI esté corriendo en <code>{obtener_url_backend()}</code>."
         )
 
     total_ok = 0
@@ -561,14 +579,14 @@ def render():
     # Usar panel de métricas premium compacto (Zenith)
     crear_panel_metricas_premium(
         metricas=[
-            {"label": "Última carga", "value": ultima_carga, "color": "#F59E0B"},
-            {"label": "Filas OK", "value": f"{total_ok:,}", "color": "#10B981"},
-            {"label": "Rechazadas", "value": f"{total_rechaz:,}", "color": "#EF4444" if total_rechaz > 0 else "#94A3B8"},
-            {"label": "Con error", "value": str(tablas_con_error), "color": "#EF4444" if tablas_con_error > 0 else "#10B981"}
+            {"label": "Última carga",  "value": ultima_carga,           "color": GOLD_ACCENT},
+            {"label": "Filas OK",      "value": f"{total_ok:,}",        "color": EMERALD_ACCENT},
+            {"label": "Rechazadas",    "value": f"{total_rechaz:,}",    "color": "#EF4444" if total_rechaz > 0 else SLATE_400},
+            {"label": "Con error",     "value": str(tablas_con_error),  "color": "#EF4444" if tablas_con_error > 0 else EMERALD_ACCENT},
         ]
     )
 
-    st.markdown("### ⚡ Centro de Comando MDM")
+    st.markdown("### ⚡ Centro de Comando ETL")
     with st.container(border=True):
 
         c_up, c_run = st.columns([1.6, 1], gap="large")
@@ -606,28 +624,28 @@ def render():
                     st.session_state.pop("etl_estado_final", None)
                     st.rerun()
             else:
-                st.info("🔒 Sin permiso para ejecutar el pipeline.", icon="⚠️")
+                banner_aviso("🔒 Sin permiso para ejecutar el pipeline.")
 
-    # ── Monitor Neural en vivo ─────────────────────────────────────────────────
+    # ── Monitor de Ejecución ETL en vivo ──────────────────────────────────────
     if st.session_state.get("etl_en_ejecucion"):
         st.markdown("---")
-        st.markdown("### 🧠 Monitor de Ingesta Neural")
+        st.markdown("### ⚡ Monitor de Ejecución ETL")
 
         with st.container(border=True):
             col_info, col_cancel = st.columns([4, 1])
             with col_info:
-                st.caption("🟡  Pipeline activo — Los datos están fluyendo hacia el DWH.")
+                st.caption("🟡  Pipeline activo — datos fluyendo hacia el DWH.")
             with col_cancel:
                 if st.button("❌ Cancelar", key="btn_cancelar_etl"):
                     id_act = st.session_state.get("etl_id_corrida")
                     if id_act:
                         delete_api(f"/etl/corridas/{id_act}")
                     st.session_state["etl_en_ejecucion"] = False
-                    st.warning("Cancelación solicitada al runner.")
+                    banner_aviso("Cancelación solicitada al runner.")
                     st.rerun()
 
-            # Contenedores para actualización dinámica
-            progreso    = st.progress(0, text="Conectando con el runner...")
+            progreso         = st.progress(0, text="Conectando con el runner...")
+            monitor_slot     = st.empty()
             log_expander_box = st.empty()
 
             log_acum     = ""
@@ -637,7 +655,6 @@ def render():
             paso_num     = 0
             total_pasos  = 22
 
-            # POST para encolar la corrida
             resultado = post_api("/etl/corridas", {"comentario": "Portal Streamlit - Ejecución manual"})
             if not resultado.ok or not isinstance(resultado.data, dict):
                 mostrar_error_api(resultado, "No se pudo encolar el pipeline.")
@@ -649,6 +666,64 @@ def render():
             st.session_state["etl_id_corrida"] = id_corrida
             log_acum += f"[✓] Corrida encolada — ID: {id_corrida}\n"
 
+            # Layout monitor: nodos SVG (izq) + stepper (der)
+            col_viz, col_steps = monitor_slot.columns([2, 3], gap="medium")
+
+            for linea in stream_api(id_corrida):
+                log_acum += linea + "\n"
+
+                match = _RE_PASO.match(linea.strip())
+                if match:
+                    paso_num    = int(match.group(1))
+                    total_pasos = int(match.group(2))
+                    descripcion = match.group(3).strip()
+                    fase_actual = _detectar_fase(paso_num)
+                    hora_actual = datetime.now().strftime("%H:%M:%S")
+
+                    pasos_lista.append({
+                        "num": paso_num, "total": total_pasos,
+                        "desc": descripcion, "fase": fase_actual,
+                        "hora": hora_actual, "error": False,
+                    })
+
+                    pct = min(99, int((paso_num / max(total_pasos, 1)) * 100))
+                    progreso.progress(pct, text=f"Paso {paso_num}/{total_pasos} — {descripcion[:55]}")
+
+                    # Actualizar monitor SVG + stepper en cada paso
+                    col_viz, col_steps = monitor_slot.columns([2, 3], gap="medium")
+                    with col_viz:
+                        st.markdown(
+                            _generar_monitor_etl_html(fase_actual, paso_num, total_pasos),
+                            unsafe_allow_html=True,
+                        )
+                    with col_steps:
+                        st.markdown(
+                            _generar_stepper_html(pasos_lista, len(pasos_lista) - 1),
+                            unsafe_allow_html=True,
+                        )
+
+                linea_lower = linea.lower().strip()
+                if "[FIN]" in linea and "éxito" in linea_lower:
+                    estado_final = "OK"
+                elif "error" in linea_lower and paso_num > 0:
+                    estado_final = "ERROR"
+                    if pasos_lista:
+                        pasos_lista[-1]["error"] = True
+                elif "[TIMEOUT]" in linea:
+                    estado_final = "TIMEOUT"
+
+                with log_expander_box.container():
+                    with st.expander("🔧 Log técnico", expanded=False):
+                        st.code(log_acum[-3000:], language="bash")
+
+            progreso.progress(100, text="✅ Pipeline finalizado.")
+            st.session_state["etl_en_ejecucion"] = False
+            st.session_state["etl_log"]          = log_acum
+            st.session_state["etl_estado_final"] = estado_final
+            st.session_state["etl_pasos_lista"]  = pasos_lista
+            st.session_state["etl_fase_actual"]  = fase_actual
+            st.session_state["etl_paso_num"]     = paso_num
+            st.session_state["etl_total_pasos"]  = total_pasos
             token_jwt = st.session_state.get("jwt_token", "")
             
             # Renderizar estado inicial del monitor canvas UNA VEZ
@@ -739,20 +814,21 @@ def render():
         elif estado_final_guardado == "ERROR":
             st.error("❌ El pipeline terminó con errores. Revisa el log.", icon="🚨")
         else:
-            st.warning(f"⚠️ Pipeline finalizó con estado: {estado_final_guardado}")
+            banner_aviso(f"Pipeline finalizó con estado: <b>{estado_final_guardado}</b>")
 
-        # Renderizar monitor congelado (canvas) si hubo visualización
         if pasos_guardados:
-            st.markdown("### 🧠 Monitor de Ingesta Neural (Finalizado)")
-            js_role_fase = FASES_ETL.get(fase_guardada, FASES_ETL["silver"])["js_role"]
-            with st.expander("👁️ Ocultar / Mostrar Animación Neural", expanded=True):
-                components.html(
-                    _generar_monitor_canvas("", "", js_role_fase),
-                    height=420,
-                    scrolling=False,
+            st.markdown("#### Resumen de ejecución")
+            col_viz, col_steps = st.columns([2, 3], gap="medium")
+            with col_viz:
+                st.markdown(
+                    _generar_monitor_etl_html(fase_guardada, paso_guardado, total_guardado),
+                    unsafe_allow_html=True,
                 )
-            st.markdown("**Pasos ejecutados:**")
-            st.markdown(_generar_stepper_html(pasos_guardados, len(pasos_guardados)), unsafe_allow_html=True)
+            with col_steps:
+                st.markdown(
+                    _generar_stepper_html(pasos_guardados, len(pasos_guardados)),
+                    unsafe_allow_html=True,
+                )
 
         if log_guardado:
             with st.expander("🔧 Ver log técnico crudo", expanded=False):
@@ -765,10 +841,13 @@ def render():
                 key="btn_descargar_log",
             )
     
-    st.markdown("<hr style='margin: 32px 0;'>", unsafe_allow_html=True)
+    st.divider()
 
     if not conectado or df_estado.empty:
-        st.info("No hay registros recientes.")
+        estado_vacio_html(
+            "📋", "Sin corridas recientes",
+            "No se encontraron corridas ETL. Ejecuta el pipeline para ver el historial aquí.",
+        )
     else:
         seccion_tabla_con_guardar(
             df_estado,
