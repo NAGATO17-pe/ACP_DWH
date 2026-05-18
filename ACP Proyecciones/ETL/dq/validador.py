@@ -78,7 +78,7 @@ def validar_fecha(valor: str | None,
         )
         return fecha, _error(
             nombre_columna, valor,
-            'Fecha fuera del rango de campaña (2025-06-01 → 2026-06-30)',
+            'Fecha fuera del rango de campana (2025-06-01 -> 2026-06-30)',
             'ALTO'
         )
     return fecha, None
@@ -105,7 +105,7 @@ def validar_peso_baya(valor: str | None, config: dict | None = None) -> tuple[fl
     if not (min_val <= peso <= max_val):
         return None, _error(
             'Peso_Baya_g', valor,
-            f'Peso fuera de rango biológico {min_val}–{max_val}g (recibido: {peso})',
+            f'Peso fuera de rango biologico {min_val}-{max_val}g (recibido: {peso})',
             'CRITICO'
         )
     return peso, None
@@ -180,7 +180,7 @@ def normalizar_humedad(valor: str | None) -> tuple[float | None, dict | None]:
     if not (0 <= humedad <= 100):
         return None, _error(
             'Humedad_Relativa_Pct', valor,
-            f'Humedad fuera de rango 0–100 (recibido: {humedad})',
+            f'Humedad fuera de rango 0-100 (recibido: {humedad})',
             'ALTO'
         )
     return humedad, None

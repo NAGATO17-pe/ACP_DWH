@@ -15,7 +15,7 @@ from datetime import datetime
 
 from sqlalchemy import text
 
-from config.conexion import verificar_conexion, obtener_engine
+from config.conexion import limpiar_sesiones_huerfanas, verificar_conexion, obtener_engine
 from config.parametros import (
     limpiar_cache as limpiar_params,
     obtener_int as obtener_param_int,
@@ -36,12 +36,11 @@ from silver.facts.fact_telemetria_clima import cargar_fact_telemetria_clima
 from silver.facts.fact_evaluacion_pesos import cargar_fact_evaluacion_pesos
 from silver.facts.fact_tareo import cargar_fact_tareo
 from silver.facts.fact_fisiologia import cargar_fact_fisiologia
-from silver.facts.fact_evaluacion_vegetativa import cargar_fact_evaluacion_vegetativa
+from silver.facts.fact_floracion import cargar_fact_floracion
 from silver.facts.fact_induccion_floral import cargar_fact_induccion_floral
 from silver.facts.fact_tasa_crecimiento_brotes import cargar_fact_tasa_crecimiento_brotes
 from silver.facts.fact_sanidad_activo import cargar_fact_sanidad_activo
 from silver.facts.fact_ciclo_poda import cargar_fact_ciclo_poda
-from silver.facts.fact_sixweek import cargar_fact_sixweek
 
 from gold.marts import refrescar_marts_seleccionados, refrescar_todos_los_marts
 from auditoria.log import registrar_inicio, registrar_fin
@@ -146,12 +145,11 @@ CATALOGO_FACTS = construir_catalogo_facts({
     'Fact_Evaluacion_Pesos':      cargar_fact_evaluacion_pesos,
     'Fact_Tareo':                 cargar_fact_tareo,
     'Fact_Fisiologia':            cargar_fact_fisiologia,
-    'Fact_Evaluacion_Vegetativa': cargar_fact_evaluacion_vegetativa,
+    'Fact_Floracion':             cargar_fact_floracion,
     'Fact_Induccion_Floral':      cargar_fact_induccion_floral,
     'Fact_Tasa_Crecimiento_Brotes': cargar_fact_tasa_crecimiento_brotes,
     'Fact_Sanidad_Activo':        cargar_fact_sanidad_activo,
     'Fact_Ciclo_Poda':            cargar_fact_ciclo_poda,
-    'Fact_Proyecciones_SixWeek':  cargar_fact_sixweek,
 })
 
 
@@ -524,21 +522,26 @@ def _ejecutar_fact(nombre: str, tabla_destino: str, funcion, engine, resumen: di
         _imprimir(f'  CIRCUIT BREAKER CRITICO en {nombre}: {error}')
         resumen[f'{nombre} CIRCUIT_BREAKER'] = str(error)
         registrar_fin(id_log, {
-            'estado': 'CIRCUIT_BREAKER_CRITICO',
+            'estado': 'CB_CRITICO',  # Auditoria.Log_Carga.Estado_Proceso VARCHAR(20)
             'filas': 0,
             'rechazadas': r.get('rechazados', 0),
             'mensaje': str(error),
         })
         raise
     except Exception as error:
-        mensaje_error = f'{nombre}: {error}'
+        # Algunas excepciones (pyodbc, SQLAlchemy) tienen str(error) vacio.
+        # Incluir tipo + traceback en log para no perder pista.
+        import traceback as _tb
+        descripcion = str(error) or type(error).__name__
+        mensaje_error = f'{nombre}: {descripcion}'
         _imprimir(f'  ERROR en {mensaje_error}')
-        resumen[f'{nombre} ERROR'] = str(error)
+        _imprimir(_tb.format_exc())
+        resumen[f'{nombre} ERROR'] = descripcion
         registrar_fin(id_log, {
             'estado': 'ERROR',
             'filas': 0,
             'rechazadas': r.get('rechazados', 0),
-            'mensaje': str(error),
+            'mensaje': descripcion,
         })
         return mensaje_error
 
@@ -580,6 +583,7 @@ def ejecutar_reproceso_facts(
     if not verificar_conexion():
         _imprimir('Sin conexion. Pipeline detenido.')
         sys.exit(1)
+    limpiar_sesiones_huerfanas()
     contexto_sql = _obtener_contexto_sql(engine)
     resumen['Servidor SQL'] = contexto_sql.get('servidor')
     resumen['Base SQL'] = contexto_sql.get('base_datos')
@@ -647,7 +651,7 @@ def ejecutar_reproceso_facts(
 def ejecutar() -> None:
     inicio = _encabezado()
     engine = obtener_engine()
-    total = 25
+    total = 23
     resumen = {}
     errores_pipeline: list[str] = []
     facts_con_error: list[str] = []
@@ -656,6 +660,7 @@ def ejecutar() -> None:
     if not verificar_conexion():
         _imprimir('Sin conexion. Pipeline detenido.')
         sys.exit(1)
+    limpiar_sesiones_huerfanas()
     contexto_sql = _obtener_contexto_sql(engine)
     resumen['Servidor SQL'] = contexto_sql.get('servidor')
     resumen['Base SQL'] = contexto_sql.get('base_datos')
@@ -781,10 +786,10 @@ def ejecutar() -> None:
                 # No detenemos el pipeline, pero los siguientes hechos podrían fallar/rechazar
 
     if _gold_debe_bloquearse(facts_con_error, config_operativa['facts_bloqueantes_gold']):
-        _paso(23, total, 'Omitiendo Marts Gold por errores previos...')
+        _paso(22, total, 'Omitiendo Marts Gold por errores previos...')
         resumen['Gold estado'] = 'OMITIDO_POR_ERROR_EN_FACTS'
     else:
-        _paso(23, total, 'Refrescando Marts Gold...')
+        _paso(22, total, 'Refrescando Marts Gold...')
         try:
             resumen_marts = refrescar_todos_los_marts(engine, resumen_etl=resumen, facts_bloqueantes=frozenset(config_operativa['facts_bloqueantes_gold']))
             for mart, valor in resumen_marts.items():
@@ -795,7 +800,7 @@ def ejecutar() -> None:
             resumen['Gold ERROR'] = str(error)
             errores_pipeline.append(mensaje_error)
 
-    _paso(24, total, 'Finalizando...')
+    _paso(23, total, 'Finalizando...')
     if errores_pipeline:
         _registrar_errores_resumen(resumen, errores_pipeline)
     _resumen_final(inicio, resumen)

@@ -1,0 +1,17 @@
+{"timestamp": "2026-05-18 09:38:08,743", "level": "INFO", "service": "acp-etl", "message": "DWH Geographic Phenology - ETL Pipeline"}
+{"timestamp": "2026-05-18 09:38:08,743", "level": "INFO", "service": "acp-etl", "message": "Inicio: 2026-05-18 09:38:08"}
+{"timestamp": "2026-05-18 09:38:08,768", "level": "INFO", "service": "acp-etl", "message": "[01/25] Verificando conexion SQL Server..."}
+{"timestamp": "2026-05-18 09:38:16,941", "level": "INFO", "service": "acp-etl", "message": "[02/25] Verificando esquema de objetos criticos en DB..."}
+{"timestamp": "2026-05-18 09:38:16,962", "level": "INFO", "service": "acp-etl", "message": "[03/25] Limpiando cache..."}
+{"timestamp": "2026-05-18 09:38:17,012", "level": "INFO", "service": "acp-etl", "message": "[04/25] Cargando archivos Excel a Bronce..."}
+{"timestamp": "2026-05-18 09:38:17,020", "level": "INFO", "service": "acp-etl", "message": "Bronce: sin archivos pendientes."}
+{"timestamp": "2026-05-18 09:38:17,020", "level": "INFO", "service": "acp-etl", "message": "[05/25] Cargando Dim_Personal (SCD1)..."}
+{"timestamp": "2026-05-18 09:38:17,041", "level": "INFO", "service": "acp-etl", "message": "[06/25] Sincronizando Dim_Geografia (arquitectura catálogos)..."}
+{"timestamp": "2026-05-18 09:38:17,045", "level": "INFO", "service": "acp-etl", "message": "INFO: Silver.Dim_Geografia_Obsoleta ausente. Se asume migración completa y catálogos estables."}
+{"timestamp": "2026-05-18 09:38:17,046", "level": "INFO", "service": "acp-etl", "message": "[07/25] Sincronizando catalogo/bridge de cama via SP..."}
+{"timestamp": "2026-05-18 09:38:17,046", "level": "INFO", "service": "acp-etl", "message": "SP_Cama omitido: no ingresaron tablas Bronce con cama en esta corrida."}
+{"timestamp": "2026-05-18 09:38:17,046", "level": "INFO", "service": "acp-etl", "message": "[08/25] Validando calidad de cama via SP..."}
+{"timestamp": "2026-05-18 09:38:17,048", "level": "INFO", "service": "acp-etl", "message": "[09/25] Cargando Fact_Ciclo_Poda..."}
+{"timestamp": "2026-05-18 09:38:17,146", "level": "INFO", "service": "acp-etl", "message": "  Homologando columna 'Variedad_Raw' via MDM..."}
+{"timestamp": "2026-05-18 09:38:25,290", "level": "INFO", "service": "acp-etl", "message": "  Registrando 5 resoluciones únicas en el diccionario..."}
+{"timestamp": "2026-05-18 09:38:25,300", "level": "INFO", "service": "acp-etl", "message": "Deduplicación temprana: 1230 IDs marcados para descarte (redundantes)."}

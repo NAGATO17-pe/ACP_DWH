@@ -1,0 +1,136 @@
+{"timestamp": "2026-05-18 11:00:19,494", "level": "INFO", "service": "acp-etl", "message": "DWH Geographic Phenology - ETL Pipeline"}
+{"timestamp": "2026-05-18 11:00:19,495", "level": "INFO", "service": "acp-etl", "message": "Inicio: 2026-05-18 11:00:19"}
+{"timestamp": "2026-05-18 11:00:19,528", "level": "INFO", "service": "acp-etl", "message": "[01/23] Verificando conexion SQL Server..."}
+{"timestamp": "2026-05-18 11:00:27,733", "level": "INFO", "service": "acp-etl", "message": "[02/23] Verificando esquema de objetos criticos en DB..."}
+{"timestamp": "2026-05-18 11:00:27,737", "level": "INFO", "service": "acp-etl", "message": "[03/23] Limpiando cache..."}
+{"timestamp": "2026-05-18 11:00:27,739", "level": "INFO", "service": "acp-etl", "message": "[04/23] Cargando archivos Excel a Bronce..."}
+{"timestamp": "2026-05-18 11:00:27,743", "level": "INFO", "service": "acp-etl", "message": "Bronce: sin archivos pendientes."}
+{"timestamp": "2026-05-18 11:00:27,743", "level": "INFO", "service": "acp-etl", "message": "[05/23] Cargando Dim_Personal (SCD1)..."}
+{"timestamp": "2026-05-18 11:00:27,761", "level": "INFO", "service": "acp-etl", "message": "[06/23] Sincronizando Dim_Geografia (arquitectura catálogos)..."}
+{"timestamp": "2026-05-18 11:00:27,763", "level": "INFO", "service": "acp-etl", "message": "INFO: Silver.Dim_Geografia_Obsoleta ausente. Se asume migración completa y catálogos estables."}
+{"timestamp": "2026-05-18 11:00:27,763", "level": "INFO", "service": "acp-etl", "message": "[07/23] Sincronizando catalogo/bridge de cama via SP..."}
+{"timestamp": "2026-05-18 11:00:27,763", "level": "INFO", "service": "acp-etl", "message": "SP_Cama omitido: no ingresaron tablas Bronce con cama en esta corrida."}
+{"timestamp": "2026-05-18 11:00:27,763", "level": "INFO", "service": "acp-etl", "message": "[08/23] Validando calidad de cama via SP..."}
+{"timestamp": "2026-05-18 11:00:27,765", "level": "INFO", "service": "acp-etl", "message": "[09/23] Cargando Fact_Ciclo_Poda..."}
+{"timestamp": "2026-05-18 11:00:27,784", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 11:00:27,786", "level": "INFO", "service": "acp-etl", "message": "[10/23] Sincronizando bridge de campanas via SP..."}
+{"timestamp": "2026-05-18 11:00:27,791", "level": "INFO", "service": "acp-etl", "message": "[10/23] Cargando Fact_Cosecha_SAP..."}
+{"timestamp": "2026-05-18 11:00:27,797", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 11:00:27,799", "level": "INFO", "service": "acp-etl", "message": "[11/23] Cargando Fact_Conteo_Fenologico..."}
+{"timestamp": "2026-05-18 11:00:27,806", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 11:00:27,808", "level": "INFO", "service": "acp-etl", "message": "[12/23] Cargando Fact_Maduracion..."}
+{"timestamp": "2026-05-18 11:00:27,812", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 11:00:27,813", "level": "INFO", "service": "acp-etl", "message": "[13/23] Cargando Fact_Peladas..."}
+{"timestamp": "2026-05-18 11:00:27,817", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 11:00:27,819", "level": "INFO", "service": "acp-etl", "message": "[14/23] Cargando Fact_Telemetria_Clima..."}
+{"timestamp": "2026-05-18 11:00:27,826", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 11:00:27,828", "level": "INFO", "service": "acp-etl", "message": "[15/23] Cargando Fact_Evaluacion_Pesos..."}
+{"timestamp": "2026-05-18 11:00:27,836", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 11:00:27,838", "level": "INFO", "service": "acp-etl", "message": "[16/23] Cargando Fact_Tareo..."}
+{"timestamp": "2026-05-18 11:00:27,842", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 11:00:27,843", "level": "INFO", "service": "acp-etl", "message": "[17/23] Cargando Fact_Fisiologia..."}
+{"timestamp": "2026-05-18 11:00:27,847", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 11:00:27,849", "level": "INFO", "service": "acp-etl", "message": "[18/23] Cargando Fact_Floracion..."}
+{"timestamp": "2026-05-18 11:00:27,859", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 11:00:27,861", "level": "INFO", "service": "acp-etl", "message": "[19/23] Cargando Fact_Induccion_Floral..."}
+{"timestamp": "2026-05-18 11:00:27,865", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 11:00:27,867", "level": "INFO", "service": "acp-etl", "message": "[20/23] Cargando Fact_Tasa_Crecimiento_Brotes..."}
+{"timestamp": "2026-05-18 11:00:27,871", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 11:00:27,873", "level": "INFO", "service": "acp-etl", "message": "[21/23] Cargando Fact_Sanidad_Activo..."}
+{"timestamp": "2026-05-18 11:00:27,876", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 11:00:27,878", "level": "INFO", "service": "acp-etl", "message": "[22/23] Refrescando Marts Gold..."}
+{"timestamp": "2026-05-18 11:00:27,883", "level": "INFO", "service": "acp-etl", "message": "[OK] Gold.Mart_Cosecha: 0 filas"}
+{"timestamp": "2026-05-18 11:00:27,884", "level": "INFO", "service": "acp-etl", "message": "[OK] Gold.Mart_Proyecciones: 0 filas"}
+{"timestamp": "2026-05-18 11:00:28,191", "level": "INFO", "service": "acp-etl", "message": "[OK] Gold.Mart_Fenologia: 3663 filas"}
+{"timestamp": "2026-05-18 11:00:28,197", "level": "INFO", "service": "acp-etl", "message": "[OK] Gold.Mart_Clima: 0 filas"}
+{"timestamp": "2026-05-18 11:00:28,308", "level": "INFO", "service": "acp-etl", "message": "[OK] Gold.Mart_Pesos_Calibres: 1446 filas"}
+{"timestamp": "2026-05-18 11:00:28,327", "level": "INFO", "service": "acp-etl", "message": "[OK] Gold.Mart_Administrativo: 0 filas"}
+{"timestamp": "2026-05-18 11:00:28,349", "level": "INFO", "service": "acp-etl", "message": "[OK] Gold.Mart_Fisiologia: 0 filas"}
+{"timestamp": "2026-05-18 11:00:28,660", "level": "INFO", "service": "acp-etl", "message": "[OK] Gold.Mart_Evaluacion_Vegetativa: 23038 filas"}
+{"timestamp": "2026-05-18 11:00:28,689", "level": "INFO", "service": "acp-etl", "message": "[OK] Gold.Mart_Maduracion: 0 filas"}
+{"timestamp": "2026-05-18 11:00:28,717", "level": "INFO", "service": "acp-etl", "message": "[OK] Gold.Mart_Tasa_Crecimiento: 0 filas"}
+{"timestamp": "2026-05-18 11:00:28,739", "level": "INFO", "service": "acp-etl", "message": "[OK] Gold.Mart_Induccion_Floral: 0 filas"}
+{"timestamp": "2026-05-18 11:00:28,741", "level": "INFO", "service": "acp-etl", "message": "[OK] Gold.Mart_Ciclo_Poda: 10 filas"}
+{"timestamp": "2026-05-18 11:00:28,764", "level": "INFO", "service": "acp-etl", "message": "[OK] Gold.Mart_Peladas: 0 filas"}
+{"timestamp": "2026-05-18 11:00:28,775", "level": "INFO", "service": "acp-etl", "message": "[23/23] Finalizando..."}
+{"timestamp": "2026-05-18 11:00:28,776", "level": "INFO", "service": "acp-etl", "message": "RESUMEN FINAL"}
+{"timestamp": "2026-05-18 11:00:28,776", "level": "INFO", "service": "acp-etl", "message": "Servidor SQL                                  LCP-PAG-CHERNAN"}
+{"timestamp": "2026-05-18 11:00:28,776", "level": "INFO", "service": "acp-etl", "message": "Base SQL                                      ACP_DataWarehose_Proyecciones"}
+{"timestamp": "2026-05-18 11:00:28,776", "level": "INFO", "service": "acp-etl", "message": "Bronce archivos                               0"}
+{"timestamp": "2026-05-18 11:00:28,776", "level": "INFO", "service": "acp-etl", "message": "Bronce filas                                  0"}
+{"timestamp": "2026-05-18 11:00:28,776", "level": "INFO", "service": "acp-etl", "message": "Dim_Personal insertados                       0"}
+{"timestamp": "2026-05-18 11:00:28,776", "level": "INFO", "service": "acp-etl", "message": "Dim_Personal actualizados                     0"}
+{"timestamp": "2026-05-18 11:00:28,776", "level": "INFO", "service": "acp-etl", "message": "Dim_Geografia insertados                      0"}
+{"timestamp": "2026-05-18 11:00:28,776", "level": "INFO", "service": "acp-etl", "message": "Dim_Geografia cerrados                        0"}
+{"timestamp": "2026-05-18 11:00:28,776", "level": "INFO", "service": "acp-etl", "message": "Dim_Geografia sin_cambios                     0"}
+{"timestamp": "2026-05-18 11:00:28,776", "level": "INFO", "service": "acp-etl", "message": "SP_Cama estado                                OMITIDO_SIN_TABLAS_CON_CAMA_EN_ESTA_CORRIDA"}
+{"timestamp": "2026-05-18 11:00:28,776", "level": "INFO", "service": "acp-etl", "message": "SP_Cama fuera regla                           1"}
+{"timestamp": "2026-05-18 11:00:28,776", "level": "INFO", "service": "acp-etl", "message": "SP_Cama geo saturadas                         0"}
+{"timestamp": "2026-05-18 11:00:28,776", "level": "INFO", "service": "acp-etl", "message": "SP_Cama estado calidad                        REVISAR_PUNTUAL"}
+{"timestamp": "2026-05-18 11:00:28,776", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda                               0"}
+{"timestamp": "2026-05-18 11:00:28,776", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda leidos                        0"}
+{"timestamp": "2026-05-18 11:00:28,776", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda rechazados                    0"}
+{"timestamp": "2026-05-18 11:00:28,776", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda rechazo pct                   0.0%"}
+{"timestamp": "2026-05-18 11:00:28,777", "level": "INFO", "service": "acp-etl", "message": "SP_Campanas_Sync                              OK"}
+{"timestamp": "2026-05-18 11:00:28,777", "level": "INFO", "service": "acp-etl", "message": "Fact_Cosecha_SAP                              0"}
+{"timestamp": "2026-05-18 11:00:28,777", "level": "INFO", "service": "acp-etl", "message": "Fact_Cosecha_SAP leidos                       0"}
+{"timestamp": "2026-05-18 11:00:28,777", "level": "INFO", "service": "acp-etl", "message": "Fact_Cosecha_SAP rechazados                   0"}
+{"timestamp": "2026-05-18 11:00:28,777", "level": "INFO", "service": "acp-etl", "message": "Fact_Cosecha_SAP rechazo pct                  0.0%"}
+{"timestamp": "2026-05-18 11:00:28,777", "level": "INFO", "service": "acp-etl", "message": "Fact_Conteo_Fenologico                        0"}
+{"timestamp": "2026-05-18 11:00:28,777", "level": "INFO", "service": "acp-etl", "message": "Fact_Conteo_Fenologico leidos                 0"}
+{"timestamp": "2026-05-18 11:00:28,777", "level": "INFO", "service": "acp-etl", "message": "Fact_Conteo_Fenologico rechazados             0"}
+{"timestamp": "2026-05-18 11:00:28,777", "level": "INFO", "service": "acp-etl", "message": "Fact_Conteo_Fenologico rechazo pct            0.0%"}
+{"timestamp": "2026-05-18 11:00:28,777", "level": "INFO", "service": "acp-etl", "message": "Fact_Maduracion                               0"}
+{"timestamp": "2026-05-18 11:00:28,777", "level": "INFO", "service": "acp-etl", "message": "Fact_Maduracion leidos                        0"}
+{"timestamp": "2026-05-18 11:00:28,777", "level": "INFO", "service": "acp-etl", "message": "Fact_Maduracion rechazados                    0"}
+{"timestamp": "2026-05-18 11:00:28,777", "level": "INFO", "service": "acp-etl", "message": "Fact_Maduracion rechazo pct                   0.0%"}
+{"timestamp": "2026-05-18 11:00:28,777", "level": "INFO", "service": "acp-etl", "message": "Fact_Peladas                                  0"}
+{"timestamp": "2026-05-18 11:00:28,777", "level": "INFO", "service": "acp-etl", "message": "Fact_Peladas leidos                           0"}
+{"timestamp": "2026-05-18 11:00:28,777", "level": "INFO", "service": "acp-etl", "message": "Fact_Peladas rechazados                       0"}
+{"timestamp": "2026-05-18 11:00:28,778", "level": "INFO", "service": "acp-etl", "message": "Fact_Peladas rechazo pct                      0.0%"}
+{"timestamp": "2026-05-18 11:00:28,778", "level": "INFO", "service": "acp-etl", "message": "Fact_Telemetria_Clima                         0"}
+{"timestamp": "2026-05-18 11:00:28,778", "level": "INFO", "service": "acp-etl", "message": "Fact_Telemetria_Clima leidos                  0"}
+{"timestamp": "2026-05-18 11:00:28,778", "level": "INFO", "service": "acp-etl", "message": "Fact_Telemetria_Clima rechazados              0"}
+{"timestamp": "2026-05-18 11:00:28,778", "level": "INFO", "service": "acp-etl", "message": "Fact_Telemetria_Clima rechazo pct             0.0%"}
+{"timestamp": "2026-05-18 11:00:28,778", "level": "INFO", "service": "acp-etl", "message": "Fact_Evaluacion_Pesos                         0"}
+{"timestamp": "2026-05-18 11:00:28,778", "level": "INFO", "service": "acp-etl", "message": "Fact_Evaluacion_Pesos leidos                  0"}
+{"timestamp": "2026-05-18 11:00:28,778", "level": "INFO", "service": "acp-etl", "message": "Fact_Evaluacion_Pesos rechazados              0"}
+{"timestamp": "2026-05-18 11:00:28,779", "level": "INFO", "service": "acp-etl", "message": "Fact_Evaluacion_Pesos rechazo pct             0.0%"}
+{"timestamp": "2026-05-18 11:00:28,779", "level": "INFO", "service": "acp-etl", "message": "Fact_Tareo                                    0"}
+{"timestamp": "2026-05-18 11:00:28,779", "level": "INFO", "service": "acp-etl", "message": "Fact_Tareo leidos                             0"}
+{"timestamp": "2026-05-18 11:00:28,779", "level": "INFO", "service": "acp-etl", "message": "Fact_Tareo rechazados                         0"}
+{"timestamp": "2026-05-18 11:00:28,779", "level": "INFO", "service": "acp-etl", "message": "Fact_Tareo rechazo pct                        0.0%"}
+{"timestamp": "2026-05-18 11:00:28,779", "level": "INFO", "service": "acp-etl", "message": "Fact_Fisiologia                               0"}
+{"timestamp": "2026-05-18 11:00:28,779", "level": "INFO", "service": "acp-etl", "message": "Fact_Fisiologia leidos                        0"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Fact_Fisiologia rechazados                    0"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Fact_Fisiologia rechazo pct                   0.0%"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Fact_Floracion                                0"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Fact_Floracion leidos                         0"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Fact_Floracion rechazados                     0"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Fact_Floracion rechazo pct                    0.0%"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Fact_Induccion_Floral                         0"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Fact_Induccion_Floral leidos                  0"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Fact_Induccion_Floral rechazados              0"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Fact_Induccion_Floral rechazo pct             0.0%"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Fact_Tasa_Crecimiento_Brotes                  0"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Fact_Tasa_Crecimiento_Brotes leidos           0"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Fact_Tasa_Crecimiento_Brotes rechazados       0"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Fact_Tasa_Crecimiento_Brotes rechazo pct      0.0%"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Fact_Sanidad_Activo                           0"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Fact_Sanidad_Activo leidos                    0"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Fact_Sanidad_Activo rechazados                0"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Fact_Sanidad_Activo rechazo pct               0.0%"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Gold.Mart_Cosecha                             0"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Gold.Mart_Proyecciones                        0"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Gold.Mart_Fenologia                           3663"}
+{"timestamp": "2026-05-18 11:00:28,780", "level": "INFO", "service": "acp-etl", "message": "Gold.Mart_Clima                               0"}
+{"timestamp": "2026-05-18 11:00:28,781", "level": "INFO", "service": "acp-etl", "message": "Gold.Mart_Pesos_Calibres                      1446"}
+{"timestamp": "2026-05-18 11:00:28,781", "level": "INFO", "service": "acp-etl", "message": "Gold.Mart_Administrativo                      0"}
+{"timestamp": "2026-05-18 11:00:28,781", "level": "INFO", "service": "acp-etl", "message": "Gold.Mart_Fisiologia                          0"}
+{"timestamp": "2026-05-18 11:00:28,781", "level": "INFO", "service": "acp-etl", "message": "Gold.Mart_Evaluacion_Vegetativa               23038"}
+{"timestamp": "2026-05-18 11:00:28,781", "level": "INFO", "service": "acp-etl", "message": "Gold.Mart_Maduracion                          0"}
+{"timestamp": "2026-05-18 11:00:28,781", "level": "INFO", "service": "acp-etl", "message": "Gold.Mart_Tasa_Crecimiento                    0"}
+{"timestamp": "2026-05-18 11:00:28,781", "level": "INFO", "service": "acp-etl", "message": "Gold.Mart_Induccion_Floral                    0"}
+{"timestamp": "2026-05-18 11:00:28,781", "level": "INFO", "service": "acp-etl", "message": "Gold.Mart_Ciclo_Poda                          10"}
+{"timestamp": "2026-05-18 11:00:28,781", "level": "INFO", "service": "acp-etl", "message": "Gold.Mart_Peladas                             0"}
+{"timestamp": "2026-05-18 11:00:28,781", "level": "INFO", "service": "acp-etl", "message": "Duracion total                                9.28s"}

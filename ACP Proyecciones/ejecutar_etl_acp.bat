@@ -47,11 +47,18 @@ if not exist "%PIPELINE_SCRIPT%" (
     goto :fin
 )
 
-:: --- Ejecutar pipeline y guardar log simultaneamente via script Python auxiliar ---
-:: Se usa un helper Python inline que hace tee real (consola + archivo) sin perder el exit code
+:: --- Ejecutar pipeline y guardar log simultaneamente via PowerShell Tee-Object ---
+:: Captura stdout + stderr y los duplica a consola y archivo. Mantiene el exit
+:: code real de Python (sin esto, tracebacks de Python y stderr se perdian).
 pushd "%ETL_DIR%"
 
-"%PYTHON_EXE%" "%PIPELINE_SCRIPT%" %*
+echo. >> "%LOG_FILE%"
+echo ============================================================ >> "%LOG_FILE%"
+echo   ETL ACP DWH - inicio %date% %time% >> "%LOG_FILE%"
+echo ============================================================ >> "%LOG_FILE%"
+
+powershell -NoProfile -Command ^
+    "$OutputEncoding = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8; & '%PYTHON_EXE%' '%PIPELINE_SCRIPT%' %* 2>&1 | Tee-Object -FilePath '%LOG_FILE%' -Append; exit $LASTEXITCODE"
 set "EXIT_CODE=!ERRORLEVEL!"
 
 popd

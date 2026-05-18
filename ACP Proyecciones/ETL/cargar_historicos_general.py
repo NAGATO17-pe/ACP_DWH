@@ -18,7 +18,7 @@ from mdm.homologador import homologar_columna
 
 # Importar Procesadores Oficiales
 from silver.facts.fact_conteo_fenologico import ProcesadorConteoFenologico
-from silver.facts.fact_evaluacion_vegetativa import ProcesadorEvaluacionVegetativa
+from silver.facts.fact_floracion import ProcesadorFloracion as ProcesadorEvaluacionVegetativa
 from silver.facts.fact_evaluacion_pesos import ProcesadorEvaluacionPesos
 from silver.facts.fact_cosecha_sap import ProcesadorCosechaSAP
 
@@ -131,9 +131,13 @@ if __name__ == "__main__":
     base_path = r'D:\Proyecto2026\ACP_DWH\ACP Proyecciones\ETL\data\Data Historica'
     
     feno_pack = [
-        'Botones_Florales_Raw', 'Flores_Raw', 'Bayas_Pequenas_Raw', 
-        'Bayas_Grandes_Verdes_Raw', 'Fase1_Raw', 'Fase2_Raw', 
-        'Bayas_Cremas_Raw', 'Bayas_Maduras_Raw', 'Bayas_Cosechables_Raw'
+        'Botones_Florales_Raw', 'Flores_Raw', 'Bayas_Pequenas_Raw',
+        'Bayas_Grandes_Verdes_Raw', 'Fase1_Raw', 'Fase2_Raw',
+        'Bayas_Cremas_Raw', 'Bayas_Maduras_Raw', 'Bayas_Cosechables_Raw',
+        # Yema Hinchada: Excel normaliza "Yema Hinchada" → "Yema_Hinchada_Raw"
+        'Yema_Hinchada_Raw',
+        # Plantas: presentes en hojas de campo más recientes
+        'PlantasProductivas_Raw', 'PlantasNoProductivas_Raw',
     ]
     
     tareas = [
@@ -160,7 +164,7 @@ if __name__ == "__main__":
             'nombre': 'Vegetativa',
             'archivo': 'fact_Evaluacion_vegetativa.xlsx',
             'proc_init': lambda eng, cid: ProcesadorEvaluacionVegetativa(eng, cid),
-            'bronce': 'Bronce.Evaluacion_Vegetativa',
+            'bronce': 'Bronce.Floracion',
             'map': {
                 'Evaluaci_n_Raw': 'Evaluacion_Raw',
                 'N_de_cama_Raw': 'Cama_Raw',

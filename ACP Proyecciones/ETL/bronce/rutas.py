@@ -30,7 +30,7 @@ RUTAS: dict[str, str] = {
     'ciclos_fenologicos':        'Bronce.Ciclos_Fenologicos',
     'evaluacion_pesos':          'Bronce.Evaluacion_Pesos',
     'induccion_floral':          'Bronce.Induccion_Floral',
-    'evaluacion_vegetativa':     'Bronce.Evaluacion_Vegetativa',
+    'evaluacion_vegetativa':     'Bronce.Floracion',
     'tasa_crecimiento_brotes':   'Bronce.Tasa_Crecimiento_Brotes',
     'evaluacion_calidad_poda':   'Bronce.Evaluacion_Calidad_Poda',
     'fisiologia':                'Bronce.Fisiologia',

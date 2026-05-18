@@ -44,12 +44,12 @@ SQL_INSERT_FACT = text("""
     INSERT INTO Silver.Fact_Conteo_Fenologico (
         ID_Geografia, ID_Tiempo, ID_Variedad,
         ID_Personal, ID_Estado_Fenologico,
-        Cantidad_Organos,
+        Cantidad_Organos, Plantas_Productivas, Plantas_No_Productivas,
         Fecha_Evento, Fecha_Sistema, Estado_DQ
     ) VALUES (
         :id_geo, :id_tiempo, :id_variedad,
         :id_personal, :id_estado,
-        :cantidad,
+        :cantidad, :plantas_prod, :plantas_noprod,
         :fecha_evento, SYSDATETIME(), 'OK'
     )
 """)
@@ -106,7 +106,21 @@ def _leer_bronce(engine: Engine) -> pd.DataFrame:
                 Cantidad_Organos_Raw,
                 Tipo_Evaluacion_Raw,
                 Valores_Raw,
-                Fecha_Registro_Raw
+                Fecha_Registro_Raw,
+                Punto_Raw,
+                BotonesFlorales_Raw,
+                Flores_Raw,
+                BayasPequenas_Raw,
+                BayasGrandes_Raw,
+                Fase1_Raw,
+                Fase2_Raw,
+                BayasCremas_Raw,
+                BayasMaduras_Raw,
+                BayasCosechables_Raw,
+                YemasActivadas_Raw,
+                PlantasProductivas_Raw,
+                PlantasNoProductivas_Raw,
+                Muestras_Raw
             FROM {TABLA_ORIGEN}
             WHERE Estado_Carga = 'CARGADO'
         """))
@@ -120,6 +134,15 @@ def _normalizar_cantidad(valor) -> int:
         return 0
 
 
+def _a_entero_nulo(valor) -> int | None:
+    try:
+        if valor is None or str(valor).strip() in ('', 'None', 'nan', 'NULL'):
+            return None
+        return int(float(str(valor)))
+    except (ValueError, TypeError):
+        return None
+
+
 def _extraer_estados_desde_fila(fila: pd.Series) -> list[tuple[str, int]]:
     estado_raw = fila.get('Estado_Raw')
     cantidad_raw = fila.get('Cantidad_Organos_Raw')
@@ -129,11 +152,38 @@ def _extraer_estados_desde_fila(fila: pd.Series) -> list[tuple[str, int]]:
 
     valores = _parsear_valores_raw(fila.get('Valores_Raw'))
     estados: list[tuple[str, int]] = []
-    for clave_wide, nombre_estado in MAPA_ESTADOS_WIDE.items():
-        if clave_wide not in valores:
-            continue
-        cantidad = _normalizar_cantidad(valores.get(clave_wide))
-        estados.append((nombre_estado, cantidad))
+    
+    # Mapeo unificado para soportar tanto columnas físicas del nuevo layout como las llaves de Valores_Raw antiguas
+    mapeo_dual = {
+        'Boton Floral': ['BotonesFlorales_Raw', 'Botones_Florales_Raw'],
+        'Flor': ['Flores_Raw', 'Flores_Raw'],
+        'Pequena': ['BayasPequenas_Raw', 'Bayas_Pequenas_Raw'],
+        'Verde': ['BayasGrandes_Raw', 'Bayas_Grandes_Verdes_Raw'],
+        'Inicio F1': ['Fase1_Raw', 'Fase1_Raw'],
+        'Inicio F2': ['Fase2_Raw', 'Fase2_Raw'],
+        'Crema': ['BayasCremas_Raw', 'Bayas_Cremas_Raw'],
+        'Madura': ['BayasMaduras_Raw', 'Bayas_Maduras_Raw'],
+        'Cosechable': ['BayasCosechables_Raw', 'Bayas_Cosechables_Raw'],
+        'Yema Hinchada': ['YemasActivadas_Raw', 'Yemas_Activadas_Raw', 'YemasHinchadas_Raw', 'Yemas_Hinchadas_Raw', 'Yema_Hinchada_Raw'],
+    }
+
+    for nombre_estado, claves in mapeo_dual.items():
+        cantidad_val = None
+        for c in claves:
+            if c in fila.index and fila.get(c) is not None and str(fila.get(c)).strip() != '':
+                cantidad_val = fila.get(c)
+                break
+        
+        if cantidad_val is None:
+            for c in claves:
+                if c in valores and valores.get(c) is not None and str(valores.get(c)).strip() != '':
+                    cantidad_val = valores.get(c)
+                    break
+        
+        if cantidad_val is not None:
+            cantidad = _normalizar_cantidad(cantidad_val)
+            estados.append((nombre_estado, cantidad))
+            
     return estados
 
 
@@ -163,6 +213,7 @@ class ProcesadorConteoFenologico(BaseFactProcessor):
                 fila.get('Modulo_Raw'),
                 turno=fila.get('Turno_Raw'),
                 valvula=fila.get('Valvula_Raw'),
+                sector=fila.get('Sector_Raw'),
             )
             if resultado_geo is None:
                 continue
@@ -178,6 +229,24 @@ class ProcesadorConteoFenologico(BaseFactProcessor):
                 self.registrar_rechazo(id_origen, 'Valores_Raw', fila.get('Valores_Raw'), 'No se encontraron estados fenologicos/cantidades en fila')
                 continue
 
+            # Extracción robusta de Plantas_Productivas y Plantas_No_Productivas
+            plantas_prod_val = None
+            if 'PlantasProductivas_Raw' in fila.index and fila.get('PlantasProductivas_Raw') is not None and str(fila.get('PlantasProductivas_Raw')).strip() != '':
+                plantas_prod_val = fila.get('PlantasProductivas_Raw')
+            else:
+                valores_dict = _parsear_valores_raw(fila.get('Valores_Raw'))
+                plantas_prod_val = valores_dict.get('PlantasProductivas_Raw') or valores_dict.get('Plantas_Productivas') or valores_dict.get('PlantasProductivas')
+
+            plantas_noprod_val = None
+            if 'PlantasNoProductivas_Raw' in fila.index and fila.get('PlantasNoProductivas_Raw') is not None and str(fila.get('PlantasNoProductivas_Raw')).strip() != '':
+                plantas_noprod_val = fila.get('PlantasNoProductivas_Raw')
+            else:
+                valores_dict = _parsear_valores_raw(fila.get('Valores_Raw'))
+                plantas_noprod_val = valores_dict.get('PlantasNoProductivas_Raw') or valores_dict.get('Plantas_No_Productivas') or valores_dict.get('PlantasNoProductivas')
+
+            plantas_productivas = _a_entero_nulo(plantas_prod_val)
+            plantas_no_productivas = _a_entero_nulo(plantas_noprod_val)
+
             filas_expandidas = 0
             for estado_raw, cantidad in estados_cantidades:
                 id_estado = obtener_id_estado_fenologico(estado_raw, self.engine)
@@ -191,25 +260,31 @@ class ProcesadorConteoFenologico(BaseFactProcessor):
                     })
                     continue
 
-                # Extracción robusta del Punto (limpiando espacios)
-                valores_dict = _parsear_valores_raw(fila.get('Valores_Raw'))
-                punto_val = str(valores_dict.get('Punto_Raw') or valores_dict.get('Punto') or '0').strip()
+                # Extracción robusta del Punto (columna física o Valores_Raw)
+                punto_val = '0'
+                if 'Punto_Raw' in fila.index and fila.get('Punto_Raw') is not None and str(fila.get('Punto_Raw')).strip() != '':
+                    punto_val = str(fila.get('Punto_Raw')).strip()
+                else:
+                    valores_dict = _parsear_valores_raw(fila.get('Valores_Raw'))
+                    punto_val = str(valores_dict.get('Punto_Raw') or valores_dict.get('Punto') or '0').strip()
 
                 fecha_registro = parsear_fecha(fila.get('Fecha_Registro_Raw'))
 
                 payload.append({
-                    'ID_Geografia':        resultado_geo['id_geografia'],
-                    '_id_modulo_catalogo': resultado_geo.get('id_modulo_catalogo'),
-                    'ID_Tiempo':           obtener_id_tiempo(fecha),
-                    'ID_Variedad':         id_var,
-                    'ID_Personal':         id_personal,
-                    'ID_Estado_Fenologico': id_estado,
-                    'Cantidad_Organos':    cantidad,
-                    'Punto':               punto_val,
-                    'Fecha_Evento':        fecha,
-                    'Fecha_Registro':      fecha_registro,
-                    'Estado_DQ':           'OK',
-                    'id_origen_rastreo':   id_origen,
+                    'ID_Geografia':           resultado_geo['id_geografia'],
+                    '_id_modulo_catalogo':    resultado_geo.get('id_modulo_catalogo'),
+                    'ID_Tiempo':              obtener_id_tiempo(fecha),
+                    'ID_Variedad':            id_var,
+                    'ID_Personal':            id_personal,
+                    'ID_Estado_Fenologico':   id_estado,
+                    'Cantidad_Organos':       cantidad,
+                    'Plantas_Productivas':    plantas_productivas,
+                    'Plantas_No_Productivas': plantas_no_productivas,
+                    'Punto':                  punto_val,
+                    'Fecha_Evento':           fecha,
+                    'Fecha_Registro':         fecha_registro,
+                    'Estado_DQ':              'OK',
+                    'id_origen_rastreo':      id_origen,
                 })
                 filas_expandidas += 1
 
@@ -228,7 +303,11 @@ def cargar_fact_conteo_fenologico(engine: Engine) -> dict:
         'Fecha_Raw', 'Fundo_Raw', 'Sector_Raw', 'Modulo_Raw', 'Turno_Raw',
         'Valvula_Raw', 'Variedad_Raw', 'Evaluador_Raw', 'Color_Cinta_Raw',
         'Estado_Raw', 'Cantidad_Organos_Raw', 'Tipo_Evaluacion_Raw',
-        'Valores_Raw', 'Fecha_Registro_Raw'
+        'Valores_Raw', 'Fecha_Registro_Raw',
+        'Punto_Raw', 'BotonesFlorales_Raw', 'Flores_Raw', 'BayasPequenas_Raw',
+        'BayasGrandes_Raw', 'Fase1_Raw', 'Fase2_Raw', 'BayasCremas_Raw',
+        'BayasMaduras_Raw', 'BayasCosechables_Raw', 'YemasActivadas_Raw',
+        'PlantasProductivas_Raw', 'PlantasNoProductivas_Raw', 'Muestras_Raw'
     ]
     df = proc.leer_bronce(cols_raw)
     if df.empty:

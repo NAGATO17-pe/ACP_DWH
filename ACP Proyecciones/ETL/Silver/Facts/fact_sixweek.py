@@ -193,27 +193,29 @@ def _extraer_kg_base(engine: Engine, id_tiempo_min: int) -> pd.DataFrame:
 
 def _obtener_id_tiempo_semana_actual(engine: Engine) -> int | None:
     """Retorna el ID_Tiempo correspondiente a la semana ISO de la fecha actual."""
-    hoy = date.today()
+    # Pasar como string ISO: el driver ODBC viejo no bindea datetime.date
+    # (pyodbc HYC00 SQLBindParameter). SQL Server lo castea solo a DATE.
+    hoy_iso = date.today().isoformat()
     with engine.connect() as conn:
         fila = conn.execute(text("""
             SELECT ID_Tiempo
             FROM Silver.Dim_Tiempo
-            WHERE :fecha BETWEEN Fecha AND Fecha
-               OR (Anio = YEAR(:fecha) AND Semana_ISO = DATEPART(ISO_WEEK, :fecha))
+            WHERE CAST(:fecha AS DATE) BETWEEN Fecha AND Fecha
+               OR (Anio = YEAR(CAST(:fecha AS DATE)) AND Semana_ISO = DATEPART(ISO_WEEK, CAST(:fecha AS DATE)))
             ORDER BY ID_Tiempo DESC
-        """), {"fecha": hoy}).fetchone()
+        """), {"fecha": hoy_iso}).fetchone()
     return int(fila[0]) if fila else None
 
 
 def _obtener_id_tiempo_hace_n_semanas(engine: Engine, semanas: int) -> int | None:
     """Retorna el ID_Tiempo de N semanas atrás desde hoy."""
-    fecha_limite = date.today() - timedelta(weeks=semanas)
+    fecha_limite_iso = (date.today() - timedelta(weeks=semanas)).isoformat()
     with engine.connect() as conn:
         fila = conn.execute(text("""
             SELECT MIN(ID_Tiempo)
             FROM Silver.Dim_Tiempo
-            WHERE Fecha >= :fecha_limite
-        """), {"fecha_limite": fecha_limite}).fetchone()
+            WHERE Fecha >= CAST(:fecha_limite AS DATE)
+        """), {"fecha_limite": fecha_limite_iso}).fetchone()
     return int(fila[0]) if fila and fila[0] else None
 
 

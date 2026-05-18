@@ -1,0 +1,42 @@
+{"timestamp": "2026-05-18 12:03:13,051", "level": "INFO", "service": "acp-etl", "message": "DWH Geographic Phenology - ETL Pipeline"}
+{"timestamp": "2026-05-18 12:03:13,052", "level": "INFO", "service": "acp-etl", "message": "Inicio: 2026-05-18 12:03:13"}
+{"timestamp": "2026-05-18 12:03:13,260", "level": "INFO", "service": "acp-etl", "message": "[01/23] Verificando conexion SQL Server..."}
+{"timestamp": "2026-05-18 12:03:21,559", "level": "INFO", "service": "acp-etl", "message": "[02/23] Verificando esquema de objetos criticos en DB..."}
+{"timestamp": "2026-05-18 12:03:21,603", "level": "INFO", "service": "acp-etl", "message": "[03/23] Limpiando cache..."}
+{"timestamp": "2026-05-18 12:03:21,606", "level": "INFO", "service": "acp-etl", "message": "[04/23] Cargando archivos Excel a Bronce..."}
+{"timestamp": "2026-05-18 12:03:21,616", "level": "INFO", "service": "acp-etl", "message": "Bronce: 11 archivo(s) encontrado(s)."}
+{"timestamp": "2026-05-18 12:03:21,616", "level": "INFO", "service": "acp-etl", "message": "Cargando Conteo frutos.xlsx -> Bronce.Conteo_Fruta..."}
+{"timestamp": "2026-05-18 12:03:26,242", "level": "INFO", "service": "acp-etl", "message": "[OK] 1565 filas insertadas en Bronce.Conteo_Fruta"}
+{"timestamp": "2026-05-18 12:03:26,243", "level": "INFO", "service": "acp-etl", "message": "Cargando Peladas_V2.xlsx -> Bronce.Peladas..."}
+{"timestamp": "2026-05-18 12:03:27,338", "level": "INFO", "service": "acp-etl", "message": "[OK] 173 filas insertadas en Bronce.Peladas | columnas extras: 1 [Tipo_Evaluacion_Raw]"}
+{"timestamp": "2026-05-18 12:03:27,338", "level": "INFO", "service": "acp-etl", "message": "Cargando Ciclos Fenologicos.xlsx -> Bronce.Ciclos_Fenologicos..."}
+{"timestamp": "2026-05-18 12:03:44,649", "level": "INFO", "service": "acp-etl", "message": "[OK] 18912 filas insertadas en Bronce.Ciclos_Fenologicos | columnas extras: 9 [Cama_Raw, Cantidad_Raw, Categoria_Raw, DNI_Raw, Dia_Raw, Evaluacion_Raw, Fecha_Subida_Raw, Fecha_detalle_Raw, Nombres_Raw]"}
+{"timestamp": "2026-05-18 12:03:44,649", "level": "INFO", "service": "acp-etl", "message": "Cargando Reporte_evaluacion_peso.xlsx -> Bronce.Evaluacion_Pesos..."}
+{"timestamp": "2026-05-18 12:03:58,752", "level": "INFO", "service": "acp-etl", "message": "[OK] 5672 filas insertadas en Bronce.Evaluacion_Pesos | columnas extras: 4 [Bayas_fase1_Raw, Bayas_fase2_Raw, Peso_bayas_fase1_Raw, Peso_bayas_fase2_Raw]"}
+{"timestamp": "2026-05-18 12:03:58,752", "level": "INFO", "service": "acp-etl", "message": "Cargando Induccion Arándano.xlsx -> Bronce.Induccion_Floral..."}
+{"timestamp": "2026-05-18 12:03:59,457", "level": "INFO", "service": "acp-etl", "message": "[OK] 1436 filas insertadas en Bronce.Induccion_Floral"}
+{"timestamp": "2026-05-18 12:03:59,457", "level": "INFO", "service": "acp-etl", "message": "Cargando Evaluación Vegetativa.xlsx -> Bronce.Floracion..."}
+{"timestamp": "2026-05-18 12:04:13,567", "level": "INFO", "service": "acp-etl", "message": "[OK] 23417 filas insertadas en Bronce.Floracion"}
+{"timestamp": "2026-05-18 12:04:13,567", "level": "INFO", "service": "acp-etl", "message": "Cargando Tasa de Crecimiento 2025 - 2026.xlsx -> Bronce.Tasa_Crecimiento_Brotes..."}
+{"timestamp": "2026-05-18 12:17:03,604", "level": "INFO", "service": "acp-etl", "message": "[OK] 268474 filas insertadas en Bronce.Tasa_Crecimiento_Brotes"}
+{"timestamp": "2026-05-18 12:17:03,604", "level": "INFO", "service": "acp-etl", "message": "Cargando Evaluacion Poda.xlsx -> Bronce.Evaluacion_Calidad_Poda..."}
+{"timestamp": "2026-05-18 12:17:06,271", "level": "INFO", "service": "acp-etl", "message": "[OK] 620 filas insertadas en Bronce.Evaluacion_Calidad_Poda | columnas extras: 17 [AUXILIAR_Raw, Altura_de_Planta_Raw, Consumidor_Raw, DNI_Raw, Diametro_de_Tallo_Raw, Evaluacion_Raw, Fecha_Registro_Raw, Hojas_Planta_Raw, Long_Horiz_Planta_Raw, Longitud_de_Tallo_Raw, N_Cortes_Defect_Planta_Raw, Nombres_Raw, ... (+5 mas)]"}
+{"timestamp": "2026-05-18 12:17:06,271", "level": "INFO", "service": "acp-etl", "message": "Cargando Fisiologia.xlsx -> Bronce.Fisiologia..."}
+{"timestamp": "2026-05-18 12:17:59,341", "level": "INFO", "service": "acp-etl", "message": "[OK] 45555 filas insertadas en Bronce.Fisiologia | columnas extras: 3 [FECHAREGISTRO_MOVIL_Raw, Fecha_Subida_Raw, ID_Raw]"}
+{"timestamp": "2026-05-18 12:17:59,341", "level": "INFO", "service": "acp-etl", "message": "Cargando Fiscalizacion.xlsx -> Bronce.Fiscalizacion..."}
+{"timestamp": "2026-05-18 12:18:06,790", "level": "INFO", "service": "acp-etl", "message": "[OK] 3632 filas insertadas en Bronce.Fiscalizacion | columnas extras: 52 [Altura_Raw, BayasCosechables_Raw, BayasCremas_Raw, BayasGrandes_Raw, BayasMaduras_Raw, BayasPequenas_Raw, Bayas_Fase1_Raw, Bayas_Fase2_Raw, Bayas_Grandes_Verde_Raw, Bayas_Pequenas2_Raw, BotonesFlorales_Raw, Brotes_Generales1_Raw, ... (+40 mas)]"}
+{"timestamp": "2026-05-18 12:18:06,790", "level": "INFO", "service": "acp-etl", "message": "Cargando Maduración_.xlsx -> Bronce.Maduracion..."}
+{"timestamp": "2026-05-18 12:18:37,764", "level": "INFO", "service": "acp-etl", "message": "[OK] 26800 filas insertadas en Bronce.Maduracion | columnas extras: 7 [COLOR_Raw, DESCRIPCIONESTADOCICLO_Raw, Fecha_Registro_Raw, Fecha_Subida_Raw, IDESTADOCICLO_Raw, ID_Raw, ORGANO_Raw]"}
+{"timestamp": "2026-05-18 12:18:37,764", "level": "INFO", "service": "acp-etl", "message": "[05/23] Cargando Dim_Personal (SCD1)..."}
+{"timestamp": "2026-05-18 12:18:37,871", "level": "INFO", "service": "acp-etl", "message": "[06/23] Sincronizando Dim_Geografia (arquitectura catálogos)..."}
+{"timestamp": "2026-05-18 12:18:37,881", "level": "INFO", "service": "acp-etl", "message": "INFO: Silver.Dim_Geografia_Obsoleta ausente. Se asume migración completa y catálogos estables."}
+{"timestamp": "2026-05-18 12:18:37,881", "level": "INFO", "service": "acp-etl", "message": "[07/23] Sincronizando catalogo/bridge de cama via SP..."}
+{"timestamp": "2026-05-18 12:18:37,931", "level": "INFO", "service": "acp-etl", "message": "ERROR en SP_Cama_Upsert: (pyodbc.ProgrammingError) ('42000', '[42000] [Microsoft][ODBC SQL Server Driver][SQL Server]No existen tablas Bronce requeridas. (50000) (SQLExecDirectW)')
+[SQL: 
+            EXEC Silver.sp_Upsert_Cama_Desde_Bronce
+                @Modo_Aplicar = ?,
+                @Cama_Min_Permitida = ?,
+                @Cama_Max_Permitida = ?
+        ]
+[parameters: (1, 0, 100)]
+(Background on this error at: https://sqlalche.me/e/20/f405)"}

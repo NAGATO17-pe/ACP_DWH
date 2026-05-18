@@ -39,7 +39,7 @@ def liberar_cuarentena():
             'Bronce.Variables_Meteorologicas': 'ID_Variables_Met',
             'Bronce.Tasa_Crecimiento_Brotes': 'ID_Tasa_Crecimiento',
             'Bronce.Induccion_Floral': 'ID_Induccion_Floral',
-            'Bronce.Evaluacion_Vegetativa': 'ID_Evaluacion_Vegetativa',
+            'Bronce.Floracion': 'ID_Evaluacion_Vegetativa',
             'Bronce.Conteo_Fruta': 'ID_Conteo_Fruta',
             'Bronce.Maduracion': 'ID_Maduracion',
             'Bronce.Peladas': 'ID_Peladas',

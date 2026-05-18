@@ -1,0 +1,19 @@
+{"timestamp": "2026-05-18 10:23:22,447", "level": "INFO", "service": "acp-etl", "message": "DWH Geographic Phenology - ETL Pipeline"}
+{"timestamp": "2026-05-18 10:23:22,447", "level": "INFO", "service": "acp-etl", "message": "Inicio: 2026-05-18 10:23:22"}
+{"timestamp": "2026-05-18 10:23:22,486", "level": "INFO", "service": "acp-etl", "message": "[01/4] Verificando conexion SQL Server..."}
+{"timestamp": "2026-05-18 10:23:30,752", "level": "INFO", "service": "acp-etl", "message": "[02/4] Limpiando cache..."}
+{"timestamp": "2026-05-18 10:23:30,756", "level": "INFO", "service": "acp-etl", "message": "[03/4] Reprocesando Fact_Tasa_Crecimiento_Brotes..."}
+{"timestamp": "2026-05-18 10:23:30,862", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:23:30,877", "level": "INFO", "service": "acp-etl", "message": "[04/4] Finalizando..."}
+{"timestamp": "2026-05-18 10:23:30,877", "level": "INFO", "service": "acp-etl", "message": "RESUMEN FINAL"}
+{"timestamp": "2026-05-18 10:23:30,877", "level": "INFO", "service": "acp-etl", "message": "Modo ejecucion                                REPROCESO_FACTS"}
+{"timestamp": "2026-05-18 10:23:30,877", "level": "INFO", "service": "acp-etl", "message": "Facts solicitadas                             Fact_Tasa_Crecimiento_Brotes"}
+{"timestamp": "2026-05-18 10:23:30,877", "level": "INFO", "service": "acp-etl", "message": "Servidor SQL                                  LCP-PAG-CHERNAN"}
+{"timestamp": "2026-05-18 10:23:30,877", "level": "INFO", "service": "acp-etl", "message": "Base SQL                                      ACP_DataWarehose_Proyecciones"}
+{"timestamp": "2026-05-18 10:23:30,877", "level": "INFO", "service": "acp-etl", "message": "Fact_Tasa_Crecimiento_Brotes bronce reabiertas 0"}
+{"timestamp": "2026-05-18 10:23:30,877", "level": "INFO", "service": "acp-etl", "message": "Fact_Tasa_Crecimiento_Brotes destino limpiado 0"}
+{"timestamp": "2026-05-18 10:23:30,878", "level": "INFO", "service": "acp-etl", "message": "Fact_Tasa_Crecimiento_Brotes                  0"}
+{"timestamp": "2026-05-18 10:23:30,878", "level": "INFO", "service": "acp-etl", "message": "Fact_Tasa_Crecimiento_Brotes leidos           0"}
+{"timestamp": "2026-05-18 10:23:30,878", "level": "INFO", "service": "acp-etl", "message": "Fact_Tasa_Crecimiento_Brotes rechazados       0"}
+{"timestamp": "2026-05-18 10:23:30,878", "level": "INFO", "service": "acp-etl", "message": "Fact_Tasa_Crecimiento_Brotes rechazo pct      0.0%"}
+{"timestamp": "2026-05-18 10:23:30,878", "level": "INFO", "service": "acp-etl", "message": "Duracion total                                8.43s"}

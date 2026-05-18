@@ -1,0 +1,54 @@
+{"timestamp": "2026-05-18 10:13:20,777", "level": "INFO", "service": "acp-etl", "message": "DWH Geographic Phenology - ETL Pipeline"}
+{"timestamp": "2026-05-18 10:13:20,777", "level": "INFO", "service": "acp-etl", "message": "Inicio: 2026-05-18 10:13:20"}
+{"timestamp": "2026-05-18 10:13:20,820", "level": "INFO", "service": "acp-etl", "message": "[01/25] Verificando conexion SQL Server..."}
+{"timestamp": "2026-05-18 10:13:29,058", "level": "INFO", "service": "acp-etl", "message": "[02/25] Verificando esquema de objetos criticos en DB..."}
+{"timestamp": "2026-05-18 10:13:29,100", "level": "INFO", "service": "acp-etl", "message": "[03/25] Limpiando cache..."}
+{"timestamp": "2026-05-18 10:13:29,102", "level": "INFO", "service": "acp-etl", "message": "[04/25] Cargando archivos Excel a Bronce..."}
+{"timestamp": "2026-05-18 10:13:29,141", "level": "INFO", "service": "acp-etl", "message": "Bronce: sin archivos pendientes."}
+{"timestamp": "2026-05-18 10:13:29,141", "level": "INFO", "service": "acp-etl", "message": "[05/25] Cargando Dim_Personal (SCD1)..."}
+{"timestamp": "2026-05-18 10:13:29,178", "level": "INFO", "service": "acp-etl", "message": "[06/25] Sincronizando Dim_Geografia (arquitectura catálogos)..."}
+{"timestamp": "2026-05-18 10:13:29,184", "level": "INFO", "service": "acp-etl", "message": "INFO: Silver.Dim_Geografia_Obsoleta ausente. Se asume migración completa y catálogos estables."}
+{"timestamp": "2026-05-18 10:13:29,184", "level": "INFO", "service": "acp-etl", "message": "[07/25] Sincronizando catalogo/bridge de cama via SP..."}
+{"timestamp": "2026-05-18 10:13:29,184", "level": "INFO", "service": "acp-etl", "message": "SP_Cama omitido: no ingresaron tablas Bronce con cama en esta corrida."}
+{"timestamp": "2026-05-18 10:13:29,184", "level": "INFO", "service": "acp-etl", "message": "[08/25] Validando calidad de cama via SP..."}
+{"timestamp": "2026-05-18 10:13:29,186", "level": "INFO", "service": "acp-etl", "message": "[09/25] Cargando Fact_Ciclo_Poda..."}
+{"timestamp": "2026-05-18 10:13:29,235", "level": "INFO", "service": "acp-etl", "message": "  Homologando columna 'Variedad_Raw' via MDM..."}
+{"timestamp": "2026-05-18 10:13:37,422", "level": "INFO", "service": "acp-etl", "message": "  Registrando 5 resoluciones únicas en el diccionario..."}
+{"timestamp": "2026-05-18 10:13:37,431", "level": "INFO", "service": "acp-etl", "message": "Deduplicación temprana: 1230 IDs marcados para descarte (redundantes)."}
+{"timestamp": "2026-05-18 10:13:37,604", "level": "INFO", "service": "acp-etl", "message": "ERROR en Fact_Ciclo_Poda:"}
+{"timestamp": "2026-05-18 10:13:37,607", "level": "INFO", "service": "acp-etl", "message": "[10/25] Cargando Fact_Cosecha_SAP..."}
+{"timestamp": "2026-05-18 10:13:37,611", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:13:37,615", "level": "INFO", "service": "acp-etl", "message": "[11/25] Cargando Fact_Conteo_Fenologico..."}
+{"timestamp": "2026-05-18 10:13:37,736", "level": "INFO", "service": "acp-etl", "message": "  Homologando columna 'Variedad_Raw' via MDM..."}
+{"timestamp": "2026-05-18 10:13:37,824", "level": "INFO", "service": "acp-etl", "message": "  Registrando 9 resoluciones únicas en el diccionario..."}
+{"timestamp": "2026-05-18 10:13:37,846", "level": "INFO", "service": "acp-etl", "message": "ERROR en Fact_Conteo_Fenologico: 'Nombre_Completo'"}
+{"timestamp": "2026-05-18 10:13:37,849", "level": "INFO", "service": "acp-etl", "message": "[12/25] Cargando Fact_Maduracion..."}
+{"timestamp": "2026-05-18 10:13:37,884", "level": "INFO", "service": "acp-etl", "message": "  Homologando columna 'Variedad_Raw' via MDM..."}
+{"timestamp": "2026-05-18 10:13:37,953", "level": "INFO", "service": "acp-etl", "message": "  Registrando 7 resoluciones únicas en el diccionario..."}
+{"timestamp": "2026-05-18 10:13:37,972", "level": "INFO", "service": "acp-etl", "message": "ERROR en Fact_Maduracion: 'Nombre_Completo'"}
+{"timestamp": "2026-05-18 10:13:37,974", "level": "INFO", "service": "acp-etl", "message": "[13/25] Cargando Fact_Peladas..."}
+{"timestamp": "2026-05-18 10:13:37,981", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:13:37,984", "level": "INFO", "service": "acp-etl", "message": "[14/25] Cargando Fact_Telemetria_Clima..."}
+{"timestamp": "2026-05-18 10:13:37,993", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:13:37,996", "level": "INFO", "service": "acp-etl", "message": "[15/25] Cargando Fact_Evaluacion_Pesos..."}
+{"timestamp": "2026-05-18 10:13:38,004", "level": "INFO", "service": "acp-etl", "message": "  Homologando columna 'Variedad_Raw' via MDM..."}
+{"timestamp": "2026-05-18 10:13:38,032", "level": "INFO", "service": "acp-etl", "message": "  Registrando 7 resoluciones únicas en el diccionario..."}
+{"timestamp": "2026-05-18 10:13:38,040", "level": "INFO", "service": "acp-etl", "message": "Deduplicación temprana: 72 IDs marcados para descarte (redundantes)."}
+{"timestamp": "2026-05-18 10:13:38,091", "level": "INFO", "service": "acp-etl", "message": "ERROR en Fact_Evaluacion_Pesos:"}
+{"timestamp": "2026-05-18 10:13:38,094", "level": "INFO", "service": "acp-etl", "message": "[16/25] Cargando Fact_Tareo..."}
+{"timestamp": "2026-05-18 10:13:38,102", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:13:38,105", "level": "INFO", "service": "acp-etl", "message": "[17/25] Cargando Fact_Fisiologia..."}
+{"timestamp": "2026-05-18 10:13:38,110", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:13:38,113", "level": "INFO", "service": "acp-etl", "message": "[18/25] Cargando Fact_Evaluacion_Vegetativa..."}
+{"timestamp": "2026-05-18 10:13:38,120", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:13:38,123", "level": "INFO", "service": "acp-etl", "message": "[19/25] Cargando Fact_Induccion_Floral..."}
+{"timestamp": "2026-05-18 10:13:38,143", "level": "INFO", "service": "acp-etl", "message": "  Homologando columna 'Variedad_Fuente_Raw' via MDM..."}
+{"timestamp": "2026-05-18 10:13:38,168", "level": "INFO", "service": "acp-etl", "message": "  Registrando 5 resoluciones únicas en el diccionario..."}
+{"timestamp": "2026-05-18 10:13:38,176", "level": "INFO", "service": "acp-etl", "message": "Deduplicación temprana: 962 IDs marcados para descarte (redundantes)."}
+{"timestamp": "2026-05-18 10:13:38,203", "level": "INFO", "service": "acp-etl", "message": "ERROR en Fact_Induccion_Floral: 'Nombre_Completo'"}
+{"timestamp": "2026-05-18 10:13:38,217", "level": "INFO", "service": "acp-etl", "message": "[20/25] Cargando Fact_Tasa_Crecimiento_Brotes..."}
+{"timestamp": "2026-05-18 10:13:38,223", "level": "INFO", "service": "acp-etl", "message": "  Homologando columna 'Variedad_Raw' via MDM..."}
+{"timestamp": "2026-05-18 10:13:38,244", "level": "INFO", "service": "acp-etl", "message": "  Registrando 8 resoluciones únicas en el diccionario..."}
+{"timestamp": "2026-05-18 10:13:38,293", "level": "INFO", "service": "acp-etl", "message": "-> 18 leidos | 0 insertados | 1 rechazados reales | 5% rechazo real"}
+{"timestamp": "2026-05-18 10:13:38,294", "level": "ERROR", "service": "acp-etl", "message": "[CIRCUIT BREAKER CRITICO] Silver.Fact_Tasa_Crecimiento_Brotes: 5.6% rechazo >= 5.0% — ABORTANDO PIPELINE COMPLETO"}
+{"timestamp": "2026-05-18 10:13:38,295", "level": "INFO", "service": "acp-etl", "message": "CIRCUIT BREAKER CRITICO en Fact_Tasa_Crecimiento_Brotes: Circuit breaker CRITICO en Silver.Fact_Tasa_Crecimiento_Brotes: 5.6% de rechazo (1/18). Umbral crítico: 5.0%."}

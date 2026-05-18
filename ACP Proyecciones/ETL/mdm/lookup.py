@@ -22,7 +22,14 @@ _log = logging.getLogger("ETL_Pipeline")
 _cache: dict[str, pd.DataFrame] = {}
 _cache_mapas: dict[str, dict] = {}
 _cache_config: dict[str, Any] = {} # Nuevo cache para parámetros y reglas
-_cache_lock = threading.Lock()
+# RLock (re-entrante) en vez de Lock plano: `resolver_geografia` (linea ~645)
+# envuelve toda su logica en `with _cache_lock:` para atomicidad, pero dentro
+# llama funciones (`_cargar_reglas_mdm`, `_obtener_id_catalogo`, etc.) que
+# tambien hacen `with _cache_lock:`. Con Lock no-reentrante, el mismo thread
+# se bloqueaba esperandose a si mismo -> deadlock en cada fila al construir
+# payload de cualquier Fact. RLock permite re-entrada del MISMO thread sin
+# romper la atomicidad frente a otros threads (mantiene la garantia).
+_cache_lock = threading.RLock()
 
 _ALIASES_CINTA = {
     'amarillo': 'amarilla',
@@ -53,16 +60,20 @@ def obtener_reglas_validacion(engine: Engine) -> pd.DataFrame:
 
 def _cargar_dim(engine: Engine, tabla: str,
                 col_id: str, col_clave: str) -> pd.DataFrame:
+    # Cache key incluye col_clave: la misma tabla se consulta con distintas
+    # columnas (ej. Dim_Personal por DNI y por Nombre_Completo). Cachear solo
+    # por tabla devolvia un DataFrame con la columna equivocada -> KeyError.
+    clave_cache = f'{tabla}::{col_id}::{col_clave}'
     with _cache_lock:
-        if tabla not in _cache:
+        if clave_cache not in _cache:
             with engine.connect() as conexion:
                 resultado = conexion.execute(
                     text(f'SELECT {col_id}, {col_clave} FROM {tabla} WITH (NOLOCK)')
                 )
-                _cache[tabla] = pd.DataFrame(
+                _cache[clave_cache] = pd.DataFrame(
                     resultado.fetchall(), columns=[col_id, col_clave]
                 )
-        return _cache[tabla]
+        return _cache[clave_cache]
 
 
 def limpiar_cache() -> None:
@@ -547,7 +558,7 @@ def _resolver_id_modulo_catalogo_con_reglas(engine: Engine, modulo_raw: str | No
             return id_mod, int(match_t.iloc[0]['Es_Test_Block'])
 
     # 3. Fallback: Modulo directo o descomposicion de Submodulo (ej. 9.1)
-    m_base, sub = _descomponer_modulo_submodulo_token(modulo_token)
+    m_base, sub = _descomponer_modulo_submodulo_token(modulo_raw)
     if m_base:
         id_mod = _resolver_id_modulo_catalogo(engine, m_base, sub)
         return id_mod, 0

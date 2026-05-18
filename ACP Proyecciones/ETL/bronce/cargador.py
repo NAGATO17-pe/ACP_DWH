@@ -31,7 +31,7 @@ _CACHE_COLUMNAS_BRONCE: dict[str, set[str]] = {}
 
 
 _FIRMAS_LAYOUT_CRITICO: dict[str, dict[str, Any]] = {
-    'Bronce.Evaluacion_Vegetativa': {
+    'Bronce.Floracion': {
         'ruta_canonica': 'evaluacion_vegetativa',
         'columnas_obligatorias': {
             'Fecha_Raw',
@@ -177,7 +177,7 @@ _FIRMAS_RUTA_SUGERIDA: dict[str, dict[str, Any]] = {
         },
     },
     'evaluacion_vegetativa': {
-        'tabla_destino': 'Bronce.Evaluacion_Vegetativa',
+        'tabla_destino': 'Bronce.Floracion',
         'columnas_clave': {
             'Fecha_Raw',
             'DNI_Raw',
@@ -226,6 +226,31 @@ _FIRMAS_RUTA_SUGERIDA: dict[str, dict[str, Any]] = {
             'AlturaPoda_Raw',
         },
     },
+    'conteo_fruta': {
+        'tabla_destino': 'Bronce.Conteo_Fruta',
+        'columnas_clave': {
+            'Fecha_Raw',
+            'DNI_Raw',
+            'Modulo_Raw',
+            'Turno_Raw',
+            'Valvula_Raw',
+            'Tipo_Evaluacion_Raw',
+            'Punto_Raw',
+            'Variedad_Raw',
+            'BotonesFlorales_Raw',
+            'Flores_Raw',
+            'BayasPequenas_Raw',
+            'BayasGrandes_Raw',
+            'Fase1_Raw',
+            'Fase2_Raw',
+            'BayasCremas_Raw',
+            'BayasMaduras_Raw',
+            'BayasCosechables_Raw',
+            'PlantasProductivas_Raw',
+            'PlantasNoProductivas_Raw',
+            'Muestras_Raw',
+        },
+    },
 }
 
 
@@ -251,6 +276,7 @@ _ALIAS_COLUMNAS: dict[str, str] = {
     'Registro':                   'Fecha_Registro_Raw',
     'REGISTRO':                   'Fecha_Registro_Raw',
     'registro':                   'Fecha_Registro_Raw',
+    'Fecha_de_registro':          'Fecha_Registro',
     # Fundo
     'Fundo':                      'Fundo',
     'fundo':                      'Fundo',
@@ -499,8 +525,12 @@ def insertar_en_bronce(df: pd.DataFrame,
 
     with engine.begin() as conn:
         cursor = conn.connection.cursor()
-        cursor.fast_executemany = True
-        cursor.executemany(sql, datos)
+        try:
+            cursor.fast_executemany = True
+            cursor.executemany(sql, datos)
+        except MemoryError:
+            cursor.fast_executemany = False
+            cursor.executemany(sql, datos)
         cursor.close()
 
     return len(df)
@@ -720,6 +750,55 @@ def _leer_excel_peladas_bd(ruta_archivo: Path) -> pd.DataFrame:
     )
 
 
+def _proyectar_dataframe_conteo_bronce(ruta_archivo: Path) -> pd.DataFrame:
+    """
+    Proyecta el layout real de Conteo de Fruta a las columnas fisicas esperadas en Bronce.
+    Conserva metadatos adicionales en Valores_Raw para no perder trazabilidad.
+    """
+    df = _leer_excel_especial(ruta_archivo, sheet_name=0, header_idx=1)
+    if df.empty:
+        return df
+
+    columnas_salida = {
+        'Fecha_Raw': _serie_o_nulos(df, 'Fecha_Raw'),
+        'Fecha_Registro_Raw': _serie_o_nulos(df, 'Fecha_Registro_Raw'),
+        'Fecha_Subida_Raw': _serie_o_nulos(df, 'Fecha_Subida_Raw'),
+        'DNI_Raw': _serie_o_nulos(df, 'DNI_Raw'),
+        'Nombres_Raw': _serie_o_nulos(df, 'Nombres_Raw'),
+        'Evaluador_Raw': _serie_o_nulos(df, 'Nombres_Raw'),
+        'Fundo_Raw': _serie_o_nulos(df, 'Fundo_Raw'),
+        'Sector_Raw': _serie_o_nulos(df, 'Sector_Raw'),
+        'Modulo_Raw': _serie_o_nulos(df, 'Modulo_Raw'),
+        'Turno_Raw': _serie_o_nulos(df, 'Turno_Raw'),
+        'Valvula_Raw': _serie_o_nulos(df, 'Valvula_Raw'),
+        'Variedad_Raw': _serie_o_nulos(df, 'Variedad_Raw'),
+        'Punto_Raw': _serie_o_nulos(df, 'Punto_Raw'),
+        'Tipo_Evaluacion_Raw': _serie_o_nulos(df, 'Evaluacion_Raw'),
+        'BotonesFlorales_Raw': _serie_o_nulos(df, 'BotonesFlorales_Raw'),
+        'Flores_Raw': _serie_o_nulos(df, 'Flores_Raw'),
+        'BayasPequenas_Raw': _serie_o_nulos(df, 'BayasPequenas_Raw'),
+        'BayasGrandes_Raw': _serie_o_nulos(df, 'BayasGrandes_Raw'),
+        'Fase1_Raw': _serie_o_nulos(df, 'Fase1_Raw'),
+        'Fase2_Raw': _serie_o_nulos(df, 'Fase2_Raw'),
+        'BayasCremas_Raw': _serie_o_nulos(df, 'BayasCremas_Raw'),
+        'BayasMaduras_Raw': _serie_o_nulos(df, 'BayasMaduras_Raw'),
+        'BayasCosechables_Raw': _serie_o_nulos(df, 'BayasCosechables_Raw'),
+        'YemasActivadas_Raw': _serie_o_nulos(df, 'YemasActivadas_Raw'),
+        'PlantasProductivas_Raw': _serie_o_nulos(df, 'PlantasProductivas_Raw'),
+        'PlantasNoProductivas_Raw': _serie_o_nulos(df, 'PlantasNoProductivas_Raw'),
+        'Muestras_Raw': _serie_o_nulos(df, 'Muestras_Raw'),
+    }
+
+    df_salida = pd.DataFrame(columnas_salida, index=df.index)
+    
+    columnas_usadas = set(columnas_salida.keys())
+    columnas_extra = [col for col in df.columns if col not in columnas_usadas]
+    if columnas_extra:
+        df_salida['Valores_Raw'] = _serializar_valores_extra(df, columnas_extra)
+
+    return df_salida
+
+
 def _proyectar_dataframe_peladas_bronce(ruta_archivo: Path) -> pd.DataFrame:
     """
     Proyecta el layout real de Peladas a las columnas fisicas esperadas en Bronce.
@@ -751,6 +830,7 @@ def _proyectar_dataframe_peladas_bronce(ruta_archivo: Path) -> pd.DataFrame:
         'BayasCremas_Raw': _serie_o_nulos(df, 'BayasCremas_Raw'),
         'BayasMaduras_Raw': _serie_o_nulos(df, 'BayasMaduras_Raw'),
         'BayasCosechables_Raw': _serie_o_nulos(df, 'BayasCosechables_Raw'),
+        'YemasActivadas_Raw': _serie_o_nulos(df, 'YemasActivadas_Raw'),
         'PlantasProductivas_Raw': _serie_o_nulos(df, 'PlantasProductivas_Raw'),
         'PlantasNoProductivas_Raw': _serie_o_nulos(df, 'PlantasNoProductivas_Raw'),
     }
@@ -777,6 +857,7 @@ def _proyectar_dataframe_peladas_bronce(ruta_archivo: Path) -> pd.DataFrame:
         'BayasCremas_Raw',
         'BayasMaduras_Raw',
         'BayasCosechables_Raw',
+        'YemasActivadas_Raw',
         'PlantasProductivas_Raw',
         'PlantasNoProductivas_Raw',
     }
@@ -895,7 +976,9 @@ def _proyectar_dataframe_tasa_crecimiento_brotes_bronce(ruta_archivo: Path) -> p
     Proyecta Tasa de Crecimiento desde la hoja BD_General.
     Solo esta hoja representa el grano raw util para ETL.
     """
-    df = _leer_excel_especial(ruta_archivo, sheet_name='BD_General', header_idx=1)
+    with pd.ExcelFile(str(ruta_archivo), engine='openpyxl') as xls:
+        sheet_to_read = 'BD_General' if 'BD_General' in xls.sheet_names else 0
+    df = _leer_excel_especial(ruta_archivo, sheet_name=sheet_to_read, header_idx=1)
     if df.empty:
         return df
 
@@ -1249,6 +1332,8 @@ def cargar_archivo(nombre_carpeta: str,
 
         if nombre_carpeta in {'reporte_clima', 'variables_meteorologicas'}:
             df = _proyectar_dataframe_clima_bronce(ruta_trabajo, tabla_destino)
+        elif nombre_carpeta == 'conteo_fruta':
+            df = _proyectar_dataframe_conteo_bronce(ruta_trabajo)
         elif nombre_carpeta == 'peladas':
             df = _proyectar_dataframe_peladas_bronce(ruta_trabajo)
         elif nombre_carpeta == 'induccion_floral':
