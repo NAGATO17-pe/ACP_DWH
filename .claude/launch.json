@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Portal MDM",
+      "runtimeExecutable": "D:\\Proyecto2026\\ACP_DWH\\ACP Proyecciones\\.venv\\Scripts\\streamlit.exe",
+      "runtimeArgs": ["run", "app.py", "--server.port", "8501", "--server.headless", "true"],
+      "port": 8501
+    },
+    {
+      "name": "Backend FastAPI",
+      "runtimeExecutable": "D:\\Proyecto2026\\ACP_DWH\\ACP Proyecciones\\.venv\\Scripts\\uvicorn.exe",
+      "runtimeArgs": ["main:aplicacion", "--host", "0.0.0.0", "--port", "8000"],
+      "port": 8000
+    },
+    {
+      "name": "Runner ETL",
+      "runtimeExecutable": "D:\\Proyecto2026\\ACP_DWH\\ACP Proyecciones\\.venv\\Scripts\\python.exe",
+      "runtimeArgs": ["-m", "runner.runner"],
+      "port": 0
+    }
+  ]
+}
