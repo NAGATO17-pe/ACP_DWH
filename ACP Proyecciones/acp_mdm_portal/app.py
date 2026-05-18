@@ -8,6 +8,7 @@ import importlib
 import streamlit as st
 
 from utils.auth import cerrar_sesion, login_gate, obtener_usuario, tiene_permiso
+from utils.constantes import ROL_BADGES
 from utils.formato import aplicar_css
 from utils.sidebar_badges import render_sidebar_badges
 
@@ -27,17 +28,11 @@ if not login_gate():
 aplicar_css()
 
 usuario = obtener_usuario()
-rol_badge = {
-    "admin":        "🔑 Admin",
-    "analista_mdm": "📊 Analista MDM",
-    "operador_etl": "⚙️ Operador ETL",
-    "viewer":       "👁️ Viewer",
-}
 
 # Escapa campos provenientes del backend antes de interpolar en HTML
 _nombre_safe  = html.escape(str(usuario.get("nombre", "")))
 _avatar_safe  = html.escape(str(usuario.get("avatar", "")))
-_rol_label    = rol_badge.get(usuario.get("rol", ""), usuario.get("rol", ""))
+_rol_label    = ROL_BADGES.get(usuario.get("rol", ""), usuario.get("rol", ""))
 _rol_safe     = html.escape(str(_rol_label))
 
 # ── Sidebar con secciones agrupadas ───────────────────────────────────────

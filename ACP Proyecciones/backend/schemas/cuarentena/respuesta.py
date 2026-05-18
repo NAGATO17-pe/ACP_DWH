@@ -34,3 +34,10 @@ class RespuestaAccionCuarentena(BaseModel):
     id_registro:   str
     estado_nuevo:  str
     mensaje:       str
+
+class RespuestaResumenCuarentena(BaseModel):
+    """Conteo agregado de registros en MDM.Cuarentena, por estado."""
+    total:       int
+    pendientes:  int
+    resueltos:   int
+    descartados: int

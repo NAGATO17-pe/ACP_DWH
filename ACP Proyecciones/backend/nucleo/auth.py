@@ -31,6 +31,7 @@ from jose import JWTError, jwt
 
 from nucleo.logging import obtener_logger
 from nucleo.settings import settings
+from repositorios import repo_usuarios
 
 log = obtener_logger(__name__)
 
@@ -180,6 +181,15 @@ async def obtener_usuario_actual(
     Inyectable en cualquier endpoint con: usuario: Annotated[UsuarioActual, Depends(obtener_usuario_actual)]
     """
     payload = decodificar_token(token)
+    nombre = payload.get("sub")
+    usuario_db = repo_usuarios.buscar_por_nombre(nombre) if nombre else None
+    if not usuario_db:
+        log.warning("Token con usuario inexistente o inactivo", extra={"sub": nombre})
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Sesión revocada o usuario inactivo.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     return UsuarioActual.desde_payload(payload)
 
 

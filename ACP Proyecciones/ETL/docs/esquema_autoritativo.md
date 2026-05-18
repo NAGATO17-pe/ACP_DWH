@@ -59,8 +59,8 @@
 | `fact_evaluacion_vegetativa.py`     | `Bronce.Evaluacion_Vegetativa`   | `Silver.Fact_Evaluacion_Vegetativa`     |
 | `fact_induccion_floral.py`          | `Bronce.Induccion_Floral`        | `Silver.Fact_Induccion_Floral`          |
 | `fact_tasa_crecimiento_brotes.py`   | `Bronce.Tasa_Crecimiento_Brotes` | `Silver.Fact_Tasa_Crecimiento_Brotes`   |
-| `fact_sanidad_activo.py`            | `Bronce.Seguimiento_Errores`     | `Silver.Fact_Sanidad_Activo`            |
-| `fact_ciclo_poda.py`                | `Bronce.Ciclo_Poda`              | `Silver.Fact_Ciclo_Poda`                |
+| `fact_censo_plantas.py`             | `Bronce.Seguimiento_Errores`     | `Silver.Fact_Censo_Plantas`             |
+| `fact_ciclo_poda.py`                | `Bronce.Evaluacion_Calidad_Poda` | `Silver.Fact_Ciclo_Poda` *(grain por punto: `[Geo, Tiempo, Variedad, Tipo_Evaluacion, Punto]`; Gold suma + reporta `N_Muestras`)* |
 
 ---
 
@@ -84,6 +84,7 @@
 | 2026-04-21  | FK apunta a `Dim_Geografia_Obsoleta`            | Migraciones aplicadas fuera de orden                              | `fase28_redirigir_fk_geografia_nueva.sql`              |
 | 2026-04-20  | Alias `tmp.ID_Geografia` no encontrado          | Código Python referencia alias temporal post-renombrado           | Actualizar SQL dinámico en `_base_processor`            |
 | 2026-04-16  | Columnas planas en SP de Cama                   | SP esperaba columnas nuevas que aún no existían en tabla          | `fase29_fix_sp_upsert_cama_nueva_arquitectura.sql`     |
+| 2026-05-18  | Silver.Fact_Ciclo_Poda colapsaba puntos por valvula | Grain `[Geo, Tiempo, Variedad, Tipo_Eval]` ignoraba `Punto_Raw`; Gold hacía `AVG()` sobre falsos promedios | `fase37_restructurar_ciclo_poda.sql` + `fase38_renombrar_mart_ciclo_poda.sql` (Silver granular por punto, Gold `SUM(...) + N_Muestras`) |
 
 ---
 

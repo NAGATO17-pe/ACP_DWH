@@ -1,6 +1,5 @@
 """
 conexion.py
-===========
 Conexión a SQL Server via pyodbc + SQLAlchemy.
 
 Estrategia de carga del .env (del menos al más prioritario):
@@ -32,6 +31,27 @@ load_dotenv(_DIR_PROYECTO / ".env", override=False)         # valores compartido
 load_dotenv(_DIR_CONFIG   / ".env", override=True)          # ajustes locales opcionales
 
 # ── Silenciar aviso de versión ODBC ───────────────────────────────────────────
+config/conexion.py
+Compatibilidad: este modulo delega en comun/conexion.py.
+
+La logica canonica vive en `comun/conexion.py` (compartida con backend).
+Mantenemos las firmas existentes para no tocar los call sites del ETL.
+"""
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+_DIR_PROYECTO = Path(__file__).resolve().parent.parent.parent
+if str(_DIR_PROYECTO) not in sys.path:
+    sys.path.insert(0, str(_DIR_PROYECTO))
+
+from comun.conexion import (  # noqa: E402
+    obtener_engine,
+    resetear_engine,
+)
+from comun.conexion import verificar_conexion as _verificar_conexion_dict  # noqa: E402
 warnings.filterwarnings(
     "ignore",
     message=r"Unrecognized server version info '17\..*'\.",
@@ -55,6 +75,9 @@ def _construir_cadena_pyodbc() -> str:
     # Los drivers modernos ODBC 17/18 sí los soportan.
     es_legacy = "ODBC" not in driver
 
+    entorno = os.getenv('ACP_ENTORNO', 'dev')
+    trust   = 'yes' if entorno == 'dev' else 'no'
+
     if not usuario:
         cadena = (
             f"DRIVER={{{driver}}};"
@@ -77,6 +100,25 @@ def _construir_cadena_pyodbc() -> str:
         cadena += f"Encrypt=yes;TrustServerCertificate={trust};"
 
     return cadena
+        return (
+            f'DRIVER={{{driver}}};'
+            f'SERVER={servidor};'
+            f'DATABASE={base};'
+            f'Trusted_Connection=yes;'
+            f'Encrypt=yes;'
+            f'TrustServerCertificate={trust};'
+            f'APP=ACP_ETL_Pipeline;'
+        )
+    return (
+        f'DRIVER={{{driver}}};'
+        f'SERVER={servidor};'
+        f'DATABASE={base};'
+        f'UID={usuario};'
+        f'PWD={clave};'
+        f'Encrypt=yes;'
+        f'TrustServerCertificate={trust};'
+        f'APP=ACP_ETL_Pipeline;'
+    )
 
 
 def obtener_engine() -> Engine:
@@ -105,8 +147,9 @@ def obtener_engine() -> Engine:
         _engine = create_engine(
             cadena_url,
             fast_executemany=True,
-            pool_size=5,
-            max_overflow=2,
+            pool_size=20,
+            max_overflow=10,
+            pool_timeout=30,
             pool_pre_ping=True,
             pool_recycle=1800,
         )
@@ -114,16 +157,19 @@ def obtener_engine() -> Engine:
     return _engine
 
 
-def resetear_engine() -> None:
+def verificar_conexion() -> bool:
     """
     Descarta el singleton y cierra todas las conexiones del pool.
     Usar solo en tests o cuando cambie la configuración de BD en caliente.
+    Compat: el ETL espera bool, comun/conexion devuelve dict.
+    Mantenemos la firma original imprimiendo el resultado como antes.
     """
-    global _engine
-    with _engine_lock:
-        if _engine is not None:
-            _engine.dispose()
-            _engine = None
+    info = _verificar_conexion_dict()
+    if info.get("conectado"):
+        print(f"Conectado a: {info.get('base_datos')}")
+        return True
+    print(f"Error de conexion: {info.get('error', 'desconocido')}")
+    return False
 
 
 def verificar_conexion() -> bool:
@@ -139,6 +185,7 @@ def verificar_conexion() -> bool:
     except Exception as error:
         print(f"  [ERROR] Conexion: {error}")
         return False
+__all__ = ["obtener_engine", "resetear_engine", "verificar_conexion"]
 
 
 if __name__ == "__main__":

@@ -497,19 +497,21 @@ def refrescar_mart_ciclo_poda(conexion) -> int:
         INSERT INTO Gold.Mart_Ciclo_Poda (
             ID_Tiempo, ID_Geografia, ID_Variedad, ID_Campana,
             Fundo, Modulo, Variedad, Semana_ISO,
-            Tipo_Evaluacion, Tallos_Planta_Prom, Longitud_Tallo_Prom,
-            Diametro_Tallo_Prom, Ramilla_Planta_Prom, Tocones_Planta_Prom,
-            Cortes_Defectuosos_Prom, Altura_Poda_Prom,
+            Tipo_Evaluacion,
+            Tallos_Planta_Total, Longitud_Tallo_Total,
+            Diametro_Tallo_Total, Ramilla_Planta_Total,
+            Tocones_Planta_Total, Cortes_Defectuosos_Total,
+            Altura_Poda_Total, N_Muestras,
             Fecha_Actualizacion
         )
         SELECT
             p.ID_Tiempo, p.ID_Geografia, p.ID_Variedad, ISNULL(p.ID_Campana, 0),
             fc.Fundo, mc.Modulo, v.Nombre_Variedad, t.Semana_ISO,
             p.Tipo_Evaluacion,
-            AVG(p.Promedio_Tallos_Planta), AVG(p.Promedio_Longitud_Tallo),
-            AVG(p.Promedio_Diametro_Tallo), AVG(p.Promedio_Ramilla_Planta),
-            AVG(p.Promedio_Tocones_Planta), AVG(p.Promedio_Cortes_Defectuosos),
-            AVG(p.Promedio_Altura_Poda),
+            SUM(p.Tallos_Planta), SUM(p.Longitud_Tallo),
+            SUM(p.Diametro_Tallo), SUM(p.Ramilla_Planta),
+            SUM(p.Tocones_Planta), SUM(p.Cortes_Defectuosos),
+            SUM(p.Altura_Poda), COUNT(*),
             SYSDATETIME()
         FROM Silver.Fact_Ciclo_Poda p
         JOIN Silver.Dim_Tiempo t ON t.ID_Tiempo = p.ID_Tiempo

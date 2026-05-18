@@ -109,6 +109,24 @@ def _abrir_nuevo_paso(id_corrida: str, orden: int, nombre_paso: str) -> _PasoAct
     )
 
 
+def _bucle_heartbeat_segundo_plano(
+    id_corrida: str,
+    pid: int,
+    intervalo_seg: int,
+    detener: threading.Event,
+) -> None:
+    """
+    Mantiene heartbeat de corrida y lock vivos aun cuando el subprocess
+    no emita stdout. Evita robo de lock si pipeline cuelga sin output.
+    """
+    while not detener.wait(intervalo_seg):
+        try:
+            r_corrida.actualizar_heartbeat_corrida(id_corrida, pid)
+            r_lock.actualizar_heartbeat_lock()
+        except Exception:
+            log.warning("[RUNNER] heartbeat segundo plano fallo", extra={"id_corrida": id_corrida})
+
+
 def ejecutar_corrida(
     id_corrida: str,
     iniciado_por: str,
@@ -161,6 +179,8 @@ def ejecutar_corrida(
     # ── 3. Lanzar subprocess ──────────────────────────────────────────────────
     proceso: subprocess.Popen | None = None
     cancelado_por_heartbeat = False
+    detener_heartbeat = threading.Event()
+    hilo_heartbeat: threading.Thread | None = None
 
     try:
         proceso = subprocess.Popen(
@@ -172,6 +192,14 @@ def ejecutar_corrida(
             encoding="utf-8",
             errors="replace",
         )
+
+        hilo_heartbeat = threading.Thread(
+            target=_bucle_heartbeat_segundo_plano,
+            args=(id_corrida, pid, heartbeat_intervalo_seg, detener_heartbeat),
+            daemon=True,
+            name=f"hb-{id_corrida[:8]}",
+        )
+        hilo_heartbeat.start()
 
         # ── 4. Leer stdout + heartbeat en thread paralelo ──────────────────────
         ultimo_heartbeat = time.monotonic()
@@ -229,6 +257,10 @@ def ejecutar_corrida(
         r_corrida.insertar_evento(id_corrida, f"[RUNNER ERROR] {exc}", tipo="ERROR")
         log.exception("[RUNNER] Excepción al ejecutar pipeline", extra={"id_corrida": id_corrida})
         codigo_retorno = -99
+    finally:
+        detener_heartbeat.set()
+        if hilo_heartbeat is not None:
+            hilo_heartbeat.join(timeout=5)
 
     # ── 6. Determinar estado final ────────────────────────────────────────────
     if cancelado_por_heartbeat:

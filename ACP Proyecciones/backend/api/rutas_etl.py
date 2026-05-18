@@ -27,6 +27,7 @@ from sse_starlette.sse import EventSourceResponse
 from nucleo.auth import UsuarioActual, obtener_usuario_actual, require_rol
 from nucleo.excepciones import ErrorRecursoNoEncontrado
 from nucleo.http_utils import obtener_ip_cliente, obtener_request_id
+from nucleo.rate_limit import verificar_rate_limit
 from schemas.etl.peticion import PeticionIniciarCorrida
 from schemas.etl.respuesta import (
     RespuestaCorridaIniciada,
@@ -50,6 +51,10 @@ from servicios.servicio_auditoria import obtener_historial
 
 enrutador_etl = APIRouter(prefix="/v1/etl", tags=["ETL"])
 
+# Políticas de rate-limit por endpoint sensible
+_rl_iniciar   = lambda r: verificar_rate_limit(r, max_intentos=10, ventana_segundos=60)   # noqa: E731
+_rl_cancelar  = lambda r: verificar_rate_limit(r, max_intentos=20, ventana_segundos=60)   # noqa: E731
+
 
 # ── POST /corridas ─────────────────────────────────────────────────────────────
 
@@ -62,7 +67,7 @@ enrutador_etl = APIRouter(prefix="/v1/etl", tags=["ETL"])
         "Retorna inmediatamente. El runner procesará la corrida de forma asíncrona. "
         "Requiere rol **operador_etl** o superior."
     ),
-    dependencies=[Depends(require_rol("operador_etl"))],
+    dependencies=[Depends(require_rol("operador_etl")), Depends(_rl_iniciar)],
 )
 async def iniciar_corrida_etl(
     cuerpo: PeticionIniciarCorrida,
@@ -124,6 +129,10 @@ async def listar_historial(
 )
 async def corridas_activas() -> list[dict]:
     return await listar_corridas_activas()
+def corridas_activas(
+    limite: int = Query(default=50, ge=1, le=500),
+) -> list[dict]:
+    return listar_corridas_activas(limite=limite)
 
 
 @enrutador_etl.get(
@@ -195,7 +204,7 @@ async def stream_corrida(id_corrida: str) -> EventSourceResponse:
         "El runner detecta el cambio en su próximo ciclo de heartbeat (≤30s). "
         "Requiere rol **operador_etl** o superior."
     ),
-    dependencies=[Depends(require_rol("operador_etl"))],
+    dependencies=[Depends(require_rol("operador_etl")), Depends(_rl_cancelar)],
 )
 async def cancelar(
     id_corrida: str,
