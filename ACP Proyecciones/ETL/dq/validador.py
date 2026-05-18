@@ -76,11 +76,6 @@ def validar_fecha(valor: str | None,
             f'Fecha fuera del rango de campana ({rango})',
             'ALTO'
         )
-        return fecha, _error(
-            nombre_columna, valor,
-            'Fecha fuera del rango de campaña (2025-06-01 → 2026-06-30)',
-            'ALTO'
-        )
     return fecha, None
 
 

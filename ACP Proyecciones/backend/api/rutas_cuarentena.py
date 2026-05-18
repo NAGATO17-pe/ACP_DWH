@@ -19,6 +19,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query, Request
 
 from nucleo.auth import UsuarioActual, obtener_usuario_actual, require_rol
+from nucleo.http_utils import obtener_ip_cliente, obtener_request_id
 from schemas.cuarentena.peticion import PeticionRechazarCuarentena, PeticionResolverCuarentena
 from schemas.cuarentena.respuesta import RespuestaAccionCuarentena, RespuestaCuarentena, RespuestaPaginada
 from servicios.servicio_auth import registrar_accion
@@ -76,7 +77,8 @@ def resolver(
         nombre_usuario=usuario.nombre_usuario,
         accion="RESOLVER_CUARENTENA",
         endpoint=str(request.url),
-        request_id=getattr(request.state, "request_id", None),
+        request_id=obtener_request_id(request),
+        ip_origen=obtener_ip_cliente(request),
         detalle=f"tabla={tabla_origen} id={id_registro}",
     )
     return RespuestaAccionCuarentena(**resultado)
@@ -106,7 +108,8 @@ def rechazar(
         nombre_usuario=usuario.nombre_usuario,
         accion="RECHAZAR_CUARENTENA",
         endpoint=str(request.url),
-        request_id=getattr(request.state, "request_id", None),
+        request_id=obtener_request_id(request),
+        ip_origen=obtener_ip_cliente(request),
         detalle=f"tabla={tabla_origen} id={id_registro}",
     )
     return RespuestaAccionCuarentena(**resultado)

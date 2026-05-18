@@ -62,8 +62,6 @@ from utils.metricas import formatear_resumen_fact, normalizar_resultado_fact
 
 
 import logging
-import sys
-from datetime import datetime
 from pathlib import Path
 
 class PrettyConsoleFormatter(logging.Formatter):
@@ -111,8 +109,8 @@ def setup_etl_logger():
         fmt = '{"timestamp": "%(asctime)s", "level": "%(levelname)s", "service": "acp-etl", "message": "%(message)s"}'
         file_handler.setFormatter(logging.Formatter(fmt))
         logger.addHandler(file_handler)
-    except Exception:
-        pass # Fallback silent if no write permissions
+    except Exception as error:
+        logger.warning("No se pudo crear file_handler de auditoria: %s", error)
 
     return logger
 
@@ -555,7 +553,7 @@ def ejecutar_reproceso_facts(
     _paso(paso_actual, total, 'Verificando conexion SQL Server...')
     if not verificar_conexion():
         _imprimir('Sin conexion. Pipeline detenido.')
-        sys.exit(1)
+        raise ErrorEjecucionPipeline(['Sin conexion a SQL Server'])
     contexto_sql = _obtener_contexto_sql(engine)
     resumen['Servidor SQL'] = contexto_sql.get('servidor')
     resumen['Base SQL'] = contexto_sql.get('base_datos')
@@ -631,7 +629,7 @@ def ejecutar() -> None:
     _paso(1, total, 'Verificando conexion SQL Server...')
     if not verificar_conexion():
         _imprimir('Sin conexion. Pipeline detenido.')
-        sys.exit(1)
+        raise ErrorEjecucionPipeline(['Sin conexion a SQL Server'])
     contexto_sql = _obtener_contexto_sql(engine)
     resumen['Servidor SQL'] = contexto_sql.get('servidor')
     resumen['Base SQL'] = contexto_sql.get('base_datos')
@@ -642,7 +640,7 @@ def ejecutar() -> None:
         verificar_objetos_criticos(engine)
     except RuntimeError as _e_esquema:
         _imprimir(str(_e_esquema))
-        sys.exit(1)
+        raise ErrorEjecucionPipeline([f'Verificacion de esquema fallida: {_e_esquema}'])
 
     _paso(3, total, 'Limpiando cache...')
     limpiar_lookup()
@@ -665,7 +663,9 @@ def ejecutar() -> None:
         _imprimir('  ERROR CRITICO EN BRONCE. Pipeline detenido antes de Silver/Gold.')
         _imprimir(f'  {error_critico_bronce.get("mensaje", "")}')
         _resumen_final(inicio, resumen)
-        sys.exit(1)
+        raise ErrorEjecucionPipeline([
+            f'Bronce critico: {error_critico_bronce.get("mensaje", "")}'
+        ])
 
     _paso(5, total, 'Cargando Dim_Personal (SCD1)...')
     r = cargar_dim_personal(engine)
@@ -703,14 +703,16 @@ def ejecutar() -> None:
                 )
                 _imprimir(f'  ERROR: {mensaje}')
                 resumen['SP_Cama inconsistencia'] = mensaje
-                sys.exit(1)
+                raise ErrorEjecucionPipeline([f'SP_Cama inconsistencia: {mensaje}'])
         else:
             resumen['SP_Cama estado'] = 'OMITIDO_SIN_TABLAS_CON_CAMA_EN_ESTA_CORRIDA'
             _imprimir('  SP_Cama omitido: no ingresaron tablas Bronce con cama en esta corrida.')
+    except ErrorEjecucionPipeline:
+        raise
     except Exception as error:
         _imprimir(f'  ERROR en SP_Cama_Upsert: {error}')
         resumen['SP_Cama_Upsert ERROR'] = str(error)
-        sys.exit(1)
+        raise ErrorEjecucionPipeline([f'SP_Cama_Upsert: {error}']) from error
 
     _paso(8, total, 'Validando calidad de cama via SP...')
     try:
@@ -727,11 +729,15 @@ def ejecutar() -> None:
             config_operativa['estados_bloqueantes_calidad_cama'],
         ):
             _imprimir(f"  ERROR: Calidad cama en estado {r.get('Estado_Calidad_Cama')}. Pipeline detenido.")
-            sys.exit(1)
+            raise ErrorEjecucionPipeline([
+                f"Calidad cama bloqueante: {r.get('Estado_Calidad_Cama')}"
+            ])
+    except ErrorEjecucionPipeline:
+        raise
     except Exception as error:
         _imprimir(f'  ERROR en SP_Cama_Validacion: {error}')
         resumen['SP_Cama_Validacion ERROR'] = str(error)
-        sys.exit(1)
+        raise ErrorEjecucionPipeline([f'SP_Cama_Validacion: {error}']) from error
 
     for nombre, meta_fact in CATALOGO_FACTS.items():
         numero = int(meta_fact['orden'])
@@ -754,7 +760,8 @@ def ejecutar() -> None:
             except Exception as error:
                 _imprimir(f'  ERROR en SP_Sincronizar_Campanas: {error}')
                 resumen['SP_Campanas_Sync ERROR'] = str(error)
-                # No detenemos el pipeline, pero los siguientes hechos podrían fallar/rechazar
+                errores_pipeline.append(f'SP_Sincronizar_Campanas: {error}')
+                facts_con_error.append('SP_Campanas_Sync')
 
     if _gold_debe_bloquearse(facts_con_error, config_operativa['facts_bloqueantes_gold']):
         _paso(23, total, 'Omitiendo Marts Gold por errores previos...')
