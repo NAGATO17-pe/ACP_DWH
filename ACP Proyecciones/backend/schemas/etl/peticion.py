@@ -23,7 +23,7 @@ _FACTS_VALIDOS: frozenset[str] = frozenset({
     "Fact_Evaluacion_Vegetativa",
     "Fact_Induccion_Floral",
     "Fact_Tasa_Crecimiento_Brotes",
-    "Fact_Sanidad_Activo",
+    "Fact_Censo_Plantas",
     "Fact_Ciclo_Poda",
     "Fact_Sixweek",
 })

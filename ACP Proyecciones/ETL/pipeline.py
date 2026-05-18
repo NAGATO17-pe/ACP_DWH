@@ -39,7 +39,7 @@ from silver.facts.fact_fisiologia import cargar_fact_fisiologia
 from silver.facts.fact_evaluacion_vegetativa import cargar_fact_evaluacion_vegetativa
 from silver.facts.fact_induccion_floral import cargar_fact_induccion_floral
 from silver.facts.fact_tasa_crecimiento_brotes import cargar_fact_tasa_crecimiento_brotes
-from silver.facts.fact_sanidad_activo import cargar_fact_sanidad_activo
+from silver.facts.fact_censo_plantas import cargar_fact_censo_plantas
 from silver.facts.fact_ciclo_poda import cargar_fact_ciclo_poda
 from silver.facts.fact_sixweek import cargar_fact_sixweek
 
@@ -149,7 +149,7 @@ CATALOGO_FACTS = construir_catalogo_facts({
     'Fact_Evaluacion_Vegetativa': cargar_fact_evaluacion_vegetativa,
     'Fact_Induccion_Floral':      cargar_fact_induccion_floral,
     'Fact_Tasa_Crecimiento_Brotes': cargar_fact_tasa_crecimiento_brotes,
-    'Fact_Sanidad_Activo':        cargar_fact_sanidad_activo,
+    'Fact_Censo_Plantas':         cargar_fact_censo_plantas,
     'Fact_Ciclo_Poda':            cargar_fact_ciclo_poda,
     'Fact_Proyecciones_SixWeek':  cargar_fact_sixweek,
 })
