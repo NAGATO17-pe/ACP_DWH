@@ -31,6 +31,8 @@ def obtener_engine() -> Engine:
     Retorna el Engine SQLAlchemy singleton para el backend.
     Se construye a partir de settings — sin hardcodear nada.
     """
+    es_legacy = "ODBC" not in settings.db_driver  # driver "SQL Server" no soporta TrustServerCertificate
+
     if settings.db_usuario:
         cadena_pyodbc = (
             f"DRIVER={{{settings.db_driver}}};"
@@ -38,16 +40,18 @@ def obtener_engine() -> Engine:
             f"DATABASE={settings.db_nombre};"
             f"UID={settings.db_usuario};"
             f"PWD={settings.db_clave};"
-            f"TrustServerCertificate=yes;"
         )
+        if not es_legacy:
+            cadena_pyodbc += "TrustServerCertificate=yes;Login Timeout=5;"
     else:
         cadena_pyodbc = (
             f"DRIVER={{{settings.db_driver}}};"
             f"SERVER={settings.db_servidor};"
             f"DATABASE={settings.db_nombre};"
             f"Trusted_Connection=yes;"
-            f"TrustServerCertificate=yes;"
         )
+        if not es_legacy:
+            cadena_pyodbc += "TrustServerCertificate=yes;Login Timeout=5;"
 
     cadena_url = (
         "mssql+pyodbc:///?odbc_connect="

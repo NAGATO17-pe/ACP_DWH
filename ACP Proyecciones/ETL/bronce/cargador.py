@@ -691,28 +691,28 @@ def _leer_excel_peladas_bd(ruta_archivo: Path) -> pd.DataFrame:
     Prioriza la hoja BD_LT, que representa el subconjunto operativo de Peladas.
     Si no existe, intenta hoja BD y filtra solo registros con Tipo_Evaluacion = PELADAS.
     """
-    libro = pd.ExcelFile(str(ruta_archivo), engine='openpyxl')
-    hojas = set(libro.sheet_names)
+    with pd.ExcelFile(str(ruta_archivo), engine='openpyxl') as libro:
+        hojas = set(libro.sheet_names)
 
-    if 'BD_LT' in hojas:
-        return _leer_excel_especial(ruta_archivo, sheet_name='BD_LT', header_idx=0)
+        if 'BD_LT' in hojas:
+            return _leer_excel_especial(ruta_archivo, sheet_name='BD_LT', header_idx=0)
 
-    if 'BD' in hojas:
-        df = _leer_excel_especial(ruta_archivo, sheet_name='BD', header_idx=0)
-        if df.empty:
+        if 'BD' in hojas:
+            df = _leer_excel_especial(ruta_archivo, sheet_name='BD', header_idx=0)
+            if df.empty:
+                return df
+
+            if 'Tipo_Evaluacion_Raw' in df.columns:
+                mascara_peladas = (
+                    df['Tipo_Evaluacion_Raw']
+                    .astype(str)
+                    .str.strip()
+                    .str.upper()
+                    .eq('PELADAS')
+                )
+                df = df[mascara_peladas].copy()
+
             return df
-
-        if 'Tipo_Evaluacion_Raw' in df.columns:
-            mascara_peladas = (
-                df['Tipo_Evaluacion_Raw']
-                .astype(str)
-                .str.strip()
-                .str.upper()
-                .eq('PELADAS')
-            )
-            df = df[mascara_peladas].copy()
-
-        return df
 
     raise ValueError(
         'Layout de Peladas sin hoja compatible. '
@@ -993,23 +993,28 @@ def _detectar_header_idx(ruta_archivo: Path, tabla_destino: str, engine) -> int:
 def _serializar_valores_extra(df: pd.DataFrame, columnas_extra: list[str]) -> pd.Series:
     """
     Serializa columnas no mapeadas en formato "col=valor | col2=valor2".
+    Versión vectorizada para alta performance en archivos grandes.
     """
     if not columnas_extra:
         return pd.Series([None] * len(df), index=df.index)
 
-    def _serializar_fila(fila: pd.Series) -> str | None:
-        partes = []
-        for columna in columnas_extra:
-            valor = fila.get(columna)
-            if valor is None:
-                continue
-            texto = str(valor).strip()
-            if not texto or texto.lower() == 'none':
-                continue
-            partes.append(f'{columna}={texto}')
-        return ' | '.join(partes) if partes else None
-
-    return df.apply(_serializar_fila, axis=1)
+    # Inicializar con serie de strings vacíos
+    res = pd.Series("", index=df.index, dtype=str)
+    
+    for col in columnas_extra:
+        # Extraer, convertir a string y limpiar
+        val = df[col].astype(str).str.strip()
+        # Máscara de valores que ignoraremos (vacíos, None, nan)
+        mask = (val == "") | (val.str.lower() == "none") | (df[col].isna())
+        
+        # Preparar fragmento "NombreColumna=Valor"
+        fragmento = col + "=" + val
+        fragmento[mask] = ""
+        
+        # Concatenar usando separador. str.cat con na_rep="" maneja la unión eficientemente
+        res = res.str.cat(fragmento, sep=" | ", na_rep="").str.strip(" | ")
+        
+    return res.replace("", None)
 
 
 def _formatear_columnas_extra(columnas_extra: list[str], max_columnas: int = 12) -> str:

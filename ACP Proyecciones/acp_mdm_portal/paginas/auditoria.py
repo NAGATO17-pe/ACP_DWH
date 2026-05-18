@@ -15,7 +15,6 @@ Funcionalidades:
 
 from __future__ import annotations
 
-import inspect
 import io
 from datetime import datetime
 
@@ -24,8 +23,8 @@ import streamlit as st
 
 from utils.api_client import get_api, mostrar_error_api
 from utils.auth import tiene_permiso
-from utils.componentes import badge_html, estado_vacio_html, mostrar_kpis
-from utils.formato import crear_tarjeta_kpi, header_pagina, renderizar_tabla_premium
+from utils.componentes import badge_html, estado_vacio_html, banner_aviso
+from utils.formato import header_pagina, renderizar_tabla_premium, crear_panel_metricas_premium
 
 # ── Constantes ────────────────────────────────────────────────────────────────
 
@@ -116,11 +115,11 @@ def _render_kpis(df: pd.DataFrame) -> None:
     # Usar componente premium centralizado
     crear_panel_metricas_premium(
         metricas=[
-            {"label": "Última corrida", "value": ultima_fecha, "color": "#F59E0B"},
+            {"label": "Última corrida", "value": ultima_fecha, "color": "#e8a020"},
             {"label": "Tablas", "value": str(tablas_distintas)},
-            {"label": "Filas OK", "value": f"{total_ok:,}", "color": "#10B981"},
-            {"label": "Rechazadas", "value": f"{total_rechaz:,}", "color": "#EF4444" if total_rechaz else "#94A3B8"},
-            {"label": "Errores", "value": str(corridas_error), "color": "#EF4444" if corridas_error else "#10B981"},
+            {"label": "Filas OK", "value": f"{total_ok:,}", "color": "#2db87a"},
+            {"label": "Rechazadas", "value": f"{total_rechaz:,}", "color": "#EF4444" if total_rechaz else "#8fa897"},
+            {"label": "Errores", "value": str(corridas_error), "color": "#EF4444" if corridas_error else "#2db87a"},
             {"label": "Duración", "value": duracion_prom}
         ],
         pct_progreso=pct_ok,
@@ -135,7 +134,7 @@ def _render_kpis(df: pd.DataFrame) -> None:
 def _render_filtros(df: pd.DataFrame) -> pd.DataFrame:
     with st.container(border=True):
         st.markdown(
-            "<p style='font-size:0.65rem;font-weight:700;color:#94A3B8;"
+            "<p style='font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.35);"
             "text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;'>Filtros</p>",
             unsafe_allow_html=True,
         )
@@ -269,7 +268,7 @@ def _render_detalle_tabla(df: pd.DataFrame) -> None:
     if not tablas:
         return
 
-    st.markdown("---")
+    st.divider()
     st.markdown("### 🔍 Detalle por tabla")
 
     col_sel, col_ref = st.columns([3, 1])
@@ -288,7 +287,7 @@ def _render_detalle_tabla(df: pd.DataFrame) -> None:
 
     if not resultado.ok:
         if resultado.status_code == 404:
-            st.info(f"No hay registros de auditoría para **{tabla_sel}**.")
+            banner_aviso(f"No hay registros de auditoría para **{tabla_sel}**.")
         else:
             mostrar_error_api(resultado, "Error al consultar el detalle.")
         return
@@ -312,21 +311,40 @@ def _render_detalle_tabla(df: pd.DataFrame) -> None:
             )
         with c2:
             filas_ok = datos.get("filas_insertadas", 0) or 0
-            st.metric("Filas insertadas", f"{int(filas_ok):,}")
+            st.markdown(
+                f"<div style='font-size:0.65rem;color:#8fa897;font-weight:700;text-transform:uppercase;"
+                f"letter-spacing:0.8px;margin-bottom:4px;'>Filas insertadas</div>"
+                f"<div style='font-size:1.35rem;font-weight:700;color:#2db87a;"
+                f"font-family:JetBrains Mono,monospace;'>{int(filas_ok):,}</div>",
+                unsafe_allow_html=True,
+            )
         with c3:
             filas_r = datos.get("filas_rechazadas", 0) or 0
-            st.metric("Rechazadas", f"{int(filas_r):,}")
+            color_r = "#EF4444" if filas_r else "#8fa897"
+            st.markdown(
+                f"<div style='font-size:0.65rem;color:#8fa897;font-weight:700;text-transform:uppercase;"
+                f"letter-spacing:0.8px;margin-bottom:4px;'>Rechazadas</div>"
+                f"<div style='font-size:1.35rem;font-weight:700;color:{color_r};"
+                f"font-family:JetBrains Mono,monospace;'>{int(filas_r):,}</div>",
+                unsafe_allow_html=True,
+            )
         with c4:
             dur = _formatear_duracion(datos.get("duracion_segundos"))
-            st.metric("Duración", dur)
+            st.markdown(
+                f"<div style='font-size:0.65rem;color:#8fa897;font-weight:700;text-transform:uppercase;"
+                f"letter-spacing:0.8px;margin-bottom:4px;'>Duración</div>"
+                f"<div style='font-size:1.35rem;font-weight:700;color:#e8a020;"
+                f"font-family:JetBrains Mono,monospace;'>{dur}</div>",
+                unsafe_allow_html=True,
+            )
 
         # Fechas
         fi = datos.get("fecha_inicio")
         ff = datos.get("fecha_fin")
         if fi or ff:
             st.markdown(
-                f"<p style='font-size:0.8rem;color:#94A3B8;margin-top:10px;'>"
-                f"⏱ Inicio: <b style='color:#F8FAFC'>{fi or '—'}</b> &nbsp;|&nbsp; Fin: <b style='color:#F8FAFC'>{ff or '—'}</b></p>",
+                f"<p style='font-size:0.8rem;color:#8fa897;margin-top:10px;'>"
+                f"⏱ Inicio: <b style='color:#e8f0ec'>{fi or '—'}</b> &nbsp;|&nbsp; Fin: <b style='color:#e8f0ec'>{ff or '—'}</b></p>",
                 unsafe_allow_html=True,
             )
 
@@ -347,34 +365,31 @@ def _render_resumen_estados(df: pd.DataFrame) -> None:
 
     bloques = ""
     paleta = {
-        "OK":      "#10B981",
+        "OK":      "#2db87a",
         "ERROR":   "#EF4444",
-        "RUNNING": "#F59E0B",
-        "SKIPPED": "#6B7280",
+        "RUNNING": "#e8a020",
+        "SKIPPED": "#8fa897",
     }
 
     for estado, cnt in conteo.items():
         pct   = round((cnt / total) * 100, 1)
-        color = paleta.get(str(estado).upper(), "#6B7280")
+        color = paleta.get(str(estado).upper(), "#8fa897")
         icono = _ESTADO_ICONOS.get(str(estado).upper(), "❓")
         bloques += f"""
         <div style="
-            background: rgba(30, 41, 59, 0.45);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-bottom: 2px solid {color}33;
-            border-radius: 16px;
-            padding: 20px 16px;
+            background: rgba(26, 46, 30, 0.5);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-bottom: 2px solid {color}44;
+            border-radius: 14px;
+            padding: 18px 16px;
             flex: 1; min-width: 140px;
             display: flex; flex-direction: column; align-items: center; gap: 6px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
-            transition: all 0.3s ease;
         ">
-            <div style="font-size:1.6rem; filter: drop-shadow(0 0 8px {color}44);">{icono}</div>
-            <div style="font-family:'JetBrains Mono','Outfit',monospace; font-size:1.6rem; font-weight:700;
-                        color:{color}; text-shadow: 0 0 20px {color}33;">{cnt}</div>
+            <div style="font-size:1.6rem;">{icono}</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:1.6rem; font-weight:700;
+                        color:{color};">{cnt}</div>
             <div style="font-size:0.6rem; text-transform:uppercase; letter-spacing:2px;
-                        color:#94A3B8; font-weight:700;">{estado}</div>
+                        color:#8fa897; font-weight:700;">{estado}</div>
             <div style="font-size:0.7rem; color:{color}; font-weight:600; opacity:0.8;">{pct}%</div>
         </div>"""
 

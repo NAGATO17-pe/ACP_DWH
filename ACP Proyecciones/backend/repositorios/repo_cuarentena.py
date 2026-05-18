@@ -41,16 +41,6 @@ def listar_pendientes(
 
     try:
         with obtener_engine().connect() as con:
-            total = con.execute(
-                text(f"""
-                    SELECT COUNT(*)
-                    FROM MDM.Cuarentena
-                    WHERE Estado = 'PENDIENTE'
-                    {clausula_filtro}
-                """),
-                parametros,
-            ).scalar() or 0
-
             filas = con.execute(
                 text(f"""
                     SELECT
@@ -62,8 +52,9 @@ def listar_pendientes(
                         CONVERT(VARCHAR(19), Fecha_Ingreso, 120) AS fecha_ingreso,
                         Estado              AS estado,
                         Motivo              AS motivo,
-                        ID_Registro_Origen  AS id_registro_origen
-                    FROM MDM.Cuarentena
+                        ID_Registro_Origen  AS id_registro_origen,
+                        COUNT(*) OVER()     AS total_rows
+                    FROM MDM.Cuarentena WITH (NOLOCK)
                     WHERE Estado = 'PENDIENTE'
                     {clausula_filtro}
                     ORDER BY Fecha_Ingreso DESC, ID_Cuarentena DESC
@@ -72,11 +63,20 @@ def listar_pendientes(
                 parametros,
             ).fetchall()
 
+        total = 0
+        datos = []
+        if filas:
+            total = filas[0]._mapping["total_rows"]
+            for fila in filas:
+                d = dict(fila._mapping)
+                d.pop("total_rows", None)
+                datos.append(d)
+
         return {
             "total":  total,
             "pagina": pagina,
             "tamano": tamano,
-            "datos":  [dict(fila._mapping) for fila in filas],
+            "datos":  datos,
         }
     except SQLAlchemyError:
         log.exception("Error al listar cuarentena")
@@ -157,4 +157,34 @@ def marcar_descartado(
             return resultado.rowcount
     except SQLAlchemyError:
         log.exception("Error al descartar cuarentena", extra={"id_registro": id_registro})
+        raise ErrorBaseDatos()
+def obtener_resumen() -> dict:
+    """
+    Retorna el conteo de registros agrupados por estado.
+    Útil para badges en la UI sin descargar toda la data.
+    """
+    try:
+        with obtener_engine().connect() as con:
+            filas = con.execute(
+                text("""
+                    SELECT
+                        Estado AS estado,
+                        COUNT(*) AS total
+                    FROM MDM.Cuarentena WITH (NOLOCK)
+                    GROUP BY Estado
+                """)
+            ).fetchall()
+
+        resumen = {"PENDIENTE": 0, "RESUELTO": 0, "DESCARTADO": 0, "TOTAL": 0}
+        total_acumulado = 0
+        for fila in filas:
+            estado = str(fila._mapping["estado"]).upper()
+            cantidad = int(fila._mapping["total"])
+            resumen[estado] = cantidad
+            total_acumulado += cantidad
+
+        resumen["TOTAL"] = total_acumulado
+        return resumen
+    except SQLAlchemyError:
+        log.exception("Error al obtener resumen de cuarentena")
         raise ErrorBaseDatos()

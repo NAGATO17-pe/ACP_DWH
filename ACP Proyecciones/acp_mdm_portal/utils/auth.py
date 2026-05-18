@@ -48,6 +48,7 @@ def obtener_usuario() -> dict | None:
 
 
 
+
 def cerrar_sesion() -> None:
     for key in [
         "autenticado",
@@ -230,9 +231,8 @@ def _render_login() -> bool:
     return False
 
 
-
 def login_gate() -> bool:
-    if st.session_state.get("autenticado"):
-        return True
-    _render_login()
-    return False
+    if not st.session_state.get("autenticado"):
+        return _render_login()
+    return True
+

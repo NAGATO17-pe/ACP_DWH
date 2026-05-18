@@ -25,10 +25,10 @@ enrutador_auditoria = APIRouter(prefix="/v1/auditoria", tags=["Auditoría"])
     description="Retorna las últimas N entradas de Auditoria.Log_Carga ordenadas por fecha desc.",
     dependencies=[Depends(require_rol("viewer"))],
 )
-def listar_log_carga(
+async def listar_log_carga(
     limite: int = Query(default=50, ge=1, le=500, description="Máximo de registros a retornar."),
 ) -> list[RespuestaLogCarga]:
-    registros = obtener_historial(limite=limite)
+    registros = await obtener_historial(limite=limite)
     return [RespuestaLogCarga(**r) for r in registros]
 
 
@@ -39,8 +39,8 @@ def listar_log_carga(
     description="Retorna la última entrada de Auditoria.Log_Carga para una tabla específica.",
     dependencies=[Depends(require_rol("viewer"))],
 )
-def ultimo_estado(tabla_destino: str) -> RespuestaUltimoEstado:
-    datos = obtener_ultimo_estado_tabla(tabla_destino)
+async def ultimo_estado(tabla_destino: str) -> RespuestaUltimoEstado:
+    datos = await obtener_ultimo_estado_tabla(tabla_destino)
     if datos is None:
         raise ErrorRecursoNoEncontrado(f"Tabla '{tabla_destino}'")
     return RespuestaUltimoEstado(**datos)

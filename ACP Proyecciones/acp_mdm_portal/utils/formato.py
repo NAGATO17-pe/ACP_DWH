@@ -1,29 +1,26 @@
 """
-utils/formato.py — Sistema de diseño visual del Portal MDM ACP (Enterprise)
-=============================================================================
-CSS Premium + Componentes de renderizado HTML.
+utils/formato.py — Sistema de diseño visual · Portal MDM ACP
+=============================================================
+Bloque CSS_PORTAL + componentes de renderizado HTML.
 
-Cambios v4 Midnight Premium Edition:
-  - Estética Dark Mode (OLED) profunda basada en Slate 900/950.
-  - Glassmorphism Oscuro: backdrop-filter blur sobre fondos Slate translúcidos.
-  - Acentos Gold (Amber) y Emerald para estados operativos.
-  - Sidebar Midnight con navegación resaltada en Gold.
-  - Tipografía Outfit + Inter integrada vía Google Fonts.
+Paleta: Verde-tierra agro (base verde-noche) · Ámbar-tierra · Verde-cosecha.
+Tipografía: Inter (cuerpo) · Outfit (títulos) · JetBrains Mono (valores).
 """
 
 import math
 
 import streamlit as st
 
-# ── Midnight Premium Palette ──
-SLATE_950      = "#020617"
-SLATE_900      = "#0F172A"
-SLATE_800      = "#1E293B"
-SLATE_400      = "#94A3B8"
-SLATE_50       = "#F8FAFC"
-GOLD_ACCENT    = "#F59E0B"
-EMERALD_ACCENT = "#10B981"
-SURFACE_GLASS  = "rgba(30, 41, 59, 0.65)"
+# ── Agro-Earth Palette (OKLCH-derived) ──────────────────────────────────────
+# Base neutral tintada a verde-tierra: distingue del Slate azul genérico
+# de SaaS y ancla la identidad en el contexto agrícola de Cerro Prieto.
+SLATE_950      = "#050f08"   # Verde-noche casi negro   oklch(5%  0.008 148)
+SLATE_900      = "#0d1a10"   # Verde-bosque profundo    oklch(11% 0.012 148)
+SLATE_800      = "#1a2e1e"   # Verde-tierra oscuro      oklch(18% 0.016 148)
+SLATE_400      = "#8fa897"   # Gris-verdoso cálido      oklch(67% 0.024 148)
+SLATE_50       = "#f4f9f5"   # Blanco-verdoso suave     oklch(97% 0.008 148)
+GOLD_ACCENT    = "#e8a020"   # Ámbar-tierra (menos eléctrico que amber-500)
+EMERALD_ACCENT = "#2db87a"   # Verde-cosecha (follaje vivo con tierra)
 
 CSS_PORTAL = f"""
 <style>
@@ -35,14 +32,13 @@ CSS_PORTAL = f"""
     --slate-950: {SLATE_950};
     --slate-900: {SLATE_900};
     --slate-800: {SLATE_800};
+    --slate-700: #2d4232;   /* Verde-tierra medio      oklch(27% 0.018 148) */
+    --slate-500: #4d6b54;   /* Verde-tierra intermedio oklch(43% 0.022 148) */
     --slate-400: {SLATE_400};
     --slate-50:  {SLATE_50};
     --gold-accent: {GOLD_ACCENT};
     --emerald-accent: {EMERALD_ACCENT};
-
-    --glass-bg: {SURFACE_GLASS};
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --teal-primary: #1a6b3a; /* Verde-agro profundo     oklch(42% 0.12 148) */
 
     --radius-sm: 10px;
     --radius-md: 14px;
@@ -61,39 +57,25 @@ h1, h2, h3, h4 {{
     font-family: 'Outfit', 'Inter', system-ui, sans-serif;
 }}
 
-/* ── Micro-animations (Zenith) ── */
+/* ── Micro-animations ── */
 @keyframes fadeIn {{
-    from {{ opacity: 0; transform: translateY(6px); }}
+    from {{ opacity: 0; transform: translateY(4px); }}
     to   {{ opacity: 1; transform: translateY(0); }}
 }}
 @keyframes slideUp {{
-    from {{ opacity: 0; transform: translateY(14px); }}
+    from {{ opacity: 0; transform: translateY(10px); }}
     to   {{ opacity: 1; transform: translateY(0); }}
-}}
-@keyframes shimmer {{
-    0%   {{ background-position: -200% 0; }}
-    100% {{ background-position: 200% 0; }}
 }}
 @keyframes softPulse {{
     0%, 100% {{ opacity: 1; }}
-    50%      {{ opacity: 0.7; }}
-}}
-@keyframes auroraFloat {{
-    0%   {{ transform: translate(0, 0) scale(1); }}
-    33%  {{ transform: translate(30px, -20px) scale(1.05); }}
-    66%  {{ transform: translate(-20px, 15px) scale(0.95); }}
-    100% {{ transform: translate(0, 0) scale(1); }}
-}}
-@keyframes cardShimmer {{
-    0%   {{ left: -100%; }}
-    100% {{ left: 200%; }}
+    50%      {{ opacity: 0.65; }}
 }}
 
 /* Smooth transitions — solo elementos del design system, no widgets Streamlit */
 .kpi-card, .glass-card, .nav-item, .step-item, .badge,
 .stButton > button, .sidebar-nav-item {{
-    transition: background-color 0.25s ease, border-color 0.25s ease,
-                box-shadow 0.25s ease, transform 0.2s ease, opacity 0.25s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease,
+                box-shadow 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
@@ -104,6 +86,7 @@ h1, h2, h3, h4 {{
     background-attachment: fixed !important;
     overflow-x: hidden;
 }}
+/* Gradientes de fondo estáticos — sin animación de bucle para ahorrar GPU */
 .stApp::before {{
     content: '';
     position: fixed;
@@ -111,20 +94,8 @@ h1, h2, h3, h4 {{
     z-index: 0;
     pointer-events: none;
     background:
-        radial-gradient(600px circle at 15% 15%, rgba(245, 158, 11, 0.06) 0%, transparent 60%),
-        radial-gradient(500px circle at 85% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 60%),
-        radial-gradient(400px circle at 50% 50%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
-    animation: auroraFloat 25s ease-in-out infinite;
-}}
-/* Digital grain texture */
-.stApp::after {{
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.015;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        radial-gradient(700px circle at 10% 10%, rgba(232, 160, 32, 0.04) 0%, transparent 55%),
+        radial-gradient(600px circle at 90% 85%, rgba(45, 184, 122, 0.03) 0%, transparent 55%);
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
@@ -163,12 +134,12 @@ section[data-testid="stSidebar"] *:not(span[style]) {{
 }}
 
 .sidebar-section {{
-    font-size: 0.6rem;
+    font-size: 0.72rem;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
     color: rgba(255,255,255,0.3) !important;
     padding: 18px 14px 6px 14px;
-    font-weight: 700;
+    font-weight: 600;
 }}
 
 /* Radio Nav */
@@ -189,7 +160,7 @@ section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] > label:hover {
     color: {SLATE_50} !important;
 }}
 section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] > label[aria-checked="true"] {{
-    background: rgba(245, 158, 11, 0.08) !important;
+    background: rgba(232, 160, 32, 0.08) !important;
     border-left-color: {GOLD_ACCENT} !important;
 }}
 section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] > label[aria-checked="true"] p {{
@@ -223,19 +194,68 @@ section[data-testid="stSidebar"] .stButton > button:hover {{
     color: #EF4444 !important;
 }}
 
+/* ── Sidebar status badges ── */
+.sb-badges-panel {{
+    margin: 0 10px 10px 10px;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}}
+.sb-badge-row {{
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 20px;
+}}
+.sb-badge-dot {{
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: softPulse 3s ease-in-out infinite;
+}}
+.sb-badge-label {{
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.35) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    flex-shrink: 0;
+    width: 68px;
+}}
+.sb-badge-value {{
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    flex: 1;
+}}
+.sb-badge-sub {{
+    font-size: 0.65rem;
+    font-weight: 400;
+    font-family: 'Inter', sans-serif;
+    color: rgba(255,255,255,0.25) !important;
+    font-style: normal;
+}}
+
 /* ══════════════════════════════════════════════════════════════════════════════
-   PAGE HEADER — Glass effect with Gold accent
+   PAGE HEADER — Sin side-stripe: borde superior + background tint
    ══════════════════════════════════════════════════════════════════════════════ */
 .page-header {{
-    background: rgba(30, 41, 59, 0.4);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.05);
-    border-left: 4px solid {GOLD_ACCENT};
-    padding: 16px 24px;
-    border-radius: 14px;
+    background: rgba(26, 46, 30, 0.5);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-top: 2px solid {GOLD_ACCENT};
+    padding: 18px 24px 16px;
+    border-radius: var(--radius-md);
     margin-bottom: 24px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    animation: slideUp 0.4s ease;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+    animation: slideUp 0.3s ease;
 }}
 .page-header h1 {{
     font-family: 'Outfit', sans-serif;
@@ -252,9 +272,9 @@ section[data-testid="stSidebar"] .stButton > button:hover {{
    DATAFRAMES — Midnight Dark Treatment
    ══════════════════════════════════════════════════════════════════════════════ */
 div[data-testid="stDataFrame"] {{
-    border-radius: 12px;
+    border-radius: var(--radius-sm);
     border: 1px solid rgba(255,255,255,0.05);
-    background: rgba(15, 23, 42, 0.5) !important;
+    background: rgba(13, 26, 16, 0.5) !important;
 }}
 div[data-testid="stDataFrame"] thead th {{
     background: {SLATE_950} !important;
@@ -268,40 +288,37 @@ div[data-testid="stDataFrame"] tbody td {{
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   KPI CARDS — Glassmorphism Midnight
+   KPI CARDS — Midnight refinado (sin blur, sin shimmer, sin bounce)
    ══════════════════════════════════════════════════════════════════════════════ */
 .kpi-container {{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 16px;
     margin-bottom: 24px;
-    animation: slideUp 0.5s ease;
+    animation: slideUp 0.35s ease;
 }}
 .kpi-card {{
-    background: rgba(30, 41, 59, 0.4);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 20px;
+    background: rgba(26, 46, 30, 0.55);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: var(--radius-md);
     padding: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.22);
     display: flex;
     align-items: center;
     gap: 18px;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
     overflow: hidden;
-    max-width: 380px;
 }}
 .kpi-card:hover {{
-    transform: translateY(-6px) scale(1.02);
-    background: rgba(30, 41, 59, 0.6);
-    border-color: rgba(255,255,255,0.15);
-    box-shadow: 0 15px 45px rgba(0,0,0,0.4);
+    transform: translateY(-2px);
+    background: rgba(26, 46, 30, 0.75);
+    border-color: rgba(255,255,255,0.12);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.28);
 }}
 .kpi-icon-wrapper {{
     position: relative;
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -310,134 +327,110 @@ div[data-testid="stDataFrame"] tbody td {{
 .kpi-icon-bg {{
     position: absolute;
     inset: 0;
-    background: var(--accent-color, #94A3B8);
-    opacity: 0.1;
-    border-radius: 12px;
-    transition: all 0.3s ease;
+    background: var(--accent-color, {SLATE_400});
+    opacity: 0.08;
+    border-radius: 10px;
+    transition: opacity 0.2s ease;
 }}
 .kpi-card:hover .kpi-icon-bg {{
-    opacity: 0.2;
-    transform: rotate(45deg);
+    opacity: 0.14;
 }}
 .kpi-icon {{
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     z-index: 1;
-    filter: drop-shadow(0 0 8px var(--accent-color, transparent));
 }}
 .kpi-title {{
-    font-size: 0.6rem;
+    font-size: 0.72rem;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
     color: {SLATE_400};
     margin-bottom: 4px;
-    font-weight: 700;
+    font-weight: 600;
 }}
 .kpi-value {{
     font-family: 'JetBrains Mono', 'Outfit', monospace;
-    font-size: 1.7rem;
+    font-size: 1.6rem;
     font-weight: 700;
     color: {SLATE_50};
     line-height: 1;
     letter-spacing: -0.5px;
 }}
-/* Shimmer sweep on KPI cards */
-.kpi-card::after {{
-    content: '';
-    position: absolute;
-    top: 0; bottom: 0;
-    width: 60%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
-    animation: cardShimmer 12s ease-in-out infinite;
-    pointer-events: none;
-}}
-.kpi-glass-reflect {{
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 50%;
-    background: linear-gradient(to bottom, rgba(255,255,255,0.03), transparent);
-    pointer-events: none;
-}}
-.kpi-card.info    {{ --accent-color: {GOLD_ACCENT}; border-bottom: 2px solid rgba(245, 158, 11, 0.2); }}
-.kpi-card.success {{ --accent-color: {EMERALD_ACCENT}; border-bottom: 2px solid rgba(16, 185, 129, 0.2); }}
-.kpi-card.danger  {{ --accent-color: #EF4444; border-bottom: 2px solid rgba(239, 68, 68, 0.2); }}
+.kpi-card.info    {{ --accent-color: {GOLD_ACCENT};    border-top: 1px solid rgba(232, 160, 32, 0.28); }}
+.kpi-card.success {{ --accent-color: {EMERALD_ACCENT}; border-top: 1px solid rgba(45, 184, 122, 0.28); }}
+.kpi-card.danger  {{ --accent-color: #EF4444;          border-top: 1px solid rgba(239, 68, 68, 0.28); }}
 
-.kpi-card.info .kpi-value    {{ color: {GOLD_ACCENT}; text-shadow: 0 0 20px rgba(245, 158, 11, 0.2); }}
-.kpi-card.success .kpi-value {{ color: {EMERALD_ACCENT}; text-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }}
-.kpi-card.danger .kpi-value  {{ color: #EF4444; text-shadow: 0 0 20px rgba(239, 68, 68, 0.2); }}
+.kpi-card.info .kpi-value    {{ color: {GOLD_ACCENT}; }}
+.kpi-card.success .kpi-value {{ color: {EMERALD_ACCENT}; }}
+.kpi-card.danger .kpi-value  {{ color: #EF4444; }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   DECISION PANEL (cuarentena)
+   DECISION PANEL (cuarentena) — Sin side-stripe, fondo tintado
    ══════════════════════════════════════════════════════════════════════════════ */
 .decision-panel {{
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    border-left: 4px solid var(--teal-light);
+    background: rgba(45, 184, 122, 0.05);
+    border: 1px solid rgba(45, 184, 122, 0.18);
     border-radius: var(--radius-md);
     padding: 20px 24px;
     margin-top: 12px;
-    box-shadow: var(--shadow-sm);
-    animation: fadeIn 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    animation: fadeIn 0.25s ease;
 }}
-.decision-panel h4 {{ color: var(--teal-primary); margin: 0 0 12px 0; font-size: 1.02rem; }}
+.decision-panel h4 {{ color: {EMERALD_ACCENT}; margin: 0 0 12px 0; font-size: 1.0rem; font-weight: 600; }}
 .decision-info {{
-    background: rgba(248, 250, 252, 0.8);
+    background: rgba(13, 26, 16, 0.4);
     border-radius: var(--radius-sm);
     padding: 12px 16px;
     margin-bottom: 14px;
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(255,255,255,0.05);
     font-size: 0.86rem;
-    color: var(--slate-700);
+    color: {SLATE_400};
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   BUTTONS — Midnight Premium
+   BUTTONS — Sin blur en botones base
    ══════════════════════════════════════════════════════════════════════════════ */
 .stButton > button {{
-    border-radius: 12px;
+    border-radius: 10px;
     font-weight: 600;
     font-size: 0.86rem;
     border: 1px solid rgba(255,255,255,0.08);
-    background: rgba(30, 41, 59, 0.5) !important;
+    background: rgba(26, 46, 30, 0.6) !important;
     color: {SLATE_50} !important;
-    backdrop-filter: blur(8px);
     letter-spacing: 0.2px;
-    transition: all 0.3s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease,
+                transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
 }}
 .stButton > button:hover {{
-    background: rgba(245, 158, 11, 0.15) !important;
-    border-color: rgba(245, 158, 11, 0.3) !important;
+    background: rgba(232, 160, 32, 0.12) !important;
+    border-color: rgba(232, 160, 32, 0.28) !important;
     color: {GOLD_ACCENT} !important;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.22);
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   BANNER — Midnight
+   BANNER — Sin side-stripe, borde perimetral completo
    ══════════════════════════════════════════════════════════════════════════════ */
 .banner-aviso {{
-    background: rgba(245, 158, 11, 0.06);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(245, 158, 11, 0.15);
-    border-left: 4px solid {GOLD_ACCENT};
-    border-radius: 12px;
-    padding: 14px 20px;
+    background: rgba(232, 160, 32, 0.07);
+    border: 1px solid rgba(232, 160, 32, 0.22);
+    border-radius: var(--radius-sm);
+    padding: 13px 18px;
     font-size: 0.86rem;
     color: {SLATE_400};
     margin-bottom: 20px;
-    animation: fadeIn 0.3s ease;
+    animation: fadeIn 0.25s ease;
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   TABLE PREMIUM — Midnight Glass
+   TABLE PREMIUM — Sin blur (tabla ya tiene fondo sólido)
    ══════════════════════════════════════════════════════════════════════════════ */
 .tabla-premium-wrapper {{
-    border-radius: 16px;
+    border-radius: var(--radius-md);
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.05);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    background: {SURFACE_GLASS};
-    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 4px 18px rgba(0,0,0,0.22);
+    background: rgba(13, 26, 16, 0.7);
 }}
 .tabla-premium thead tr {{
     background: {SLATE_950};
@@ -475,31 +468,29 @@ div[data-testid="stDataFrame"] tbody td {{
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   METRIC CARDS (native Streamlit)
+   METRIC CARDS (native Streamlit) — Fondo sólido, sin blur
    ══════════════════════════════════════════════════════════════════════════════ */
 div[data-testid="stMetric"] {{
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
+    background: rgba(26, 46, 30, 0.55);
+    border: 1px solid rgba(255,255,255,0.07);
     border-radius: var(--radius-md);
     padding: 16px 20px;
-    box-shadow: var(--shadow-sm);
-    animation: fadeIn 0.4s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+    animation: fadeIn 0.3s ease;
 }}
 div[data-testid="stMetric"]:hover {{
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.24);
+    transform: translateY(-1px);
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   EXPANDERS
+   EXPANDERS — Fondo sólido oscuro, sin blur
    ══════════════════════════════════════════════════════════════════════════════ */
 details[data-testid="stExpander"] {{
-    background: var(--glass-bg) !important;
-    backdrop-filter: blur(8px) !important;
-    border: 1px solid rgba(0,0,0,0.06) !important;
+    background: rgba(13, 26, 16, 0.55) !important;
+    border: 1px solid rgba(255,255,255,0.06) !important;
     border-radius: var(--radius-md) !important;
-    box-shadow: var(--shadow-xs);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.14);
 }}
 details[data-testid="stExpander"] summary {{
     font-weight: 600;
@@ -519,13 +510,11 @@ button[data-baseweb="tab"][aria-selected="true"] {{
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   CONTAINERS & FORMS (Glass treatment)
+   CONTAINERS & FORMS — Sin blur
    ══════════════════════════════════════════════════════════════════════════════ */
-div[data-testid="stForm"],
-div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div > div > div > div[data-testid="stForm"] {{
-    background: var(--glass-bg) !important;
-    backdrop-filter: blur(12px) !important;
-    border: 1px solid var(--glass-border) !important;
+div[data-testid="stForm"] {{
+    background: rgba(13, 26, 16, 0.5) !important;
+    border: 1px solid rgba(255,255,255,0.06) !important;
     border-radius: var(--radius-lg) !important;
 }}
 
@@ -643,8 +632,8 @@ div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div 
     transition: all 0.3s ease;
 }}
 .step-done .step-dot {{
-    background: #10B981;
-    border-color: #10B981;
+    background: {EMERALD_ACCENT};
+    border-color: {EMERALD_ACCENT};
 }}
 .step-active .step-dot {{
     border-color: var(--teal-primary);
@@ -724,10 +713,18 @@ def score_a_color(score: float) -> str:
         pass
     return "🔴"
 
-def crear_tarjeta_kpi(titulo: str, valor: str, icono: str, tipo: str = "") -> str:
-    """Renderiza una tarjeta KPI HTML Ultra Premium."""
+def crear_tarjeta_kpi(titulo: str, valor: str, icono: str, tipo: str = "", tooltip: str = "") -> str:
+    """Renderiza una tarjeta KPI HTML Ultra Premium.
+
+    Args:
+        tooltip: si se provee, se inyecta como atributo `title=` (tooltip nativo
+                 del navegador al hacer hover). Compatible con todos los
+                 llamadores existentes (default '').
+    """
     clase_tipo = f" {tipo}" if tipo else ""
-    return f"""<div class="kpi-card{clase_tipo}">
+    # Escapado básico contra inyección de atributos HTML
+    title_attr = f' title="{tooltip.replace(chr(34), chr(39))}"' if tooltip else ""
+    return f"""<div class="kpi-card{clase_tipo}"{title_attr}>
     <div class="kpi-icon-wrapper">
         <div class="kpi-icon-bg"></div>
         <div class="kpi-icon">{icono}</div>
@@ -736,7 +733,6 @@ def crear_tarjeta_kpi(titulo: str, valor: str, icono: str, tipo: str = "") -> st
         <div class="kpi-title">{titulo}</div>
         <div class="kpi-value">{valor}</div>
     </div>
-    <div class="kpi-glass-reflect"></div>
 </div>"""
 
 def crear_panel_metricas_premium(metricas: list[dict], pct_progreso: float = None, texto_progreso: str = "", labels_progreso: dict = None) -> None:
@@ -757,9 +753,9 @@ def crear_panel_metricas_premium(metricas: list[dict], pct_progreso: float = Non
     if pct_progreso is not None:
         l_ok = labels_progreso.get("ok", "OK") if labels_progreso else "OK"
         l_err = labels_progreso.get("error", "Error") if labels_progreso else "Error"
-        progreso_html = f'<div style="margin-top:20px;"><div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="font-size:0.6rem; color:#94A3B8; text-transform:uppercase; letter-spacing:1.5px; font-weight:700;">{texto_progreso}</span><span style="font-family:\'JetBrains Mono\',monospace; font-size:0.75rem; color:#F8FAFC; font-weight:600;">{pct_progreso}%</span></div><div style="height:6px; background:rgba(255,255,255,0.04); border-radius:99px; overflow:hidden;"><div style="height:100%; width:{pct_progreso}%; border-radius:99px; background:linear-gradient(90deg, #10B981, #34D399); transition:width 0.6s ease;"></div></div><div style="display:flex; justify-content:space-between; margin-top:6px; font-size:0.6rem; color:#94A3B8;"><span>✅ {l_ok}</span><span>❌ {l_err}</span></div></div>'
+        progreso_html = f'<div style="margin-top:20px;"><div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="font-size:0.6rem; color:{SLATE_400}; text-transform:uppercase; letter-spacing:1.5px; font-weight:700;">{texto_progreso}</span><span style="font-family:\'JetBrains Mono\',monospace; font-size:0.75rem; color:{SLATE_50}; font-weight:600;">{pct_progreso}%</span></div><div style="height:6px; background:rgba(255,255,255,0.04); border-radius:99px; overflow:hidden;"><div style="height:100%; width:{pct_progreso}%; border-radius:99px; background:linear-gradient(90deg, {EMERALD_ACCENT}, #5ddba0); transition:width 0.6s ease;"></div></div><div style="display:flex; justify-content:space-between; margin-top:6px; font-size:0.6rem; color:{SLATE_400};"><span>✅ {l_ok}</span><span>❌ {l_err}</span></div></div>'
 
-    html = f'<div style="background:rgba(30, 41, 59, 0.35); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.05); border-radius:20px; padding:24px 32px; margin-bottom:24px; box-shadow:0 8px 30px rgba(0,0,0,0.2);"><div style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">{"".join(stats_html)}</div>{progreso_html}</div>'
+    html = f'<div style="background:rgba(26, 46, 30, 0.6); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:22px 28px; margin-bottom:24px; box-shadow:0 4px 18px rgba(0,0,0,0.2);"><div style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">{"".join(stats_html)}</div>{progreso_html}</div>'
     st.markdown(html, unsafe_allow_html=True)
 
 

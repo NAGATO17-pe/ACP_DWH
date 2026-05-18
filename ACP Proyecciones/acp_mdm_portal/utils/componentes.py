@@ -167,8 +167,9 @@ def banner_aviso(mensaje: str) -> None:
 
 def health_status_panel() -> bool:
     """Muestra un badge de conexión basado en la disponibilidad del Backend."""
-    from utils.api_client import get_api
-    resultado = get_api("/health/live", base_url="http://127.0.0.1:8000")
+    from utils.api_client import get_api, obtener_url_backend
+
+    resultado = get_api("/health/live", base_url=obtener_url_backend())
     if resultado.ok:
         st.sidebar.markdown(badge_html("Servidor API Conectado", "success"), unsafe_allow_html=True)
         return True

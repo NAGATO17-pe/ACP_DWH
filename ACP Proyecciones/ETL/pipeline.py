@@ -59,6 +59,7 @@ from utils.ejecucion import (
     resolver_plan_reproceso,
 )
 from utils.metricas import formatear_resumen_fact, normalizar_resultado_fact
+from utils.errores import ErrorCircuitBreakerCritico, ErrorCircuitBreakerError
 
 
 import logging
@@ -103,16 +104,26 @@ def setup_etl_logger():
     stream_handler.setFormatter(PrettyConsoleFormatter())
     logger.addHandler(stream_handler)
 
-    # 2. JSON oculto para auditoria
+    # 2. JSON con timestamp para auditoria — preserva historial de runs (O-3)
     try:
         log_dir = Path("logs")
         log_dir.mkdir(exist_ok=True)
-        file_handler = logging.FileHandler(log_dir / "etl_last_run.json", mode='w', encoding='utf-8')
+        ts_nombre = datetime.now().strftime("%Y%m%d_%H%M%S")
+        ruta_run = log_dir / f"etl_{ts_nombre}.json"
+        file_handler = logging.FileHandler(ruta_run, mode='w', encoding='utf-8')
         fmt = '{"timestamp": "%(asctime)s", "level": "%(levelname)s", "service": "acp-etl", "message": "%(message)s"}'
         file_handler.setFormatter(logging.Formatter(fmt))
         logger.addHandler(file_handler)
+        # Symlink etl_last_run.json → archivo más reciente (Windows requiere privilégios)
+        symlink = log_dir / "etl_last_run.json"
+        try:
+            if symlink.exists() or symlink.is_symlink():
+                symlink.unlink()
+            symlink.symlink_to(ruta_run.name)
+        except OSError:
+            pass  # Sin privilegios de symlink en Windows — el archivo con timestamp existe igual
     except Exception:
-        pass # Fallback silent if no write permissions
+        pass  # Fallback silencioso si no hay permisos de escritura
 
     return logger
 
@@ -232,6 +243,8 @@ class ErrorEjecucionPipeline(RuntimeError):
     def __init__(self, errores: list[str]) -> None:
         self.errores = list(errores)
         super().__init__(' | '.join(self.errores))
+
+
 
 
 def _encabezado() -> datetime:
@@ -506,6 +519,17 @@ def _ejecutar_fact(nombre: str, tabla_destino: str, funcion, engine, resumen: di
             'mensaje': '',
         })
         return None
+    except ErrorCircuitBreakerCritico as error:
+        # Rechazo >= LIMITE_CRITICO: abortar el pipeline completo, no continuar
+        _imprimir(f'  CIRCUIT BREAKER CRITICO en {nombre}: {error}')
+        resumen[f'{nombre} CIRCUIT_BREAKER'] = str(error)
+        registrar_fin(id_log, {
+            'estado': 'CIRCUIT_BREAKER_CRITICO',
+            'filas': 0,
+            'rechazadas': r.get('rechazados', 0),
+            'mensaje': str(error),
+        })
+        raise
     except Exception as error:
         mensaje_error = f'{nombre}: {error}'
         _imprimir(f'  ERROR en {mensaje_error}')
@@ -782,19 +806,12 @@ def ejecutar() -> None:
 if __name__ == '__main__':
     argumentos = _parsear_argumentos()
 
-    try:
-        if argumentos.modo_ejecucion == MODO_EJECUCION_FACTS:
-            ejecutar_reproceso_facts(
-                facts_solicitadas=argumentos.facts,
-                incluir_dependencias=not argumentos.sin_dependencias,
-                refrescar_gold=not argumentos.sin_gold,
-                forzar_relectura_bronce=not argumentos.sin_relectura_bronce,
-            )
-        else:
-            ejecutar()
-    except ValueError as error:
-        _imprimir(f'ERROR DE VALIDACION: {error}')
-        sys.exit(1)
-    except Exception as error:
-        _imprimir(f'ERROR: {error}')
-        sys.exit(1)
+    if argumentos.modo_ejecucion == MODO_EJECUCION_FACTS:
+        ejecutar_reproceso_facts(
+            facts_solicitadas=argumentos.facts,
+            incluir_dependencias=not argumentos.sin_dependencias,
+            refrescar_gold=not argumentos.sin_gold,
+            forzar_relectura_bronce=not argumentos.sin_relectura_bronce,
+        )
+    else:
+        ejecutar()

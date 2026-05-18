@@ -7,6 +7,7 @@ Grain: Geo + Tiempo + Variedad + ID_Cinta + ID_Organo
 """
 
 import pandas as pd
+from typing import Any
 from sqlalchemy.engine import Engine
 from sqlalchemy import text
 

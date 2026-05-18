@@ -78,7 +78,7 @@ async def iniciar_corrida_etl(
         refrescar_gold=cuerpo.refrescar_gold,
         forzar_relectura_bronce=cuerpo.forzar_relectura_bronce,
     )
-    registrar_accion(
+    await registrar_accion(
         nombre_usuario=usuario.nombre_usuario,
         accion="LANZAR_ETL",
         endpoint=str(request.url),
@@ -108,10 +108,10 @@ async def iniciar_corrida_etl(
     description="Retorna las últimas N ejecuciones desde Auditoria.Log_Carga.",
     dependencies=[Depends(require_rol("viewer"))],
 )
-def listar_historial(
+async def listar_historial(
     limite: int = Query(default=50, ge=1, le=500),
 ) -> list[RespuestaHistorialCorrida]:
-    registros = obtener_historial(limite=limite)
+    registros = await obtener_historial(limite=limite)
     return [RespuestaHistorialCorrida(**r) for r in registros]
 
 
@@ -122,8 +122,8 @@ def listar_historial(
     summary="Corridas activas (PENDIENTE o EJECUTANDO)",
     dependencies=[Depends(require_rol("viewer"))],
 )
-def corridas_activas() -> list[dict]:
-    return listar_corridas_activas()
+async def corridas_activas() -> list[dict]:
+    return await listar_corridas_activas()
 
 
 @enrutador_etl.get(
@@ -132,8 +132,9 @@ def corridas_activas() -> list[dict]:
     summary="Catálogo de facts soportadas por rerun",
     dependencies=[Depends(require_rol("viewer"))],
 )
-def catalogo_facts() -> list[RespuestaFactDisponible]:
-    return [RespuestaFactDisponible(**fact) for fact in listar_catalogo_facts()]
+async def catalogo_facts() -> list[RespuestaFactDisponible]:
+    facts = await listar_catalogo_facts()
+    return [RespuestaFactDisponible(**fact) for fact in facts]
 
 
 # ── GET /corridas/{id} ─────────────────────────────────────────────────────────
@@ -144,8 +145,8 @@ def catalogo_facts() -> list[RespuestaFactDisponible]:
     summary="Estado de una corrida",
     dependencies=[Depends(require_rol("viewer"))],
 )
-def estado_corrida(id_corrida: str) -> RespuestaDetalleCorrida:
-    datos = obtener_corrida(id_corrida)
+async def estado_corrida(id_corrida: str) -> RespuestaDetalleCorrida:
+    datos = await obtener_corrida(id_corrida)
     if datos is None:
         raise ErrorRecursoNoEncontrado(f"Corrida '{id_corrida}'")
     return RespuestaDetalleCorrida(**datos)
@@ -157,10 +158,11 @@ def estado_corrida(id_corrida: str) -> RespuestaDetalleCorrida:
     summary="Traza de pasos de una corrida",
     dependencies=[Depends(require_rol("viewer"))],
 )
-def pasos_corrida(id_corrida: str) -> list[RespuestaPasoCorrida]:
-    if not corrida_existe(id_corrida):
+async def pasos_corrida(id_corrida: str) -> list[RespuestaPasoCorrida]:
+    if not await corrida_existe(id_corrida):
         raise ErrorRecursoNoEncontrado(f"Corrida '{id_corrida}'")
-    return [RespuestaPasoCorrida(**paso) for paso in obtener_pasos_corrida(id_corrida)]
+    pasos = await obtener_pasos_corrida(id_corrida)
+    return [RespuestaPasoCorrida(**paso) for paso in pasos]
 
 
 # ── GET /corridas/{id}/eventos (SSE) ──────────────────────────────────────────
@@ -178,7 +180,7 @@ def pasos_corrida(id_corrida: str) -> list[RespuestaPasoCorrida]:
     dependencies=[Depends(require_rol("viewer"))],
 )
 async def stream_corrida(id_corrida: str) -> EventSourceResponse:
-    if not corrida_existe(id_corrida):
+    if not await corrida_existe(id_corrida):
         raise ErrorRecursoNoEncontrado(f"Corrida '{id_corrida}'")
     return EventSourceResponse(stream_eventos_corrida(id_corrida))
 
@@ -200,13 +202,13 @@ async def cancelar(
     request: Request,
     usuario: Annotated[UsuarioActual, Depends(obtener_usuario_actual)],
 ) -> dict:
-    datos = obtener_corrida(id_corrida)
+    datos = await obtener_corrida(id_corrida)
     if datos is None:
         raise ErrorRecursoNoEncontrado(f"Corrida '{id_corrida}'")
 
     cancelado = await cancelar_corrida(id_corrida, usuario.nombre_usuario)
 
-    registrar_accion(
+    await registrar_accion(
         nombre_usuario=usuario.nombre_usuario,
         accion="CANCELAR_ETL",
         endpoint=str(request.url),
