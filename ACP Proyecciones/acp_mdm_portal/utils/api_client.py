@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 import requests
@@ -8,17 +9,50 @@ import streamlit as st
 
 import os
 
+# Misma fuente de vars que el backend, para que Streamlit (al ejecutarse aparte)
+# no dependa solo del entorno heredado de acp_start.
+try:
+    from dotenv import load_dotenv
+
+    _RAIZ_PORTAL = Path(__file__).resolve().parents[1]
+    _RAIZ_PROYECTO = _RAIZ_PORTAL.parent
+    load_dotenv(_RAIZ_PROYECTO / "backend" / ".env")
+    load_dotenv(_RAIZ_PROYECTO / ".env")
+except ImportError:
+    pass
+
+# Si no hay .env, 8000 coincide con el arranque típico de uvicorn en dev.
+_DEFAULT_PUERTO_API = "8000"
+
+
+def _fallback_backend_url() -> str:
+    puerto = os.getenv("ACP_PUERTO", _DEFAULT_PUERTO_API)
+    return f"http://127.0.0.1:{puerto}"
+
+
 def _obtener_url_backend() -> str:
     # 1. Prioridad: st.secrets (configuración de streamlit)
     # 2. Prioridad: os.getenv (variables de entorno)
-    # 3. Fallback: localhost
+    # 3. Fallback: mismo host/puerto que ACP_PUERTO (backend/.env o launcher)
+    fb = _fallback_backend_url()
     try:
-        return st.secrets.get("BACKEND_URL") or os.getenv("BACKEND_URL", "http://127.0.0.1:8000")
+        return st.secrets.get("BACKEND_URL") or os.getenv("BACKEND_URL") or fb
     except Exception:
-        return os.getenv("BACKEND_URL", "http://127.0.0.1:8000")
+        return os.getenv("BACKEND_URL") or fb
 
-URL_BACKEND = _obtener_url_backend()
-URL_BASE = f"{URL_BACKEND}/api/v1"
+
+def obtener_url_backend() -> str:
+    """URL base del API; se recalcula en cada llamada para respetar .env recién cargado."""
+    return _obtener_url_backend()
+
+
+def obtener_url_base_api() -> str:
+    return f"{obtener_url_backend()}/api/v1"
+
+
+# Compatibilidad: muchos módulos importan URL_BACKEND / URL_BASE.
+URL_BACKEND = obtener_url_backend()
+URL_BASE = obtener_url_base_api()
 TIMEOUT_API_SEG = (5, 30)
 
 _SESSION = requests.Session()
@@ -129,29 +163,38 @@ def mostrar_error_api(resultado: ResultadoApi, mensaje_base: str | None = None) 
     st.error(" | ".join(partes) if partes else "Error no controlado en la comunicación con el backend.")
 
 
+def _headers_login_form() -> dict[str, str]:
+    """OAuth2 password: sin Bearer (evita enviar un JWT caducado en el login)."""
+    return {"Content-Type": "application/x-www-form-urlencoded"}
+
+
 def login_backend(username: str, password: str) -> ResultadoApi:
     return _request(
         "POST",
-        f"{URL_BACKEND}/auth/login",
+        f"{obtener_url_backend()}/auth/login",
         data={"username": username, "password": password},
-        headers=_get_headers("application/x-www-form-urlencoded"),
+        headers=_headers_login_form(),
     )
 
 
-def get_api(endpoint: str, base_url: str = URL_BASE) -> ResultadoApi:
-    return _request("GET", f"{base_url}{endpoint}", headers=_get_headers())
+def get_api(endpoint: str, base_url: str | None = None) -> ResultadoApi:
+    bu = obtener_url_base_api() if base_url is None else base_url
+    return _request("GET", f"{bu}{endpoint}", headers=_get_headers())
 
 
-def post_api(endpoint: str, payload: dict, base_url: str = URL_BASE) -> ResultadoApi:
-    return _request("POST", f"{base_url}{endpoint}", json=payload, headers=_get_headers())
+def post_api(endpoint: str, payload: dict, base_url: str | None = None) -> ResultadoApi:
+    bu = obtener_url_base_api() if base_url is None else base_url
+    return _request("POST", f"{bu}{endpoint}", json=payload, headers=_get_headers())
 
 
-def patch_api(endpoint: str, payload: dict, base_url: str = URL_BASE) -> ResultadoApi:
-    return _request("PATCH", f"{base_url}{endpoint}", json=payload, headers=_get_headers())
+def patch_api(endpoint: str, payload: dict, base_url: str | None = None) -> ResultadoApi:
+    bu = obtener_url_base_api() if base_url is None else base_url
+    return _request("PATCH", f"{bu}{endpoint}", json=payload, headers=_get_headers())
 
 
-def delete_api(endpoint: str, base_url: str = URL_BASE) -> ResultadoApi:
-    return _request("DELETE", f"{base_url}{endpoint}", headers=_get_headers())
+def delete_api(endpoint: str, base_url: str | None = None) -> ResultadoApi:
+    bu = obtener_url_base_api() if base_url is None else base_url
+    return _request("DELETE", f"{bu}{endpoint}", headers=_get_headers())
 
 
 def stream_api(id_corrida: str):
@@ -166,7 +209,7 @@ def stream_api(id_corrida: str):
         for linea in stream_api(id_corrida):
             consola += linea + "\\n"
     """
-    url     = f"{URL_BASE}/etl/corridas/{id_corrida}/eventos"
+    url = f"{obtener_url_base_api()}/etl/corridas/{id_corrida}/eventos"
     headers = _get_headers()
     headers.pop("Content-Type", None)          # SSE no lleva Content-Type
     headers["Accept"] = "text/event-stream"

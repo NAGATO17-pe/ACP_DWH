@@ -1,32 +1,62 @@
 import io
+
 import pandas as pd
 import streamlit as st
+
+from utils.api_client import get_api
 from utils.auth import tiene_permiso
+from utils.componentes import banner_aviso, estado_vacio_html
+from utils.formato import (
+    GOLD_ACCENT,
+    EMERALD_ACCENT,
+    crear_panel_metricas_premium,
+    header_pagina,
+    renderizar_tabla_premium,
+)
+
+_RENOMBRES = {
+    "tabla_origen":    "Tabla Origen",
+    "id_registro":     "ID",
+    "columna_origen":  "Columna Origen",
+    "valor_raw":       "Valor Raw",
+    "nombre_archivo":  "Archivo",
+    "fecha_ingreso":   "Fecha ingreso",
+    "estado":          "Estado",
+    "motivo":          "Motivo",
+}
+_COLS_VISTA = ["ID", "Tabla Origen", "Columna Origen", "Valor Raw", "Motivo", "Fecha ingreso", "Estado"]
+
+
+@st.cache_data(ttl=60, show_spinner=False)
+def _cargar_cuarentena() -> pd.DataFrame:
+    resultado = get_api("/cuarentena?pagina=1&tamano=10000")
+    if resultado.ok and isinstance(resultado.data, dict):
+        datos = resultado.data.get("datos", [])
+        if datos:
+            df = pd.DataFrame(datos)
+            df.rename(columns=_RENOMBRES, inplace=True)
+            return df
+    return pd.DataFrame(columns=list(_RENOMBRES.values()))
 from utils.componentes import badge_html, estado_vacio_html, mostrar_kpis
 from utils.formato import header_pagina, renderizar_tabla_premium
 from utils.api_client import get_api, mostrar_error_api
 
 def cargar_cuarentena() -> pd.DataFrame:
-    _RENOMBRES = {
-        "tabla_origen": "Tabla Origen",
-        "id_registro": "ID",
-        "columna_origen": "Columna Origen",
-        "valor_raw": "Valor Raw",
-        "nombre_archivo": "Archivo",
-        "fecha_ingreso": "Fecha ingreso",
-        "estado": "Estado",
-        "motivo": "Motivo",
-    }
+    from utils.constantes import RENOMBRES_CUARENTENA
     resultado = get_api("/cuarentena?pagina=1&tamano=10000")
-    if resultado.ok and isinstance(resultado.data, dict):
-        datos = resultado.data.get("datos", [])
-        if not datos:
-            return pd.DataFrame(columns=list(_RENOMBRES.values()))
+    cols_vacias = list(RENOMBRES_CUARENTENA.values())
+    if not resultado.ok:
+        return pd.DataFrame(columns=cols_vacias)
+    data = resultado.data
+    if not isinstance(data, dict):
+        return pd.DataFrame(columns=cols_vacias)
+    datos = data.get("datos") or []
+    if not isinstance(datos, list) or not datos:
+        return pd.DataFrame(columns=cols_vacias)
+    df = pd.DataFrame(datos)
+    df.rename(columns=RENOMBRES_CUARENTENA, inplace=True)
+    return df
 
-        df = pd.DataFrame(datos)
-        df.rename(columns=_RENOMBRES, inplace=True)
-        return df
-    return pd.DataFrame(columns=list(_RENOMBRES.values()))
 
 def _exportar_excel(df: pd.DataFrame) -> bytes:
     buffer = io.BytesIO()
@@ -34,46 +64,53 @@ def _exportar_excel(df: pd.DataFrame) -> bytes:
         df.to_excel(writer, index=False, sheet_name="Cuarentena")
     return buffer.getvalue()
 
+
 def render() -> None:
-    header_pagina("🔴", "Cuarentena", "Revisión de registros rechazados · Decide qué hacer con cada uno")
-    df_original = cargar_cuarentena()
+    header_pagina(
+        "🔴", "Cuarentena",
+        "Registros rechazados por el pipeline · Solo lectura, auditoría.",
+    )
 
-    total = len(df_original)
-    pendientes = int((df_original["Estado"] == "PENDIENTE").sum()) if not df_original.empty else 0
-    resueltos = int((df_original["Estado"] == "RESUELTO").sum()) if not df_original.empty else 0
+    with st.spinner("Cargando registros de cuarentena…"):
+        df = _cargar_cuarentena()
 
-    mostrar_kpis([
-        {"label": "📋 Total registros", "value": total},
-        {"label": "⏳ Pendientes", "value": pendientes},
-        {"label": "✅ Resueltos", "value": resueltos},
+    total      = len(df)
+    pendientes = int((df["Estado"] == "PENDIENTE").sum()) if not df.empty else 0
+    resueltos  = int((df["Estado"] == "RESUELTO").sum())  if not df.empty else 0
+    en_revision = total - pendientes - resueltos
+
+    crear_panel_metricas_premium([
+        {"label": "Total registros", "value": str(total),       "color": GOLD_ACCENT},
+        {"label": "Pendientes",      "value": str(pendientes),  "color": "#EF4444" if pendientes else "#4d6b54"},
+        {"label": "En revisión",     "value": str(en_revision), "color": GOLD_ACCENT if en_revision else "#4d6b54"},
+        {"label": "Resueltos",       "value": str(resueltos),   "color": EMERALD_ACCENT},
     ])
 
-    st.markdown("<hr style='margin:16px 0;'>", unsafe_allow_html=True)
-
-    if df_original.empty:
-        estado_vacio_html("✅", "Sin registros coincidentes", "No hay registros en cuarentena.")
+    if df.empty:
+        estado_vacio_html(
+            "✅", "Sin registros en cuarentena",
+            "El pipeline no ha rechazado ningún registro. Todo limpio.",
+        )
         return
 
-    st.markdown("### 📋 Registros en cuarentena")
-    columnas_vista = [c for c in ["ID", "Tabla Origen", "Columna Origen", "Valor Raw", "Motivo", "Fecha ingreso", "Estado"] if c in df_original.columns]
-    renderizar_tabla_premium(df_original[columnas_vista], key="cuarentena_tabla", page_size=15)
+    columnas_vista = [c for c in _COLS_VISTA if c in df.columns]
+    st.caption(f"{total} registro(s) · Última carga hace menos de 60 s")
+    renderizar_tabla_premium(df[columnas_vista], key="cuarentena_tabla", page_size=15)
 
     st.download_button(
         label="📥 Exportar a Excel",
-        data=_exportar_excel(df_original[columnas_vista]),
+        data=_exportar_excel(df[columnas_vista]),
         file_name="cuarentena.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
 
-    st.markdown("<hr style='margin:24px 0;'>", unsafe_allow_html=True)
+    st.divider()
 
     if tiene_permiso("escribir"):
-        st.info(
-            "💡 **Atención Analista/Steward:** Esta pantalla es de **solo-lectura** "
-            "(Modo Auditoría). Para procesar masivamente y homologar "
-            "registros pendientes utilizando los **Catálogos Oficiales**, por favor "
-            "dirígete a la sección de **[ Homologación ]** en el menú lateral.", 
-            icon="ℹ️"
+        banner_aviso(
+            "Esta vista es de <b>solo lectura</b> (Modo Auditoría). "
+            "Para homologar registros pendientes, ve a "
+            "<b>Homologación</b> en el menú lateral."
         )
     else:
-        st.info("🔒 Modo Auditoría. Tu rol no tiene permisos de edición.", icon="🛡️")
+        banner_aviso("Modo Auditoría. Tu rol no tiene permisos de edición.")

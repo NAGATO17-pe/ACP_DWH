@@ -9,6 +9,8 @@ El router de auth solo llama funciones de este servicio.
 
 from __future__ import annotations
 
+import asyncio
+
 from fastapi import HTTPException, status
 
 from nucleo.auth import crear_token, verificar_clave
@@ -98,7 +100,7 @@ def autenticar_usuario(
     }
 
 
-def registrar_accion(
+async def registrar_accion(
     nombre_usuario: str,
     accion: str,
     resultado: str = "OK",
@@ -111,7 +113,8 @@ def registrar_accion(
     Registra una acción mutable en Auditoria.Log_Acceso.
     Llamar desde endpoints que modifican estado.
     """
-    repo_log.registrar_acceso(
+    await asyncio.to_thread(
+        repo_log.registrar_acceso,
         nombre_usuario=nombre_usuario,
         accion=accion,
         resultado=resultado,

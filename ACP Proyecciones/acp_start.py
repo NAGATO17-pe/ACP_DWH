@@ -7,12 +7,16 @@ import subprocess
 import sys
 import os
 import time
+
+from dotenv import load_dotenv
 import signal
 import threading
 import urllib.request
 import urllib.error
 import webbrowser
 import ctypes
+import logging
+import logging.handlers
 from pathlib import Path
 from datetime import datetime
 
@@ -38,17 +42,23 @@ BG_BLUE = "\033[44m"
 BASE = Path(__file__).parent
 VENV = BASE / ".venv" / "Scripts"
 
+# Puertos por defecto alejados de 8000/8501 (muy usados por otras apps).
+load_dotenv(BASE / "backend" / ".env")
+load_dotenv(BASE / ".env")
+_PUERTO_BACKEND = int(os.getenv("ACP_PUERTO", "8810"))
+_PUERTO_STREAMLIT = int(os.getenv("ACP_STREAMLIT_PORT", "8510"))
+
 SERVICIOS = [
     {
         "nombre":   "Backend FastAPI",
         "icono":    "⚙",
         "cmd":      [str(VENV / "uvicorn.exe"), "main:aplicacion",
-                     "--host", "0.0.0.0", "--port", "8000"],
+                     "--host", "0.0.0.0", "--port", str(_PUERTO_BACKEND)],
         "cwd":      BASE / "backend",
-        "health":   "http://localhost:8000/health/live",
-        "url":      "http://localhost:8000/docs",
+        "health":   f"http://localhost:{_PUERTO_BACKEND}/health/live",
+        "url":      f"http://localhost:{_PUERTO_BACKEND}/docs",
         "log":      BASE / "backend" / "logs" / "backend.log",
-        "puerto":   8000,
+        "puerto":   _PUERTO_BACKEND,
         "color":    BLUE,
         "proceso":  None,
     },
@@ -68,13 +78,13 @@ SERVICIOS = [
         "nombre":   "Portal MDM",
         "icono":    "🌐",
         "cmd":      [str(VENV / "streamlit.exe"), "run", "app.py",
-                     "--server.port", "8501",
+                     "--server.port", str(_PUERTO_STREAMLIT),
                      "--server.headless", "true"],
         "cwd":      BASE / "acp_mdm_portal",
-        "health":   "http://localhost:8501/_stcore/health",
-        "url":      "http://localhost:8501",
+        "health":   f"http://localhost:{_PUERTO_STREAMLIT}/_stcore/health",
+        "url":      f"http://localhost:{_PUERTO_STREAMLIT}",
         "log":      BASE / "backend" / "logs" / "portal.log",
-        "puerto":   8501,
+        "puerto":   _PUERTO_STREAMLIT,
         "color":    CYAN,
         "proceso":  None,
     },
@@ -109,6 +119,35 @@ def log(msg, nivel="INFO"):
     colores = {"INFO": GREEN, "WARN": YELLOW, "ERR": RED, "OK": GREEN}
     c = colores.get(nivel, WHITE)
     print(f"  {DIM}[{ts()}]{RESET} {c}{nivel:4}{RESET}  {msg}")
+    _launcher_log.info(f"[{nivel}] {msg}")
+
+
+def _crear_log_rotativo(ruta: Path):
+    """Retorna un RotatingFileHandler para redirigir stdout/stderr del subproceso."""
+    ruta.parent.mkdir(parents=True, exist_ok=True)
+    handler = logging.handlers.RotatingFileHandler(
+        filename=ruta,
+        maxBytes=50 * 1024 * 1024,   # 50 MB por archivo
+        backupCount=10,
+        encoding="utf-8",
+    )
+    return handler
+
+
+# Logger del propio lanzador (separado de los subprocesos)
+_DIR_LOGS_LAUNCHER = BASE / "backend" / "logs"
+_DIR_LOGS_LAUNCHER.mkdir(parents=True, exist_ok=True)
+_launcher_log = logging.getLogger("acp_start")
+_launcher_log.setLevel(logging.INFO)
+if not _launcher_log.handlers:
+    _h = logging.handlers.RotatingFileHandler(
+        filename=_DIR_LOGS_LAUNCHER / "launcher.log",
+        maxBytes=10 * 1024 * 1024,
+        backupCount=5,
+        encoding="utf-8",
+    )
+    _h.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
+    _launcher_log.addHandler(_h)
 
 
 def puerto_en_uso(puerto: int) -> bool:
@@ -130,23 +169,45 @@ def health_check(url: str, intentos: int = 1) -> bool:
 
 # ─── Inicio de servicios ─────────────────────────────────────────────────────
 
+def _liberar_puerto(puerto: int) -> None:
+    """Mata el proceso huérfano que ocupa el puerto."""
+    try:
+        r = subprocess.run(["netstat", "-ano"], capture_output=True, text=True)
+        for line in r.stdout.splitlines():
+            if f":{puerto} " in line and "LISTENING" in line:
+                pid = line.strip().split()[-1]
+                if pid.isdigit() and pid != "0":
+                    subprocess.run(["taskkill", "/F", "/PID", pid], capture_output=True)
+                    log(f"Proceso huérfano {pid} en puerto {puerto} terminado", "WARN")
+                    time.sleep(0.5)
+                    break
+    except Exception:
+        pass
+
+
 def iniciar_servicio(svc: dict) -> bool:
     nombre = svc["nombre"]
     color  = svc["color"]
 
-    # Verificar si puerto ya está en uso
+    # Verificar si puerto ya está en uso; si es así, liberar el proceso huérfano
     if svc["puerto"] and puerto_en_uso(svc["puerto"]):
-        log(f"{color}{nombre}{RESET}  puerto {svc['puerto']} ya ocupado — omitido", "WARN")
-        return True
+        _liberar_puerto(svc["puerto"])
+        if puerto_en_uso(svc["puerto"]):
+            log(f"{color}{nombre}{RESET}  puerto {svc['puerto']} sigue ocupado — omitido", "WARN")
+            return True
 
     # Crear carpeta de logs
     svc["log"].parent.mkdir(parents=True, exist_ok=True)
 
     log(f"Iniciando  {color}{nombre}{RESET} ...", "INFO")
 
-    log_file = open(svc["log"], "a", encoding="utf-8")
-    log_file.write(f"\n{'='*60}\n[{datetime.now()}] INICIO\n{'='*60}\n")
-    log_file.flush()
+    # Abre el archivo de log con rotación (50 MB, 10 backups).
+    # subprocess necesita un file object con fileno(), así que abrimos el
+    # archivo subyacente del handler directamente.
+    rot_handler = _crear_log_rotativo(svc["log"])
+    rot_handler.stream.write(f"\n{'='*60}\n[{datetime.now()}] INICIO\n{'='*60}\n")
+    rot_handler.stream.flush()
+    log_file = rot_handler.stream
 
     proc = subprocess.Popen(
         svc["cmd"],
@@ -156,7 +217,7 @@ def iniciar_servicio(svc: dict) -> bool:
         creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0,
     )
     svc["proceso"] = proc
-    PROCESOS_ACTIVOS.append((proc, log_file))
+    PROCESOS_ACTIVOS.append((proc, rot_handler))
     return True
 
 
@@ -217,7 +278,7 @@ def mostrar_estado():
 
 def detener_todo():
     log("Deteniendo todos los servicios...", "INFO")
-    for proc, log_file in PROCESOS_ACTIVOS:
+    for proc, handler in PROCESOS_ACTIVOS:
         try:
             if sys.platform == "win32":
                 proc.send_signal(signal.CTRL_BREAK_EVENT)
@@ -228,7 +289,7 @@ def detener_todo():
             proc.kill()
         finally:
             try:
-                log_file.close()
+                handler.close()
             except Exception:
                 pass
     log("Servicios detenidos.", "OK")
@@ -318,9 +379,9 @@ def arrancar_servicios():
     if resultados.get("Backend FastAPI") and resultados.get("Portal MDM"):
         log("Abriendo navegador...", "INFO")
         time.sleep(1)
-        webbrowser.open("http://localhost:8501")
+        webbrowser.open(f"http://localhost:{_PUERTO_STREAMLIT}")
     elif resultados.get("Backend FastAPI"):
-        webbrowser.open("http://localhost:8000/docs")
+        webbrowser.open(f"http://localhost:{_PUERTO_BACKEND}/docs")
     else:
         log("Algunos servicios no respondieron. Revisa los logs.", "WARN")
 
