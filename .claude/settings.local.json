@@ -10,7 +10,9 @@
       "Bash(C:\\\\Users\\\\chernandez\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe -c \"import sqlalchemy; print\\('sqlalchemy ok'\\)\")",
       "PowerShell(& \"C:\\\\Users\\\\chernandez\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe\" -c \"import pyodbc; print\\('pyodbc ok'\\)\" 2>&1)",
       "PowerShell(& \"C:\\\\Users\\\\chernandez\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe\" -c \"import sqlalchemy; print\\('sqlalchemy ok'\\)\" 2>&1)",
-      "PowerShell(& \"D:\\\\Proyecto2026\\\\ACP_DWH\\\\ACP Proyecciones\\\\.venv\\\\Scripts\\\\python.exe\" -c \"import pyodbc; print\\('pyodbc ok'\\); import sqlalchemy; print\\('sqlalchemy ok'\\)\" 2>&1)"
+      "PowerShell(& \"D:\\\\Proyecto2026\\\\ACP_DWH\\\\ACP Proyecciones\\\\.venv\\\\Scripts\\\\python.exe\" -c \"import pyodbc; print\\('pyodbc ok'\\); import sqlalchemy; print\\('sqlalchemy ok'\\)\" 2>&1)",
+      "Bash(rm -rf \"D:/Proyecto2026/ACP_DWH/ACP Proyecciones/.claude/worktrees/romantic-brahmagupta-c85d85/ACP Proyecciones/backend/broker\")",
+      "Bash(rm -f \"D:/Proyecto2026/ACP_DWH/ACP Proyecciones/.claude/worktrees/romantic-brahmagupta-c85d85/ACP Proyecciones/backend/servicios/pipeline_runner.py\")"
     ]
   }
 }

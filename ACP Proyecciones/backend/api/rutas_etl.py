@@ -127,8 +127,10 @@ def listar_historial(
     summary="Corridas activas (PENDIENTE o EJECUTANDO)",
     dependencies=[Depends(require_rol("viewer"))],
 )
-def corridas_activas() -> list[dict]:
-    return listar_corridas_activas()
+def corridas_activas(
+    limite: int = Query(default=50, ge=1, le=500),
+) -> list[dict]:
+    return listar_corridas_activas(limite=limite)
 
 
 @enrutador_etl.get(
