@@ -48,6 +48,16 @@ def listar_cuarentena(
     return resultado
 
 
+def obtener_resumen_cuarentena() -> dict:
+    conteos = repo.contar_por_estado()
+    return {
+        "total":      sum(conteos.values()),
+        "pendientes": conteos.get("PENDIENTE",  0),
+        "resueltos":  conteos.get("RESUELTO",   0),
+        "descartados": conteos.get("DESCARTADO", 0),
+    }
+
+
 def _invalidar_cache_cuarentena() -> None:
     """Limpia toda la caché cuando hay cambios en cuarentena."""
     cache.limpiar_todo()

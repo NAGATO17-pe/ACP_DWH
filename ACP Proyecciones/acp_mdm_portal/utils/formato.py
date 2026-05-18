@@ -102,7 +102,6 @@ h1, h2, h3, h4 {{
 .stApp {{
     background: {SLATE_950} !important;
     background-attachment: fixed !important;
-    overflow-x: hidden;
 }}
 .stApp::before {{
     content: '';
@@ -532,13 +531,17 @@ div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div 
 /* ══════════════════════════════════════════════════════════════════════════════
    SCROLLBARS — Visible en Windows
    ══════════════════════════════════════════════════════════════════════════════ */
-::-webkit-scrollbar {{ width: 6px; height: 6px; }}
+* {{
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+}}
+::-webkit-scrollbar {{ width: 10px; height: 10px; }}
 ::-webkit-scrollbar-track {{ background: transparent; }}
 ::-webkit-scrollbar-thumb {{
-    background: rgba(148, 163, 184, 0.15);
+    background: rgba(148, 163, 184, 0.45);
     border-radius: 10px;
 }}
-::-webkit-scrollbar-thumb:hover {{ background: rgba(148, 163, 184, 0.3); }}
+::-webkit-scrollbar-thumb:hover {{ background: rgba(245, 158, 11, 0.6); }}
 /* Scrollbar lateral del stepper (neural-monitor) */
 .stepper-panel::-webkit-scrollbar {{ width: 5px; }}
 .stepper-panel::-webkit-scrollbar-thumb {{ background: rgba(100,116,139,0.2); }}

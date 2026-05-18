@@ -1,0 +1,9 @@
+﻿python : C:\Users\chernandez\AppData\Local\Programs\Python\Python314\python.exe: can't open file 
+'D:\\Proyecto2026\\ACP_DWH\\ACP Proyecciones\\.claude\\worktrees\\hopeful-engelbart-dc958f\\audit_dims_vs_files.py': 
+[Errno 2] No such file or directory
+En línea: 1 Carácter: 1
++ python audit_dims_vs_files.py 2>&1 | Out-File _dim_audit.log -Encodin ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C:\Users\cherna...le or directory:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

@@ -16,10 +16,15 @@ Uso:
 from __future__ import annotations
 import json
 import logging
+import logging.handlers
+import re
 import sys
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 from nucleo.settings import settings
+
+_DIR_LOGS = Path(__file__).resolve().parents[1] / "logs"
 
 # ── Constantes ─────────────────────────────────────────────────────────────────
 _NOMBRE_SERVICIO = "acp-backend"
@@ -107,24 +112,74 @@ class _TextoFormatter(logging.Formatter):
         return linea
 
 
+class _SanitizadorPII(logging.Filter):
+    """
+    Enmascara DNIs (8 dígitos) y RUCs (11 dígitos comenzando en 10/20)
+    antes de que cualquier handler escriba el registro a disco.
+    Evita que datos personales queden persistidos en los archivos de log.
+    """
+
+    # RUC peruano: 10xxxxxxxxx o 20xxxxxxxxx (11 dígitos)
+    _RUC = re.compile(r"\b(1|2)(0\d{9})\b")
+    # DNI peruano: exactamente 8 dígitos (no precedidos ni seguidos de dígito)
+    _DNI = re.compile(r"(?<!\d)(\d{8})(?!\d)")
+
+    def filter(self, record: logging.LogRecord) -> bool:  # noqa: A003
+        record.msg = self._enmascarar(str(record.msg))
+        if record.args:
+            if isinstance(record.args, dict):
+                record.args = {
+                    k: self._enmascarar(str(v)) for k, v in record.args.items()
+                }
+            else:
+                record.args = tuple(self._enmascarar(str(a)) for a in record.args)
+        return True
+
+    def _enmascarar(self, texto: str) -> str:
+        texto = self._RUC.sub(lambda m: m.group(1) + "0" + "*" * 8 + m.group(2)[-1], texto)
+        texto = self._DNI.sub(lambda m: m.group(1)[:2] + "****" + m.group(1)[-2:], texto)
+        return texto
+
+
+_sanitizador_pii = _SanitizadorPII()
+
+
 def configurar_logging() -> None:
     """
     Configura el logging global del proceso.
     Debe llamarse UNA SOLA VEZ al iniciar el servidor (en lifespan).
+    Registra dos handlers: consola (stdout) + archivo rotativo (50 MB, 10 backups).
     """
-    nivel  = getattr(logging, settings.log_nivel.upper(), logging.INFO)
-    handler = logging.StreamHandler(sys.stdout)
+    nivel = getattr(logging, settings.log_nivel.upper(), logging.INFO)
 
     if settings.log_formato == "json":
-        handler.setFormatter(_JsonFormatter())
+        formatter: logging.Formatter = _JsonFormatter()
     else:
-        handler.setFormatter(_TextoFormatter())
+        formatter = _TextoFormatter()
 
-    # Configura el root logger sin duplicar handlers
     root = logging.getLogger()
     root.setLevel(nivel)
-    if not any(isinstance(h, logging.StreamHandler) for h in root.handlers):
-        root.addHandler(handler)
+
+    # Handler consola (sin duplicar)
+    if not any(isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler)
+               for h in root.handlers):
+        consola = logging.StreamHandler(sys.stdout)
+        consola.setFormatter(formatter)
+        consola.addFilter(_sanitizador_pii)
+        root.addHandler(consola)
+
+    # Handler archivo con rotación (sin duplicar)
+    if not any(isinstance(h, logging.handlers.RotatingFileHandler) for h in root.handlers):
+        _DIR_LOGS.mkdir(parents=True, exist_ok=True)
+        archivo = logging.handlers.RotatingFileHandler(
+            filename=_DIR_LOGS / "backend.log",
+            maxBytes=50 * 1024 * 1024,   # 50 MB
+            backupCount=10,
+            encoding="utf-8",
+        )
+        archivo.setFormatter(_JsonFormatter())   # archivo siempre JSON para parseo
+        archivo.addFilter(_sanitizador_pii)
+        root.addHandler(archivo)
 
     # Silencia loggers ruidosos de terceros
     logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
