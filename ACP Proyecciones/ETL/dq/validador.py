@@ -76,20 +76,20 @@ def validar_fecha(valor: str | None,
             f'Fecha fuera del rango de campana ({rango})',
             'ALTO'
         )
-        return fecha, _error(
-            nombre_columna, valor,
-            'Fecha fuera del rango de campaña (2025-06-01 → 2026-06-30)',
-            'ALTO'
-        )
     return fecha, None
 
 
-def validar_peso_baya(valor: str | None) -> tuple[float | None, dict | None]:
+def validar_peso_baya(valor: str | None, config: dict | None = None) -> tuple[float | None, dict | None]:
     """
-    Valida que el peso de baya esté en rango 0.5–8.0g.
+    Valida que el peso de baya esté en rango.
+    Usa parámetros de config (PESO_BAYA_MIN, PESO_BAYA_MAX) o defaults de seguridad.
     """
     if valor is None:
         return None, _error('Peso_Baya_g', valor, 'Peso nulo', 'ALTO')
+
+    # Obtener límites de la base de datos real o usar defaults si no hay config
+    min_val = float(config.get('PESO_BAYA_MIN', 0.5)) if config else 0.5
+    max_val = float(config.get('PESO_BAYA_MAX', 12.0)) if config else 12.0
 
     try:
         peso = float(str(valor).replace(',', '.'))
@@ -97,10 +97,10 @@ def validar_peso_baya(valor: str | None) -> tuple[float | None, dict | None]:
         return None, _error('Peso_Baya_g', valor,
                             'Peso no numérico', 'CRITICO')
 
-    if not (0.5 <= peso <= 8.0):
+    if not (min_val <= peso <= max_val):
         return None, _error(
             'Peso_Baya_g', valor,
-            f'Peso fuera de rango biológico 0.5–8.0g (recibido: {peso})',
+            f'Peso fuera de rango biológico {min_val}–{max_val}g (recibido: {peso})',
             'CRITICO'
         )
     return peso, None

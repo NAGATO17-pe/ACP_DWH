@@ -3,59 +3,46 @@ utils/formato.py — Sistema de diseño visual del Portal MDM ACP (Enterprise)
 =============================================================================
 CSS Premium + Componentes de renderizado HTML.
 
-Cambios v3 Light Premium Glassmorphism:
-  - Google Fonts Inter + Outfit (tipografía premium dual)
-  - Light Glassmorphism: fondos translúcidos con backdrop-filter blur
-  - Sidebar con vidrio esmerilado semi-transparente (teal suave)
-  - Paleta de colores agradable a la vista (descanso visual)
-  - Header con gradiente sutil y bordes redondeados
-  - Micro-animaciones refinadas (fadeIn, slideUp, shimmer)
-  - Diseño 100% responsivo
+Cambios v4 Midnight Premium Edition:
+  - Estética Dark Mode (OLED) profunda basada en Slate 900/950.
+  - Glassmorphism Oscuro: backdrop-filter blur sobre fondos Slate translúcidos.
+  - Acentos Gold (Amber) y Emerald para estados operativos.
+  - Sidebar Midnight con navegación resaltada en Gold.
+  - Tipografía Outfit + Inter integrada vía Google Fonts.
 """
 
 import math
 
 import streamlit as st
 
-# ── Light Premium Palette ──
-TEAL_PRIMARY  = "#1B6B5A"
-TEAL_LIGHT    = "#2D9B7E"
-TEAL_SOFT     = "#E8F5F1"
-AMBER_ACCENT  = "#D4915E"
-SLATE_700     = "#374151"
-SLATE_500     = "#64748B"
-SLATE_200     = "#E2E8F0"
-SURFACE_GLASS = "rgba(255, 255, 255, 0.72)"
+# ── Midnight Premium Palette ──
+SLATE_950      = "#020617"
+SLATE_900      = "#0F172A"
+SLATE_800      = "#1E293B"
+SLATE_400      = "#94A3B8"
+SLATE_50       = "#F8FAFC"
+GOLD_ACCENT    = "#F59E0B"
+EMERALD_ACCENT = "#10B981"
+SURFACE_GLASS  = "rgba(30, 41, 59, 0.65)"
 
 CSS_PORTAL = f"""
 <style>
-/* ── Google Fonts ── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+/* ── Google Fonts (Zenith Premium) ── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 /* ── Design Tokens ── */
 :root {{
-    --teal-primary: {TEAL_PRIMARY};
-    --teal-light: {TEAL_LIGHT};
-    --teal-soft: {TEAL_SOFT};
-    --amber-accent: {AMBER_ACCENT};
-    --slate-700: {SLATE_700};
-    --slate-500: {SLATE_500};
-    --slate-200: {SLATE_200};
-
-    /* Legacy aliases (backward compat) */
-    --verde-acp: {TEAL_PRIMARY};
-    --verde-claro: {TEAL_LIGHT};
-    --bronce: {AMBER_ACCENT};
+    --slate-950: {SLATE_950};
+    --slate-900: {SLATE_900};
+    --slate-800: {SLATE_800};
+    --slate-400: {SLATE_400};
+    --slate-50:  {SLATE_50};
+    --gold-accent: {GOLD_ACCENT};
+    --emerald-accent: {EMERALD_ACCENT};
 
     --glass-bg: {SURFACE_GLASS};
-    --glass-border: rgba(255, 255, 255, 0.45);
-    --glass-shadow: 0 8px 32px rgba(27, 107, 90, 0.08);
-
-    --shadow-xs: 0 1px 3px rgba(0,0,0,0.04);
-    --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
-    --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-    --shadow-lg: 0 8px 32px rgba(0,0,0,0.10);
-    --shadow-xl: 0 16px 48px rgba(0,0,0,0.12);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 
     --radius-sm: 10px;
     --radius-md: 14px;
@@ -74,7 +61,7 @@ h1, h2, h3, h4 {{
     font-family: 'Outfit', 'Inter', system-ui, sans-serif;
 }}
 
-/* ── Micro-animations ── */
+/* ── Micro-animations (Zenith) ── */
 @keyframes fadeIn {{
     from {{ opacity: 0; transform: translateY(6px); }}
     to   {{ opacity: 1; transform: translateY(0); }}
@@ -91,6 +78,16 @@ h1, h2, h3, h4 {{
     0%, 100% {{ opacity: 1; }}
     50%      {{ opacity: 0.7; }}
 }}
+@keyframes auroraFloat {{
+    0%   {{ transform: translate(0, 0) scale(1); }}
+    33%  {{ transform: translate(30px, -20px) scale(1.05); }}
+    66%  {{ transform: translate(-20px, 15px) scale(0.95); }}
+    100% {{ transform: translate(0, 0) scale(1); }}
+}}
+@keyframes cardShimmer {{
+    0%   {{ left: -100%; }}
+    100% {{ left: 200%; }}
+}}
 
 /* Smooth transitions — solo elementos del design system, no widgets Streamlit */
 .kpi-card, .glass-card, .nav-item, .step-item, .badge,
@@ -100,261 +97,272 @@ h1, h2, h3, h4 {{
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   APP BACKGROUND — Soft warm gradient with floating orbs
+   APP BACKGROUND — Aurora UI (Zenith Premium)
    ══════════════════════════════════════════════════════════════════════════════ */
 .stApp {{
-    background:
-        radial-gradient(ellipse at 15% 5%, rgba(27,107,90,0.05) 0%, transparent 50%),
-        radial-gradient(ellipse at 85% 90%, rgba(212,145,94,0.04) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(45,155,126,0.02) 0%, transparent 60%),
-        linear-gradient(170deg, #FAFBFC 0%, #F1F5F4 40%, #F5F3F0 100%) !important;
+    background: {SLATE_950} !important;
     background-attachment: fixed !important;
-    animation: fadeIn 0.4s ease-out;
+}}
+.stApp::before {{
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(600px circle at 15% 15%, rgba(245, 158, 11, 0.06) 0%, transparent 60%),
+        radial-gradient(500px circle at 85% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 60%),
+        radial-gradient(400px circle at 50% 50%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+    animation: auroraFloat 25s ease-in-out infinite;
+}}
+/* Digital grain texture */
+.stApp::after {{
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.015;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   SIDEBAR — Light Premium (Senior FE)
-   Pure white background, teal left-border accent. No dark backgrounds.
+   SIDEBAR — Midnight Premium
    ══════════════════════════════════════════════════════════════════════════════ */
 section[data-testid="stSidebar"] {{
     background-color: transparent !important;
     border-right: none !important;
 }}
 section[data-testid="stSidebar"] > div:first-child {{
-    background: #FFFFFF !important;
-    border-right: 1px solid #E9EEF2 !important;
-    box-shadow: 2px 0 16px rgba(27,107,90,0.05) !important;
+    background: {SLATE_950} !important;
+    border-right: 1px solid rgba(255,255,255,0.05) !important;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.5) !important;
 }}
 
-/* Reset all sidebar text to dark — excluye badges/spans con color inline */
+/* Sidebar text */
 section[data-testid="stSidebar"] *:not(span[style]) {{
-    color: #374151 !important;
+    color: {SLATE_400} !important;
 }}
 
-/* ── Logo block — compact ── */
 .sidebar-logo {{
     display: flex;
     align-items: center;
     gap: 9px;
-    padding: 14px 14px 12px 14px;
-    border-bottom: 1px solid #F1F5F8;
-    margin-bottom: 4px;
+    padding: 18px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    margin-bottom: 8px;
 }}
 .sidebar-logo h2 {{
-    font-family: 'Outfit', 'Inter', sans-serif;
-    color: #1B6B5A !important;
-    font-size: 1.0rem;
+    font-family: 'Outfit', sans-serif;
+    color: {GOLD_ACCENT} !important;
+    font-size: 1.1rem;
     font-weight: 700;
     margin: 0;
-    letter-spacing: 0.3px;
-}}
-.sidebar-logo p {{
-    display: none;
+    letter-spacing: 0.5px;
 }}
 
-/* ── Section header label ── */
 .sidebar-section {{
-    font-size: 0.58rem;
+    font-size: 0.6rem;
     text-transform: uppercase;
-    letter-spacing: 1.6px;
-    color: #9CA3AF !important;
-    padding: 14px 14px 4px 14px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.3) !important;
+    padding: 18px 14px 6px 14px;
     font-weight: 700;
 }}
 
-/* ── Radio nav: hide native circle bullet ── */
+/* Radio Nav */
 section[data-testid="stSidebar"] div[role="radiogroup"] > label > div:first-child {{
     display: none !important;
 }}
 section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] > label {{
-    padding: 8px 14px;
-    border-radius: 7px;
-    margin-bottom: 1px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 2px;
     background: transparent;
     cursor: pointer;
-    border-left: 3px solid transparent;
-    transition: background 0.15s ease, border-color 0.15s ease;
+    border-left: 2px solid transparent;
+    transition: all 0.2s ease;
 }}
 section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] > label:hover {{
-    background: #EFF8F5 !important;
-    border-left-color: #2D9B7E !important;
+    background: rgba(255,255,255,0.03) !important;
+    color: {SLATE_50} !important;
 }}
-/* ── Página activa: resaltar ítem seleccionado ── */
-section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] > label[data-checked="true"],
 section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] > label[aria-checked="true"] {{
-    background: rgba(27,107,90,0.10) !important;
-    border-left-color: var(--teal-primary) !important;
+    background: rgba(245, 158, 11, 0.08) !important;
+    border-left-color: {GOLD_ACCENT} !important;
 }}
-section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] > label[data-checked="true"] p,
 section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] > label[aria-checked="true"] p {{
-    color: var(--teal-primary) !important;
-    font-weight: 700 !important;
+    color: {GOLD_ACCENT} !important;
+    font-weight: 600 !important;
 }}
-section[data-testid="stSidebar"] .stRadio p,
-section[data-testid="stSidebar"] .stRadio span,
-section[data-testid="stSidebar"] .stRadio div[data-testid="stMarkdownContainer"] {{
-    color: #374151 !important;
-    font-size: 0.87rem;
+section[data-testid="stSidebar"] .stRadio p {{
+    font-size: 0.85rem;
     font-weight: 500;
 }}
 
-/* ── Footer ── */
 .sidebar-footer {{
     text-align: center;
-    padding: 16px 12px;
-    border-top: 1px solid #F1F5F8;
-    margin-top: 20px;
-    font-size: 0.68rem;
-    color: #CBD5E1 !important;
+    padding: 20px 12px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.2) !important;
 }}
 
-/* ── Logout button ── */
+/* ── Logout button (Midnight) ── */
 section[data-testid="stSidebar"] .stButton > button {{
-    background: #F9FAFB !important;
-    border: 1px solid #E5E7EB !important;
-    color: #6B7280 !important;
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    color: {SLATE_400} !important;
     border-radius: 8px !important;
     font-weight: 500 !important;
 }}
 section[data-testid="stSidebar"] .stButton > button:hover {{
-    background: #FEF2F2 !important;
-    border-color: #FECACA !important;
-    color: #DC2626 !important;
+    background: rgba(239, 68, 68, 0.1) !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
+    color: #EF4444 !important;
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   PAGE HEADER — Glass card with teal accent
+   PAGE HEADER — Glass effect with Gold accent
    ══════════════════════════════════════════════════════════════════════════════ */
 .page-header {{
-    background: #FFFFFF;
-    border: 1px solid #EEF2F6;
-    border-left: 4px solid var(--teal-primary);
-    padding: 14px 20px;
-    border-radius: 10px;
-    margin-bottom: 18px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-    animation: fadeIn 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    background: rgba(30, 41, 59, 0.4);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-left: 4px solid {GOLD_ACCENT};
+    padding: 16px 24px;
+    border-radius: 14px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    animation: slideUp 0.4s ease;
 }}
 .page-header h1 {{
-    font-family: 'Outfit', 'Inter', sans-serif;
-    margin: 0;
-    font-size: 1.15rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.4rem;
     font-weight: 700;
-    color: var(--teal-primary);
-    letter-spacing: -0.2px;
+    color: {SLATE_50};
 }}
 .page-header p {{
-    margin: 2px 0 0 0;
-    font-size: 0.78rem;
-    color: var(--slate-500);
-    font-weight: 400;
+    font-size: 0.85rem;
+    color: {SLATE_400};
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   DATAFRAMES (native Streamlit) - Contrast not lines
+   DATAFRAMES — Midnight Dark Treatment
    ══════════════════════════════════════════════════════════════════════════════ */
 div[data-testid="stDataFrame"] {{
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid #EEF2F6;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-}}
-/* Compact table font */
-div[data-testid="stDataFrame"] table {{
-    font-size: 0.82rem !important;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.05);
+    background: rgba(15, 23, 42, 0.5) !important;
 }}
 div[data-testid="stDataFrame"] thead th {{
-    background: #F8FAFC !important;
-    color: #374151 !important;
-    font-weight: 600 !important;
-    font-size: 0.72rem !important;
+    background: {SLATE_950} !important;
+    color: {SLATE_400} !important;
+    font-size: 0.7rem !important;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 8px 12px !important;
-    border-bottom: 2px solid #EEF2F6 !important;
-    border-right: none !important;
-    border-left: none !important;
-}}
-div[data-testid="stDataFrame"] tbody tr:nth-child(even) td {{
-    background: #F8FAFC !important;
-}}
-div[data-testid="stDataFrame"] tbody tr:nth-child(odd) td {{
-    background: #FFFFFF !important;
+    border-bottom: 1px solid rgba(255,255,255,0.05) !important;
 }}
 div[data-testid="stDataFrame"] tbody td {{
-    padding: 6px 12px !important;
-    border: none !important;
-    color: #374151 !important;
-    font-size: 0.82rem !important;
-}}
-div[data-testid="stDataFrame"] tbody tr:hover td {{
-    background: #EFF8F5 !important;
+    color: {SLATE_50} !important;
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   KPI CARDS — Glassmorphism float cards
+   KPI CARDS — Glassmorphism Midnight
    ══════════════════════════════════════════════════════════════════════════════ */
 .kpi-container {{
-    display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
     animation: slideUp 0.5s ease;
 }}
 .kpi-card {{
-    background: #FFFFFF;
-    border: 1px solid #EEF2F6;
-    border-radius: 10px;
-    padding: 14px 18px 14px 16px;
-    flex: 1;
-    min-width: 150px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    background: rgba(30, 41, 59, 0.4);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     display: flex;
-    flex-direction: row;
     align-items: center;
-    gap: 12px;
+    gap: 18px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
     overflow: hidden;
-    border-left: 3px solid var(--amber-accent);
-    border-top: none;
-    transition: box-shadow 0.15s ease, transform 0.15s ease;
+    max-width: 380px;
 }}
 .kpi-card:hover {{
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+    transform: translateY(-6px) scale(1.02);
+    background: rgba(30, 41, 59, 0.6);
+    border-color: rgba(255,255,255,0.15);
+    box-shadow: 0 15px 45px rgba(0,0,0,0.4);
+}}
+.kpi-icon-wrapper {{
+    position: relative;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}}
+.kpi-icon-bg {{
+    position: absolute;
+    inset: 0;
+    background: var(--accent-color, #94A3B8);
+    opacity: 0.1;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}}
+.kpi-card:hover .kpi-icon-bg {{
+    opacity: 0.2;
+    transform: rotate(45deg);
 }}
 .kpi-icon {{
-    font-size: 1.6rem;
-    opacity: 0.75;
-    flex-shrink: 0;
-    line-height: 1;
+    font-size: 1.8rem;
+    z-index: 1;
+    filter: drop-shadow(0 0 8px var(--accent-color, transparent));
 }}
-.kpi-content {{ display: flex; flex-direction: column; }}
 .kpi-title {{
-    font-size: 0.68rem;
+    font-size: 0.6rem;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--slate-500);
-    margin-bottom: 3px;
-    font-weight: 600;
+    letter-spacing: 2px;
+    color: {SLATE_400};
+    margin-bottom: 4px;
+    font-weight: 700;
 }}
 .kpi-value {{
-    font-family: 'Outfit', 'Inter', sans-serif;
-    font-size: 1.35rem;
+    font-family: 'JetBrains Mono', 'Outfit', monospace;
+    font-size: 1.7rem;
     font-weight: 700;
-    color: var(--teal-primary);
-    line-height: 1.1;
+    color: {SLATE_50};
+    line-height: 1;
+    letter-spacing: -0.5px;
 }}
-.kpi-card.success {{ border-left-color: #10B981; }}
-.kpi-card.success .kpi-value {{ color: #059669; }}
-.kpi-card.warning {{ border-left-color: #F59E0B; }}
-.kpi-card.warning .kpi-value {{ color: #D97706; }}
-.kpi-card.danger  {{ border-left-color: #EF4444; }}
-.kpi-card.danger  .kpi-value {{ color: #DC2626; }}
-.kpi-card.info    {{ border-left-color: var(--teal-light); }}
-.kpi-card.info    .kpi-value {{ color: var(--teal-primary); }}
+/* Shimmer sweep on KPI cards */
+.kpi-card::after {{
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 60%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+    animation: cardShimmer 12s ease-in-out infinite;
+    pointer-events: none;
+}}
+.kpi-glass-reflect {{
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.03), transparent);
+    pointer-events: none;
+}}
+.kpi-card.info    {{ --accent-color: {GOLD_ACCENT}; border-bottom: 2px solid rgba(245, 158, 11, 0.2); }}
+.kpi-card.success {{ --accent-color: {EMERALD_ACCENT}; border-bottom: 2px solid rgba(16, 185, 129, 0.2); }}
+.kpi-card.danger  {{ --accent-color: #EF4444; border-bottom: 2px solid rgba(239, 68, 68, 0.2); }}
+
+.kpi-card.info .kpi-value    {{ color: {GOLD_ACCENT}; text-shadow: 0 0 20px rgba(245, 158, 11, 0.2); }}
+.kpi-card.success .kpi-value {{ color: {EMERALD_ACCENT}; text-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }}
+.kpi-card.danger .kpi-value  {{ color: #EF4444; text-shadow: 0 0 20px rgba(239, 68, 68, 0.2); }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
    DECISION PANEL (cuarentena)
@@ -382,102 +390,72 @@ div[data-testid="stDataFrame"] tbody tr:hover td {{
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   BUTTONS — Soft gradient with micro-lift
+   BUTTONS — Midnight Premium
    ══════════════════════════════════════════════════════════════════════════════ */
 .stButton > button {{
-    border-radius: var(--radius-sm);
+    border-radius: 12px;
     font-weight: 600;
     font-size: 0.86rem;
-    border: 1px solid transparent;
-    box-shadow: var(--shadow-xs);
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(30, 41, 59, 0.5) !important;
+    color: {SLATE_50} !important;
+    backdrop-filter: blur(8px);
     letter-spacing: 0.2px;
+    transition: all 0.3s ease;
 }}
-.stButton > button[kind="primary"] {{
-    background: linear-gradient(135deg, var(--teal-primary) 0%, var(--teal-light) 100%) !important;
-    color: white !important;
-    border: none;
-    box-shadow: 0 2px 8px rgba(27,107,90,0.18);
-}}
-.stButton > button[kind="primary"]:hover {{
-    background: linear-gradient(135deg, var(--teal-light) 0%, var(--teal-primary) 100%) !important;
+.stButton > button:hover {{
+    background: rgba(245, 158, 11, 0.15) !important;
+    border-color: rgba(245, 158, 11, 0.3) !important;
+    color: {GOLD_ACCENT} !important;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(27,107,90,0.22) !important;
-}}
-.stButton > button[kind="secondary"]:hover {{
-    transform: translateY(-1px);
-    border-color: var(--teal-light) !important;
-    color: var(--teal-primary) !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   BANNER
+   BANNER — Midnight
    ══════════════════════════════════════════════════════════════════════════════ */
 .banner-aviso {{
-    background: rgba(255, 251, 235, 0.85);
+    background: rgba(245, 158, 11, 0.06);
     backdrop-filter: blur(8px);
-    border: 1px solid rgba(212,145,94,0.25);
-    border-left: 4px solid var(--amber-accent);
-    border-radius: var(--radius-sm);
+    border: 1px solid rgba(245, 158, 11, 0.15);
+    border-left: 4px solid {GOLD_ACCENT};
+    border-radius: 12px;
     padding: 14px 20px;
     font-size: 0.86rem;
-    color: var(--slate-700);
+    color: {SLATE_400};
     margin-bottom: 20px;
-    box-shadow: var(--shadow-xs);
     animation: fadeIn 0.3s ease;
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   TABLE PREMIUM — Clean glass with soft teal header
+   TABLE PREMIUM — Midnight Glass
    ══════════════════════════════════════════════════════════════════════════════ */
 .tabla-premium-wrapper {{
-    border-radius: var(--radius-md);
+    border-radius: 16px;
     overflow: hidden;
-    border: 1px solid rgba(0,0,0,0.06);
-    box-shadow: var(--shadow-sm);
-    margin-bottom: 8px;
-    animation: fadeIn 0.35s ease;
-    background: var(--glass-bg);
-    backdrop-filter: blur(8px);
-}}
-.tabla-premium {{
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.84rem;
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    background: {SURFACE_GLASS};
+    backdrop-filter: blur(12px);
 }}
 .tabla-premium thead tr {{
-    background: linear-gradient(135deg, {TEAL_PRIMARY} 0%, {TEAL_LIGHT} 100%);
+    background: {SLATE_950};
 }}
 .tabla-premium thead th {{
-    color: #ffffff;
-    font-weight: 600;
-    padding: 12px 16px;
-    text-align: left;
-    font-size: 0.76rem;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    border-right: 1px solid rgba(255,255,255,0.10);
-    white-space: nowrap;
-    font-family: 'Inter', sans-serif;
+    color: {GOLD_ACCENT};
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
 }}
-.tabla-premium thead th:last-child {{ border-right: none; }}
 .tabla-premium tbody td {{
-    padding: 10px 16px;
-    border-bottom: 1px solid rgba(0,0,0,0.04);
-    color: var(--slate-700);
-    max-width: 300px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    color: {SLATE_50};
+    padding: 12px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
 }}
-.tabla-premium tbody tr.zebra-even {{ background: rgba(27,107,90,0.03); }}
-.tabla-premium tbody tr.zebra-odd  {{ background: rgba(255,255,255,0.6); }}
 .tabla-premium tbody tr:hover {{
-    background: rgba(27,107,90,0.07) !important;
-    cursor: default;
-}}
-.tabla-premium tbody td input[type="checkbox"] {{
-    width: 16px; height: 16px;
-    accent-color: var(--teal-primary);
+    background: rgba(255,255,255,0.02) !important;
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
@@ -528,24 +506,15 @@ details[data-testid="stExpander"] summary {{
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   TABS — Active tab visual differentiation
+   TABS — Midnight
    ══════════════════════════════════════════════════════════════════════════════ */
 button[data-baseweb="tab"] {{
-    font-weight: 600 !important;
-    font-size: 0.9rem !important;
-    letter-spacing: 0.2px;
+    color: {SLATE_400} !important;
     border-bottom: 2px solid transparent !important;
-    transition: border-color 0.15s ease, color 0.15s ease !important;
-    padding-bottom: 10px !important;
-}}
-button[data-baseweb="tab"]:hover {{
-    color: var(--teal-primary) !important;
-    border-bottom-color: rgba(45,155,126,0.45) !important;
 }}
 button[data-baseweb="tab"][aria-selected="true"] {{
-    color: var(--teal-primary) !important;
-    border-bottom: 2px solid var(--teal-primary) !important;
-    font-weight: 700 !important;
+    color: {GOLD_ACCENT} !important;
+    border-bottom: 2px solid {GOLD_ACCENT} !important;
 }}
 
 /* ══════════════════════════════════════════════════════════════════════════════
@@ -562,13 +531,17 @@ div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div 
 /* ══════════════════════════════════════════════════════════════════════════════
    SCROLLBARS — Visible en Windows
    ══════════════════════════════════════════════════════════════════════════════ */
-::-webkit-scrollbar {{ width: 7px; height: 7px; }}
-::-webkit-scrollbar-track {{ background: transparent; border-radius: 10px; }}
+* {{
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+}}
+::-webkit-scrollbar {{ width: 10px; height: 10px; }}
+::-webkit-scrollbar-track {{ background: transparent; }}
 ::-webkit-scrollbar-thumb {{
-    background: rgba(27,107,90,0.25);
+    background: rgba(148, 163, 184, 0.45);
     border-radius: 10px;
 }}
-::-webkit-scrollbar-thumb:hover {{ background: rgba(27,107,90,0.45); }}
+::-webkit-scrollbar-thumb:hover {{ background: rgba(245, 158, 11, 0.6); }}
 /* Scrollbar lateral del stepper (neural-monitor) */
 .stepper-panel::-webkit-scrollbar {{ width: 5px; }}
 .stepper-panel::-webkit-scrollbar-thumb {{ background: rgba(100,116,139,0.2); }}
@@ -755,15 +728,43 @@ def score_a_color(score: float) -> str:
     return "🔴"
 
 def crear_tarjeta_kpi(titulo: str, valor: str, icono: str, tipo: str = "") -> str:
-    """Renderiza una tarjeta KPI HTML."""
+    """Renderiza una tarjeta KPI HTML Ultra Premium."""
     clase_tipo = f" {tipo}" if tipo else ""
     return f"""<div class="kpi-card{clase_tipo}">
-<div class="kpi-icon">{icono}</div>
-<div class="kpi-content">
-<div class="kpi-title">{titulo}</div>
-<div class="kpi-value">{valor}</div>
-</div>
+    <div class="kpi-icon-wrapper">
+        <div class="kpi-icon-bg"></div>
+        <div class="kpi-icon">{icono}</div>
+    </div>
+    <div class="kpi-content">
+        <div class="kpi-title">{titulo}</div>
+        <div class="kpi-value">{valor}</div>
+    </div>
+    <div class="kpi-glass-reflect"></div>
 </div>"""
+
+def crear_panel_metricas_premium(metricas: list[dict], pct_progreso: float = None, texto_progreso: str = "", labels_progreso: dict = None) -> None:
+    """
+    Genera un panel unificado de métricas Zenith Premium (Minimalista).
+    Soporta barra de progreso y métricas horizontales en una sola línea colapsada.
+    """
+    def _stat_html(label, value, color="#F8FAFC"):
+        return f'<div style="text-align:center;"><div style="font-family:\'JetBrains Mono\',monospace; font-size:1.3rem; font-weight:700; color:{color}; line-height:1;">{value}</div><div style="font-size:0.55rem; text-transform:uppercase; letter-spacing:1.5px; color:#64748B; font-weight:600; margin-top:4px;">{label}</div></div>'
+
+    stats_html = []
+    for i, m in enumerate(metricas):
+        stats_html.append(_stat_html(m["label"], m["value"], m.get("color", "#F8FAFC")))
+        if i < len(metricas) - 1:
+            stats_html.append('<div style="width:1px; height:32px; background:rgba(255,255,255,0.06);"></div>')
+
+    progreso_html = ""
+    if pct_progreso is not None:
+        l_ok = labels_progreso.get("ok", "OK") if labels_progreso else "OK"
+        l_err = labels_progreso.get("error", "Error") if labels_progreso else "Error"
+        progreso_html = f'<div style="margin-top:20px;"><div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="font-size:0.6rem; color:#94A3B8; text-transform:uppercase; letter-spacing:1.5px; font-weight:700;">{texto_progreso}</span><span style="font-family:\'JetBrains Mono\',monospace; font-size:0.75rem; color:#F8FAFC; font-weight:600;">{pct_progreso}%</span></div><div style="height:6px; background:rgba(255,255,255,0.04); border-radius:99px; overflow:hidden;"><div style="height:100%; width:{pct_progreso}%; border-radius:99px; background:linear-gradient(90deg, #10B981, #34D399); transition:width 0.6s ease;"></div></div><div style="display:flex; justify-content:space-between; margin-top:6px; font-size:0.6rem; color:#94A3B8;"><span>✅ {l_ok}</span><span>❌ {l_err}</span></div></div>'
+
+    html = f'<div style="background:rgba(30, 41, 59, 0.35); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.05); border-radius:20px; padding:24px 32px; margin-bottom:24px; box-shadow:0 8px 30px rgba(0,0,0,0.2);"><div style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">{"".join(stats_html)}</div>{progreso_html}</div>'
+    st.markdown(html, unsafe_allow_html=True)
+
 
 
 # ── Componente de Paginación Premium (local — para DataFrames en memoria) ─────

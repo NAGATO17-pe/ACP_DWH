@@ -20,6 +20,7 @@ _log = logging.getLogger("ETL_Pipeline")
 
 _cache: dict[str, pd.DataFrame] = {}
 _cache_mapas: dict[str, dict] = {}
+_cache_config: dict[str, Any] = {} # Nuevo cache para parámetros y reglas
 _cache_lock = threading.Lock()
 
 _ALIASES_CINTA = {
@@ -27,6 +28,26 @@ _ALIASES_CINTA = {
     'blanco': 'blanca',
     'rojo': 'roja',
 }
+
+
+def obtener_parametros_pipeline(engine: Engine) -> dict[str, Any]:
+    """Carga parámetros generales desde Config.Parametros_Pipeline."""
+    with _cache_lock:
+        if 'parametros_pipeline' not in _cache_config:
+            with engine.connect() as conexion:
+                resultado = conexion.execute(text("SELECT Nombre_Parametro, Valor FROM Config.Parametros_Pipeline"))
+                _cache_config['parametros_pipeline'] = {row[0]: row[1] for row in resultado}
+        return _cache_config['parametros_pipeline']
+
+
+def obtener_reglas_validacion(engine: Engine) -> pd.DataFrame:
+    """Carga reglas de validación específicas desde Config.Reglas_Validacion."""
+    with _cache_lock:
+        if 'reglas_validacion' not in _cache_config:
+            with engine.connect() as conexion:
+                resultado = conexion.execute(text("SELECT * FROM Config.Reglas_Validacion WHERE Activo = 1"))
+                _cache_config['reglas_validacion'] = pd.DataFrame(resultado.fetchall(), columns=resultado.keys())
+        return _cache_config['reglas_validacion']
 
 
 def _cargar_dim(engine: Engine, tabla: str,
@@ -62,25 +83,18 @@ def limpiar_cache() -> None:
         _log.debug(f'Cache de lookup limpiado: {n_dims} dims, {n_mapas} mapas descartados.')
 
 
-def _normalizar_texto(valor) -> str | None:
-    if valor is None:
-        return None
-    if isinstance(valor, float) and pd.isna(valor):
-        return None
+from utils.texto import normalizar_espacio, normalizar_componente_geografico
 
-    texto = str(valor).strip()
-    if texto in ('', 'None', 'nan'):
-        return None
-    return texto.lower()
+def _normalizar_texto(valor) -> str | None:
+    t = normalizar_espacio(valor)
+    return t.lower() if t else None
 
 
 def _normalizar_componente(valor) -> str:
-    if valor is None:
+    t = normalizar_componente_geografico(valor)
+    if t is None or t.upper() in ('NONE', 'NAN', 'NULL', 'SIN_FUNDO', 'SIN_SECTOR', 'SIN_MODULO', 'SIN_TURNO', 'SIN_VALVULA', 'SIN_CAMA'):
         return 'NONE'
-    texto = str(valor).strip().upper()
-    if texto in ('', 'NAN', 'NULL', 'SIN_FUNDO', 'SIN_SECTOR', 'SIN_MODULO', 'SIN_TURNO', 'SIN_VALVULA', 'SIN_CAMA'):
-        return 'NONE'
-    return texto.lower()
+    return t.lower()
 
 
 def _obtener_mapa_dim(engine: Engine,
@@ -318,6 +332,22 @@ def _cargar_geografia(engine: Engine) -> pd.DataFrame:
                         'ID_Cama_Catalogo', 'Es_Test_Block'
                     ]
                 )
+        return _cache[clave_cache]
+ 
+ 
+def _cargar_bridge_campanas(engine: Engine) -> pd.DataFrame:
+    clave_cache = 'Silver.Bridge_Modulo_Campana'
+    with _cache_lock:
+        if clave_cache not in _cache:
+            with engine.connect() as conexion:
+                df = pd.read_sql("""
+                    SELECT ID_Modulo_Catalogo, ID_Variedad, ID_Campana, Fecha_Inicio, Fecha_Fin 
+                    FROM Silver.Bridge_Modulo_Campana
+                    WHERE Es_Activa = 1
+                """, conexion)
+                df['Fecha_Inicio'] = pd.to_datetime(df['Fecha_Inicio'])
+                df['Fecha_Fin'] = pd.to_datetime(df['Fecha_Fin'].fillna('2099-12-31'))
+                _cache[clave_cache] = df
         return _cache[clave_cache]
 
 def _obtener_id_catalogo(engine: Engine, tabla: str, col_id: str, col_nombre: str, valor: str | None) -> int:
@@ -567,6 +597,7 @@ def resolver_geografia(fundo: str | None,
     
     resultado = {
         'id_geografia': None,
+        'id_modulo_catalogo': id_modulo,
         'estado': 'PENDIENTE_GEOGRAFIA_NO_EXISTE',
         'detalle': f'Geografia incompleta o nueva en catalogos. Enviada a MDM (F_ID={id_fundo} S_ID={id_sector} M_ID={id_modulo})'
     }
@@ -584,52 +615,80 @@ def obtener_id_geografia(fundo: str | None,
     resultado = resolver_geografia(fundo, sector, modulo, engine, turno, valvula, cama)
     return resultado.get('id_geografia')
 
+ 
 def obtener_id_campana(id_geografia: int | None,
                        id_variedad: int | None,
                        fecha_evento,
-                       engine: Engine) -> int | None:
+                       engine: Engine,
+                       id_modulo_catalogo: int | None = None) -> int | None:
     """
-    Busca la Campana activa usando Bridge_Modulo_Campana.
+    Busca la Campana activa usando Bridge_Modulo_Campana (Cacheado en memoria).
+    Si id_geografia es None, intenta usar id_modulo_catalogo (match con Dim_Catalogo*).
     """
-    if id_geografia is None or id_variedad is None or fecha_evento is None:
+    if fecha_evento is None:
         return None
-
+ 
     try:
-        fecha_str = str(fecha_evento)[:10]
+        fecha_dt = pd.to_datetime(fecha_evento)
     except:
         return None
-
-    clave_cache = f'campana::{id_geografia}::{id_variedad}::{fecha_str}'
-    with _cache_lock:
-        if clave_cache in _cache_mapas:
-            return _cache_mapas[clave_cache]
-
-    # Necesitamos el ID_Modulo_Catalogo para esta geografia
-    df_geo = _cargar_geografia(engine)
-    geo_info = df_geo[df_geo['ID_Geografia'] == id_geografia]
-    if geo_info.empty:
-        return None
+ 
+    # 1. Obtener ID_Modulo_Catalogo (desde parametro o desde la geografia)
+    id_mod_cat = id_modulo_catalogo
     
-    id_modulo_cat = int(geo_info.iloc[0]['ID_Modulo_Catalogo'])
+    if id_mod_cat is None and id_geografia is not None:
+        df_geo = _cargar_geografia(engine)
+        geo_info = df_geo[df_geo['ID_Geografia'] == id_geografia]
+        
+        if not geo_info.empty:
+            id_mod_cat = int(geo_info.iloc[0]['ID_Modulo_Catalogo'])
+ 
+    if id_mod_cat is None or id_variedad is None:
+        return obtener_id_campana_anual(fecha_dt, engine)
+ 
+    # 2. Buscar en el Bridge (Cacheado)
+    df_bridge = _cargar_bridge_campanas(engine)
+    
+    # Filtro por Modulo y Variedad
+    match = df_bridge[
+        (df_bridge['ID_Modulo_Catalogo'] == id_mod_cat) &
+        (df_bridge['ID_Variedad'] == id_variedad) &
+        (df_bridge['Fecha_Inicio'] <= fecha_dt) &
+        (df_bridge['Fecha_Fin'] >= fecha_dt)
+    ]
+ 
+    if not match.empty:
+        # Retornamos el ID de la campaña mas reciente que coincida (por si hubiera solapamientos minimos)
+        return int(match.sort_values('Fecha_Inicio', ascending=False).iloc[0]['ID_Campana'])
+ 
+    # 3. FALLBACK GLOBAL: Si no hay en el Bridge, usamos el año calendario (Bridge as a connection, not a filter)
+    return obtener_id_campana_anual(fecha_dt, engine)
 
-    with engine.connect() as conexion:
-        resultado = conexion.execute(text("""
-            SELECT TOP 1 ID_Campana
-            FROM Silver.Bridge_Modulo_Campana
-            WHERE ID_Modulo_Catalogo = :mod
-              AND ID_Variedad = :var
-              AND Es_Activa = 1
-              AND :fecha >= Fecha_Inicio
-              AND (:fecha <= Fecha_Fin OR Fecha_Fin IS NULL)
-            ORDER BY Fecha_Inicio DESC
-        """), {
-            "mod": id_modulo_cat,
-            "var": int(id_variedad),
-            "fecha": fecha_str
-        }).fetchone()
 
-    id_campana = int(resultado[0]) if resultado else None
-    with _cache_lock:
-        _cache_mapas[clave_cache] = id_campana
-    return id_campana
+def obtener_id_campana_anual(fecha_evento, engine: Engine) -> int | None:
+    """Retorna la campaña anual (Clase 0) correspondiente al año del evento."""
+    try:
+        fecha_dt = pd.to_datetime(fecha_evento)
+        anio_cal = fecha_dt.year
+        
+        clave_cache = f'campana_anual::{anio_cal}'
+        with _cache_lock:
+            if clave_cache in _cache_mapas:
+                return _cache_mapas[clave_cache]
 
+        with engine.connect() as conn:
+            # Buscamos la campaña anual (no asociada a modulo especifico en el bridge)
+            # Generalmente tienen Clase_Campana = 0 o son las unicas para ese año en Dim_Campana
+            res_c = conn.execute(text("""
+                SELECT TOP 1 ID_Campana 
+                FROM Silver.Dim_Campana 
+                WHERE Anio_Cosecha = :a 
+                ORDER BY ID_Campana DESC
+            """), {"a": anio_cal}).fetchone()
+            
+            id_c = int(res_c[0]) if res_c else None
+            with _cache_lock:
+                _cache_mapas[clave_cache] = id_c
+            return id_c
+    except:
+        return None

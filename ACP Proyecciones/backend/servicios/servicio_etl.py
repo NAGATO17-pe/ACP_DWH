@@ -128,9 +128,8 @@ async def stream_eventos_corrida(id_corrida: str) -> AsyncGenerator[dict, None]:
     estados_terminal = {"OK", "ERROR", "CANCELADO", "TIMEOUT"}
 
     while tiempo_total < _POLL_TIMEOUT_TOTAL_SEG:
-        # Leer eventos nuevos desde el último ID visto
-        eventos = await asyncio.to_thread(
-            r_corrida.listar_eventos,
+        eventos, estado_corrida = await asyncio.to_thread(
+            r_corrida.listar_eventos_y_estado,
             id_corrida,
             ultimo_id_visto,
         )
@@ -143,13 +142,9 @@ async def stream_eventos_corrida(id_corrida: str) -> AsyncGenerator[dict, None]:
                 "id":    str(evento["id_evento"]),
             }
 
-        # Verificar si la corrida terminó
-        corrida = await asyncio.to_thread(r_corrida.obtener_corrida, id_corrida)
-        if corrida and corrida.get("estado") in estados_terminal:
-            # Emitir cualquier evento final pendiente que pudo haberse insertado
-            # justo antes de que verifiquemos el estado
-            eventos_finales = await asyncio.to_thread(
-                r_corrida.listar_eventos, id_corrida, ultimo_id_visto
+        if estado_corrida in estados_terminal:
+            eventos_finales, _ = await asyncio.to_thread(
+                r_corrida.listar_eventos_y_estado, id_corrida, ultimo_id_visto
             )
             for evento in eventos_finales:
                 ultimo_id_visto = evento["id_evento"]
@@ -158,7 +153,6 @@ async def stream_eventos_corrida(id_corrida: str) -> AsyncGenerator[dict, None]:
                     "data":  evento["mensaje"],
                     "id":    str(evento["id_evento"]),
                 }
-            # Sentinel de cierre para el cliente
             yield {"event": "fin", "data": "[FIN_CORRIDA]"}
             return
 
@@ -187,11 +181,11 @@ def obtener_pasos_corrida(id_corrida: str) -> list[dict]:
     return r_corrida.listar_pasos_corrida(id_corrida)
 
 
-def listar_corridas_activas() -> list[dict]:
-    """Retorna corridas PENDIENTE o EJECUTANDO."""
+def listar_corridas_activas(limite: int = 50) -> list[dict]:
+    """Retorna corridas PENDIENTE o EJECUTANDO. Acepta limite configurable."""
     return [
         enriquecer_corrida_con_parametros(corrida)
-        for corrida in r_corrida.listar_corridas(limite=10, solo_activas=True)
+        for corrida in r_corrida.listar_corridas(limite=limite, solo_activas=True)
     ]
 
 

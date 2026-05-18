@@ -15,10 +15,12 @@ import repositorios.repo_catalogos as repo
 log = obtener_logger(__name__)
 
 _REPOSITORIOS_CATALOGO = {
-    "variedades": repo.listar_variedades,
-    "geografia": repo.listar_geografia,
-    "personal": repo.listar_personal,
+    "variedades":     repo.listar_variedades,
+    "dim_variedades": repo.listar_dim_variedades,
+    "geografia":      repo.listar_geografia,
+    "personal":       repo.listar_personal,
 }
+
 
 _TTL_CATALOGOS = 3600   # 1 hora — datos estáticos
 
@@ -42,12 +44,38 @@ def _listar_catalogo(nombre_catalogo: str, pagina: int = 1, tamano: int = 20) ->
 
 
 def listar_variedades(pagina: int = 1, tamano: int = 20) -> dict:
-    """Lee MDM.Catalogo_Variedades activas con paginación server-side."""
+    """Lee MDM.Catalogo_Variedades (catálogo maestro MDM)."""
     return _listar_catalogo(
         "variedades",
         pagina=pagina,
         tamano=tamano,
     )
+
+
+def listar_dim_variedades(pagina: int = 1, tamano: int = 20) -> dict:
+    """Lee Silver.Dim_Variedad (dimensión DWH ya homologada)."""
+    return _listar_catalogo(
+        "dim_variedades",
+        pagina=pagina,
+        tamano=tamano,
+    )
+
+
+def crear_dim_variedad(nombre_variedad: str, breeder: str | None) -> dict:
+    """
+    Crea una nueva variedad en Silver.Dim_Variedad.
+    Propaga ValueError si el nombre ya existe.
+    """
+    return repo.insertar_dim_variedad(nombre_variedad=nombre_variedad, breeder=breeder)
+
+
+def cambiar_estado_dim_variedad(id_variedad: int, es_activa: bool) -> dict:
+    """
+    Activa o desactiva (soft-delete) una variedad en Silver.Dim_Variedad.
+    Propaga ValueError si el ID no existe.
+    """
+    return repo.cambiar_estado_dim_variedad(id_variedad=id_variedad, es_activa=es_activa)
+
 
 
 def listar_geografia(pagina: int = 1, tamano: int = 20) -> dict:

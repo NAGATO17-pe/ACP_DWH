@@ -138,11 +138,16 @@ def _cargar_catalogo_crudo(engine: Engine) -> pd.DataFrame:
 def cargar_dim_geografia_v2(engine: Engine) -> dict[str, int]:
     resumen = {"insertados": 0, "cerrados": 0, "sin_cambios": 0}
     
-    if not _tabla_existe(engine, "Silver", "Dim_Geografia_Base"):
+    if not _tabla_existe(engine, "Silver", "Dim_Geografia_Base") and not _tabla_existe(engine, "Silver", "Dim_Geografia"):
         _log.warning(
-            "WARNING: Silver.Dim_Geografia_Base ausente — se omite sincronización SCD2. "
-            "¿Se ejecutó la migración fase25 (DDL catálogos)?"
+            "WARNING: Silver.Dim_Geografia_Base y Silver.Dim_Geografia ausentes. "
+            "Se omite sincronización. Verifique el esquema."
         )
+        return resumen
+
+    # Si no existe Obsoleta, no hay nada que rescatar hacia la nueva arquitectura
+    if not _tabla_existe(engine, "Silver", "Dim_Geografia_Obsoleta"):
+        _log.info("INFO: Silver.Dim_Geografia_Obsoleta ausente. Se asume migración completa y catálogos estables.")
         return resumen
 
     # 1. Cargar datos crudos y Catálogos

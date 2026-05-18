@@ -7,9 +7,8 @@ from datetime import datetime
 
 from utils.auth import tiene_permiso
 from utils.componentes import health_status_panel, seccion_tabla_con_guardar
-from utils.constantes import FASES_ETL, RENOMBRES_LOG_ETL
-from utils.formato import crear_tarjeta_kpi, header_pagina
-from utils.api_client import URL_BACKEND, get_api, mostrar_error_api, post_api, stream_api, delete_api
+from utils.formato import crear_tarjeta_kpi, header_pagina, crear_panel_metricas_premium
+from utils.api_client import get_api, mostrar_error_api, post_api, stream_api, delete_api
 
 # ── Constantes de fases ETL ──────────────────────────────────────────────────
 _RE_PASO = re.compile(r"^\[(\d+)/(\d+)\]\s+(.+)$")
@@ -492,21 +491,16 @@ def _generar_stepper_html(pasos: list[dict], paso_activo_idx: int) -> str:
     return f'<div class="stepper-panel">{items_html}</div>'
 
 
-@st.cache_data(ttl=60, show_spinner=False)
-def _cargar_resumen_ultima_carga() -> pd.DataFrame:
+def _cargar_resumen_ultima_carga() -> tuple[pd.DataFrame, str | None]:
+    """Consulta directa al backend — sin caché. Retorna (df, error_msg)."""
     resultado = get_api("/etl/corridas")
     if resultado.ok and isinstance(resultado.data, list):
         corridas = resultado.data
         if corridas:
-            return pd.DataFrame(corridas)
-    # Valores de mockups para UI si no hay log:
-    return pd.DataFrame()
-
-def _cargar_log_reciente() -> pd.DataFrame:
-    resultado = get_api("/etl/corridas")
-    if resultado.ok and isinstance(resultado.data, list):
-        return pd.DataFrame(resultado.data)
-    return pd.DataFrame()
+            return pd.DataFrame(corridas), None
+        return pd.DataFrame(), None   # Backend OK pero sin corridas aún
+    # Error real de conectividad — lo devolvemos para mostrarlo al usuario
+    return pd.DataFrame(), resultado.error or "No se pudo conectar al backend."
 
 def render():
     # Limpiar estado fantasma: en_ejecucion=True sin ID de corrida activa
@@ -516,7 +510,15 @@ def render():
     header_pagina("🏠", "Inicio", "Estado del pipeline · Data Warehouse ACP")
     conectado = health_status_panel()
 
-    df_estado = _cargar_resumen_ultima_carga()
+    df_estado, error_carga = _cargar_resumen_ultima_carga()
+
+    # —— Mostrar error de conectividad si el backend no respondio ————————————
+    if error_carga:
+        st.warning(
+            f"⚠️ **Backend no disponible.** {error_carga}  \n"
+            "Verifica que el servidor FastAPI esté corriendo en `http://127.0.0.1:8000`.",
+            icon="📡",
+        )
 
     total_ok = 0
     total_rechaz = 0
@@ -556,13 +558,15 @@ def render():
         cols_order = ["ID", "Tabla", "Estado", "Filas OK", "Rechaz.", "Seg.", "Inicio", "Error"]
         df_estado = df_estado[[c for c in cols_order if c in df_estado.columns]]
 
-    html_kpis = f"""<div class="kpi-container" style="margin-bottom: 32px;">
-    {crear_tarjeta_kpi("Ultima carga", ultima_carga, "🕒", "info")}
-    {crear_tarjeta_kpi("Filas OK (Aprox)", f"{total_ok:,}", "✅", "success")}
-    {crear_tarjeta_kpi("Rechazadas", f"{total_rechaz:,}", "❌", "danger" if total_rechaz > 0 else "")}
-    {crear_tarjeta_kpi("Corridas con error", str(tablas_con_error), "⚠️", "warning" if tablas_con_error > 0 else "success")}
-    </div>"""
-    st.markdown(html_kpis, unsafe_allow_html=True)
+    # Usar panel de métricas premium compacto (Zenith)
+    crear_panel_metricas_premium(
+        metricas=[
+            {"label": "Última carga", "value": ultima_carga, "color": "#F59E0B"},
+            {"label": "Filas OK", "value": f"{total_ok:,}", "color": "#10B981"},
+            {"label": "Rechazadas", "value": f"{total_rechaz:,}", "color": "#EF4444" if total_rechaz > 0 else "#94A3B8"},
+            {"label": "Con error", "value": str(tablas_con_error), "color": "#EF4444" if tablas_con_error > 0 else "#10B981"}
+        ]
+    )
 
     st.markdown("### ⚡ Centro de Comando MDM")
     with st.container(border=True):

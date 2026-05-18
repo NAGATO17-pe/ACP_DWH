@@ -31,8 +31,17 @@ ORDEN_DEPENDENCIAS = (
 
 
 CONFIG_FACTS = OrderedDict({
-    "Fact_Cosecha_SAP": {
+    "Fact_Ciclo_Poda": {
         "orden": 9,
+        "tabla_destino": "Silver.Fact_Ciclo_Poda",
+        "fuentes_bronce": ("Bronce.Evaluacion_Calidad_Poda", "Bronce.Ciclos_Fenologicos"),
+        "dependencias": (DEPENDENCIA_DIM_GEOGRAFIA,),
+        "marts": ("Gold.Mart_Ciclo_Poda",),
+        "releer_bronce_por_estado": True,
+        "estrategia_rerun": "rebuild_fact",
+    },
+    "Fact_Cosecha_SAP": {
+        "orden": 10,
         "tabla_destino": "Silver.Fact_Cosecha_SAP",
         "fuentes_bronce": ("Bronce.Reporte_Cosecha", "Bronce.Data_SAP"),
         "dependencias": (DEPENDENCIA_DIM_GEOGRAFIA,),
@@ -41,7 +50,7 @@ CONFIG_FACTS = OrderedDict({
         "estrategia_rerun": "rebuild_fact",
     },
     "Fact_Conteo_Fenologico": {
-        "orden": 10,
+        "orden": 11,
         "tabla_destino": "Silver.Fact_Conteo_Fenologico",
         "fuentes_bronce": ("Bronce.Conteo_Fruta",),
         "dependencias": (DEPENDENCIA_DIM_PERSONAL, DEPENDENCIA_DIM_GEOGRAFIA),
@@ -50,25 +59,25 @@ CONFIG_FACTS = OrderedDict({
         "estrategia_rerun": "rebuild_fact",
     },
     "Fact_Maduracion": {
-        "orden": 11,
+        "orden": 12,
         "tabla_destino": "Silver.Fact_Maduracion",
         "fuentes_bronce": ("Bronce.Maduracion",),
         "dependencias": (DEPENDENCIA_DIM_PERSONAL, DEPENDENCIA_DIM_GEOGRAFIA),
-        "marts": (),
+        "marts": ("Gold.Mart_Maduracion",),
         "releer_bronce_por_estado": False,
         "estrategia_rerun": "rebuild_total_fact",
     },
     "Fact_Peladas": {
-        "orden": 12,
+        "orden": 13,
         "tabla_destino": "Silver.Fact_Peladas",
         "fuentes_bronce": ("Bronce.Peladas",),
         "dependencias": (DEPENDENCIA_DIM_PERSONAL, DEPENDENCIA_DIM_GEOGRAFIA),
-        "marts": (),
+        "marts": ("Gold.Mart_Peladas",),
         "releer_bronce_por_estado": True,
         "estrategia_rerun": "rebuild_fact",
     },
     "Fact_Telemetria_Clima": {
-        "orden": 13,
+        "orden": 14,
         "tabla_destino": "Silver.Fact_Telemetria_Clima",
         "fuentes_bronce": ("Bronce.Reporte_Clima", "Bronce.Variables_Meteorologicas"),
         "dependencias": (),
@@ -77,7 +86,7 @@ CONFIG_FACTS = OrderedDict({
         "estrategia_rerun": "rebuild_fact",
     },
     "Fact_Evaluacion_Pesos": {
-        "orden": 14,
+        "orden": 15,
         "tabla_destino": "Silver.Fact_Evaluacion_Pesos",
         "fuentes_bronce": ("Bronce.Evaluacion_Pesos",),
         "dependencias": (
@@ -91,7 +100,7 @@ CONFIG_FACTS = OrderedDict({
         "estrategia_rerun": "rebuild_fact",
     },
     "Fact_Tareo": {
-        "orden": 15,
+        "orden": 16,
         "tabla_destino": "Silver.Fact_Tareo",
         "fuentes_bronce": ("Bronce.Consolidado_Tareos",),
         "dependencias": (DEPENDENCIA_DIM_PERSONAL, DEPENDENCIA_DIM_GEOGRAFIA),
@@ -100,16 +109,16 @@ CONFIG_FACTS = OrderedDict({
         "estrategia_rerun": "rebuild_fact",
     },
     "Fact_Fisiologia": {
-        "orden": 16,
+        "orden": 17,
         "tabla_destino": "Silver.Fact_Fisiologia",
         "fuentes_bronce": ("Bronce.Fisiologia",),
         "dependencias": (DEPENDENCIA_DIM_GEOGRAFIA,),
-        "marts": (),
+        "marts": ("Gold.Mart_Fisiologia",),
         "releer_bronce_por_estado": True,
         "estrategia_rerun": "rebuild_fact",
     },
     "Fact_Evaluacion_Vegetativa": {
-        "orden": 17,
+        "orden": 18,
         "tabla_destino": "Silver.Fact_Evaluacion_Vegetativa",
         "fuentes_bronce": ("Bronce.Evaluacion_Vegetativa",),
         "dependencias": (
@@ -118,45 +127,48 @@ CONFIG_FACTS = OrderedDict({
             DEPENDENCIA_SP_CAMA_SYNC,
             DEPENDENCIA_SP_CAMA_VALIDACION,
         ),
-        "marts": (),
+        "marts": ("Gold.Mart_Evaluacion_Vegetativa",),
         "releer_bronce_por_estado": True,
         "estrategia_rerun": "rebuild_fact",
     },
     "Fact_Induccion_Floral": {
-        "orden": 18,
+        "orden": 19,
         "tabla_destino": "Silver.Fact_Induccion_Floral",
         "fuentes_bronce": ("Bronce.Induccion_Floral",),
         "dependencias": (DEPENDENCIA_DIM_PERSONAL, DEPENDENCIA_DIM_GEOGRAFIA),
-        "marts": (),
+        "marts": ("Gold.Mart_Induccion_Floral",),
         "releer_bronce_por_estado": True,
         "estrategia_rerun": "rebuild_fact",
     },
     "Fact_Tasa_Crecimiento_Brotes": {
-        "orden": 19,
+        "orden": 20,
         "tabla_destino": "Silver.Fact_Tasa_Crecimiento_Brotes",
         "fuentes_bronce": ("Bronce.Tasa_Crecimiento_Brotes",),
         "dependencias": (DEPENDENCIA_DIM_PERSONAL, DEPENDENCIA_DIM_GEOGRAFIA),
-        "marts": (),
+        "marts": ("Gold.Mart_Tasa_Crecimiento",),
         "releer_bronce_por_estado": True,
         "estrategia_rerun": "rebuild_fact",
     },
-    "Fact_Sanidad_Activo": {
-        "orden": 20,
-        "tabla_destino": "Silver.Fact_Sanidad_Activo",
+    "Fact_Censo_Plantas": {
+        "orden": 21,
+        "tabla_destino": "Silver.Fact_Censo_Plantas",
         "fuentes_bronce": ("Bronce.Seguimiento_Errores",),
         "dependencias": (DEPENDENCIA_DIM_GEOGRAFIA,),
         "marts": (),
         "releer_bronce_por_estado": True,
         "estrategia_rerun": "rebuild_fact",
     },
-    "Fact_Ciclo_Poda": {
-        "orden": 21,
-        "tabla_destino": "Silver.Fact_Ciclo_Poda",
-        "fuentes_bronce": ("Bronce.Evaluacion_Calidad_Poda", "Bronce.Ciclos_Fenologicos"),
+    "Fact_Proyecciones_SixWeek": {
+        "orden": 22,
+        "tabla_destino": "Silver.Fact_Proyecciones",
+        # No consume Bronce directamente; lee desde Silver (Fact_Maduracion,
+        # Fact_Peladas, Fact_Cosecha_SAP) que ya deben estar procesadas.
+        "fuentes_bronce": (),
         "dependencias": (DEPENDENCIA_DIM_GEOGRAFIA,),
-        "marts": (),
-        "releer_bronce_por_estado": True,
-        "estrategia_rerun": "rebuild_fact",
+        "marts": ("Gold.Mart_Proyecciones",),
+        # Full-read: siempre recalcula porque los inputs Silver cambian cada corrida.
+        "releer_bronce_por_estado": False,
+        "estrategia_rerun": "rebuild_total_fact",
     },
 })
 

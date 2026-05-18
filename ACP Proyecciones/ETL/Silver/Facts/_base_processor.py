@@ -29,18 +29,36 @@ from typing import Any
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
-from utils.contexto_transaccional import ContextoTransaccionalETL
+from utils.errores import ErrorCircuitBreakerCritico, ErrorCircuitBreakerError
+from mdm.lookup import (
+    obtener_parametros_pipeline,
+    obtener_reglas_validacion,
+    obtener_id_tiempo,
+    obtener_id_geografia,
+    obtener_id_variedad,
+    obtener_id_personal,
+    obtener_id_campana
+)
+from utils.tipos import a_entero, a_decimal, obtener_valor_raw as _get_raw
+from silver.facts._helpers_fact_comunes import leer_bronce_dinamico, parsear_valores_raw
 
 _log = logging.getLogger("ETL_Pipeline")
 
 
 class BaseFactProcessor:
-    LIMITE_RECHAZO = 5.0  # Umbral por defecto para alertas de calidad
+    # Niveles de calidad del circuit breaker (porcentaje de rechazo real sobre leídos)
+    LIMITE_WARNING  = 1.0   # Emite WARNING en log, continúa
+    LIMITE_ERROR    = 2.0   # Aborta el fact, bloquea Gold
+    LIMITE_CRITICO  = 5.0   # Aborta el pipeline completo
 
     def __init__(self, engine: Engine, tabla_origen: str, tabla_destino: str, columna_id: str = None):
         self.engine = engine
         self.tabla_origen = tabla_origen
         self.tabla_destino = tabla_destino
+        
+        # Cargar configuración real de la base de datos
+        self.config_params = obtener_parametros_pipeline(engine)
+        self.reglas_dq = obtener_reglas_validacion(engine)
         
         # Prioridad: 1. Parametro explicito, 2. Guess por nombre de tabla
         self.columna_id = columna_id or f"ID_{self.tabla_origen.split('.')[-1]}"
@@ -97,6 +115,68 @@ class BaseFactProcessor:
             'tipo_regla': tipo_regla,
             'id_registro_origen': id_origen,
         })
+
+    # ── utilidades de extraccion y conversion ──────────────────────────────────
+
+    def parsear_raw(self, texto: str | None) -> dict[str, str]:
+        """Envuelve parsear_valores_raw de helpers."""
+        return parsear_valores_raw(texto)
+
+    def get_raw_val(self, fila: Any, col: str, dict_raw: dict | None = None) -> Any:
+        """
+        Busca un valor de forma robusta:
+        1. En la fila (DataFrame/Dict) con el nombre exacto.
+        2. En el dict_raw (Valores_Raw) con el nombre exacto.
+        3. En el dict_raw de forma insensible a mayúsculas/minúsculas.
+        """
+        # 1. Intento exacto en fila
+        if hasattr(fila, 'get'):
+            val = fila.get(col)
+        elif hasattr(fila, col):
+            val = getattr(fila, col)
+        else:
+            val = None
+        
+        if val is not None and str(val).strip() not in ('', 'None', 'nan'):
+            return val
+
+        if not dict_raw:
+            return None
+
+        # 2. Intento exacto en dict_raw
+        val = dict_raw.get(col)
+        if val is not None and str(val).strip() not in ('', 'None', 'nan'):
+            return val
+        
+        # 3. Búsqueda insensible a mayúsculas/minúsculas en dict_raw
+        col_lower = col.lower()
+        for k, v in dict_raw.items():
+            if k.lower() == col_lower:
+                if v is not None and str(v).strip() not in ('', 'None', 'nan'):
+                    return v
+        
+        return None
+
+    def a_int(self, valor: Any) -> int | None:
+        """Conversion segura a entero."""
+        return a_entero(valor)
+
+    def a_decimal(self, valor: Any) -> float | None:
+        """Conversion segura a decimal."""
+        return a_decimal(valor)
+
+    def leer_bronce(self, columnas_raw: list[str], filtro_estado: bool = True) -> Any:
+        """
+        Lee la tabla origen usando el helper dinamico. 
+        Evita duplicar la logica de SELECT y COLUMN_NAME en cada fact.
+        """
+        return leer_bronce_dinamico(
+            self.engine, 
+            self.tabla_origen, 
+            self.columna_id, 
+            columnas_raw, 
+            filtro_estado=filtro_estado
+        )
 
     # ── validaciones con cache (reutilizables por todas las clases hijas) ────────
 
@@ -378,19 +458,29 @@ class BaseFactProcessor:
         if df.empty or not columnas_clave_negocio:
             return df
             
-        antes = len(df)
-        # Aseguramos que las columnas existen en el DF
+        # Detectar la columna de ID (original o alias común)
+        col_id_actual = self.columna_id
+        if col_id_actual not in df.columns and 'ID_Registro_Origen' in df.columns:
+            col_id_actual = 'ID_Registro_Origen'
+        elif col_id_actual not in df.columns:
+            # Si no hay ID, no podemos trackear el descarte, solo deduplicamos
+            _log.warning(f"[{self.tabla_destino}] No se encontró columna ID ({self.columna_id}) para trackear descartes.")
+            return df.drop_duplicates(subset=[c for c in columnas_clave_negocio if c in df.columns], keep='first')
+
+        # Aseguramos que las columnas de negocio existen en el DF
         cols_finales = [c for c in columnas_clave_negocio if c in df.columns]
         if not cols_finales:
             return df
 
-        # Mantenemos el primero de cada grupo (asumiendo orden cronológico en Bronce si aplica)
+        # Capturar IDs de los que vamos a descartar (los que NO son el 'first')
+        df_duplicados = df[df.duplicated(subset=cols_finales, keep='first')]
+        if not df_duplicados.empty:
+            ids_a_descartar = df_duplicados[col_id_actual].dropna().unique().tolist()
+            self.ids_procesados.extend([int(i) for i in ids_a_descartar])
+            _log.info(f"Deduplicación temprana: {len(ids_a_descartar)} IDs marcados para descarte (redundantes).")
+
+        # Mantenemos el primero de cada grupo
         df_limpio = df.drop_duplicates(subset=cols_finales, keep='first')
-        despues = len(df_limpio)
-        
-        if antes != despues:
-            _log.info(f"Deduplicación temprana: {antes - despues} filas redundantes filtradas antes de procesar.")
-            
         return df_limpio
 
     # ── metodo principal ───────────────────────────────────────────────────────
@@ -414,22 +504,28 @@ class BaseFactProcessor:
             return
 
         # 0. Inyección automática de ID_Campana (Nueva Arquitectura)
-        # Vectorizado: se resuelven solo las claves únicas (geo, var, fecha),
-        # no una query por fila. obtener_id_campana tiene cache interno, pero
-        # llamarlo N veces con la misma clave aún entra al lock N veces.
         if any('ID_Campana' not in row for row in lista_dicts):
             from mdm.lookup import obtener_id_campana
             _cache_campana_local: dict[tuple, Any] = {}
-            for row in lista_dicts:
+            lista_original = lista_dicts
+            lista_dicts = []
+            
+            for row in lista_original:
                 if 'ID_Campana' not in row:
                     id_geo  = row.get('ID_Geografia')
                     id_var  = row.get('ID_Variedad')
+                    id_mod  = row.get('_id_modulo_catalogo')
                     fecha   = row.get('Fecha_Evento') or row.get('Fecha') or row.get('Fecha_Cosecha')
                     fecha_k = str(fecha)[:10] if fecha is not None else None
-                    clave   = (id_geo, id_var, fecha_k)
+                    clave   = (id_geo, id_var, id_mod, fecha_k)
+                    
                     if clave not in _cache_campana_local:
-                        _cache_campana_local[clave] = obtener_id_campana(id_geo, id_var, fecha, self.engine)
-                    row['ID_Campana'] = _cache_campana_local[clave]
+                        _cache_campana_local[clave] = obtener_id_campana(id_geo, id_var, fecha, self.engine, id_modulo_catalogo=id_mod)
+                    
+                    id_campana = _cache_campana_local[clave]
+                    row['ID_Campana'] = id_campana
+                
+                lista_dicts.append(row)
 
         # 1. Deduplicación interna en memoria (para evitar IntegrityError en el INSERT final)
         lista_dicts_limpia = self._limpiar_duplicados_internos(lista_dicts)
@@ -564,17 +660,48 @@ class BaseFactProcessor:
         # 4. Reporte final
         _log.info(f"-> {total_leidos} leidos | {self.resumen.get('insertados', 0)} insertados | {unique_ids_rechazados} rechazados reales | {int(porcentaje_rechazo)}% rechazo real")
 
-        bloqueo = False
-        if porcentaje_rechazo > self.LIMITE_RECHAZO:
-            bloqueo = True
-            _log.warning(f"AVISO: {porcentaje_rechazo:.1f}% de rechazo real ({unique_ids_rechazados}/{total_leidos} filas afectadas). Limite de calidad ({self.LIMITE_RECHAZO}%) superado, pero se continua por solicitud.")
+        # ── Circuit Breaker de calidad ─────────────────────────────────────────
+        nivel_bloqueo = None
+        if total_leidos > 0:
+            if porcentaje_rechazo >= self.LIMITE_CRITICO:
+                nivel_bloqueo = "CRITICO"
+                _log.error(
+                    f"[CIRCUIT BREAKER CRITICO] {self.tabla_destino}: "
+                    f"{porcentaje_rechazo:.1f}% rechazo >= {self.LIMITE_CRITICO}% — "
+                    f"ABORTANDO PIPELINE COMPLETO"
+                )
+                raise ErrorCircuitBreakerCritico(
+                    f"Circuit breaker CRITICO en {self.tabla_destino}: "
+                    f"{porcentaje_rechazo:.1f}% de rechazo ({unique_ids_rechazados}/{total_leidos}). "
+                    f"Umbral crítico: {self.LIMITE_CRITICO}%."
+                )
+            elif porcentaje_rechazo >= self.LIMITE_ERROR:
+                nivel_bloqueo = "ERROR"
+                _log.error(
+                    f"[CIRCUIT BREAKER ERROR] {self.tabla_destino}: "
+                    f"{porcentaje_rechazo:.1f}% rechazo >= {self.LIMITE_ERROR}% — "
+                    f"ABORTANDO FACT, GOLD BLOQUEADO"
+                )
+                raise ErrorCircuitBreakerError(
+                    f"Circuit breaker ERROR en {self.tabla_destino}: "
+                    f"{porcentaje_rechazo:.1f}% de rechazo ({unique_ids_rechazados}/{total_leidos}). "
+                    f"Umbral de error: {self.LIMITE_ERROR}%."
+                )
+            elif porcentaje_rechazo >= self.LIMITE_WARNING:
+                nivel_bloqueo = "WARNING"
+                _log.warning(
+                    f"[CIRCUIT BREAKER WARNING] {self.tabla_destino}: "
+                    f"{porcentaje_rechazo:.1f}% rechazo >= {self.LIMITE_WARNING}% — "
+                    f"continúa, pero revisar calidad."
+                )
 
         return {
             'Tabla_Destino': self.tabla_destino,
             'Filas_Leidas_Bronce': total_leidos,
             'Filas_Insertadas': self.resumen.get('insertados', 0),
             'Nuevos_Casos_Cuarentena': unique_ids_rechazados,
-            'Bloqueo_Integridad': bloqueo,
+            'cuarentena': self.resumen.get('cuarentena', []),
+            'Bloqueo_Integridad': nivel_bloqueo == "WARNING",
             'Dependencias_Incumplidas': [],
             'resueltos_por_tiebreaker': self.resumen.get('resueltos_por_tiebreaker', 0),
         }
