@@ -10,7 +10,8 @@
       "Bash(C:\\\\Users\\\\chernandez\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe -c \"import sqlalchemy; print\\('sqlalchemy ok'\\)\")",
       "PowerShell(& \"C:\\\\Users\\\\chernandez\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe\" -c \"import pyodbc; print\\('pyodbc ok'\\)\" 2>&1)",
       "PowerShell(& \"C:\\\\Users\\\\chernandez\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe\" -c \"import sqlalchemy; print\\('sqlalchemy ok'\\)\" 2>&1)",
-      "PowerShell(& \"D:\\\\Proyecto2026\\\\ACP_DWH\\\\ACP Proyecciones\\\\.venv\\\\Scripts\\\\python.exe\" -c \"import pyodbc; print\\('pyodbc ok'\\); import sqlalchemy; print\\('sqlalchemy ok'\\)\" 2>&1)"
+      "PowerShell(& \"D:\\\\Proyecto2026\\\\ACP_DWH\\\\ACP Proyecciones\\\\.venv\\\\Scripts\\\\python.exe\" -c \"import pyodbc; print\\('pyodbc ok'\\); import sqlalchemy; print\\('sqlalchemy ok'\\)\" 2>&1)",
+      "Bash(python -c ' *)"
     ]
   }
 }
