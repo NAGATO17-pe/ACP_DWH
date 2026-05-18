@@ -11,13 +11,21 @@ import json
 import re
 
 from sqlalchemy import text
+import threading
+from typing import Dict, Optional
 from config.conexion import obtener_engine
 
 
-_cache_parametros: dict[str, str] = {}
+_cache_parametros: Dict[str, str] = {}
+_columna_param_cache: Optional[str] = None
+_config_lock = threading.Lock()
 
 
 def _resolver_columna_parametro(conexion) -> str:
+    global _columna_param_cache
+    if _columna_param_cache:
+        return _columna_param_cache
+
     resultado = conexion.execute(text("""
         SELECT COLUMN_NAME
         FROM INFORMATION_SCHEMA.COLUMNS
@@ -31,37 +39,38 @@ def _resolver_columna_parametro(conexion) -> str:
     }
 
     if 'Parametro' in columnas:
-        return 'Parametro'
-    if 'Nombre_Parametro' in columnas:
-        return 'Nombre_Parametro'
-
-    raise RuntimeError(
-        'Config.Parametros_Pipeline no expone columna Parametro ni Nombre_Parametro.'
-    )
+        _columna_param_cache = 'Parametro'
+    elif 'Nombre_Parametro' in columnas:
+        _columna_param_cache = 'Nombre_Parametro'
+    else:
+        raise RuntimeError(
+            'Config.Parametros_Pipeline no expone columna Parametro ni Nombre_Parametro.'
+        )
+    return _columna_param_cache
 
 
 def cargar_parametros() -> dict[str, str]:
     """
     Carga todos los parámetros activos desde Config.Parametros_Pipeline.
-    Guarda en cache para no repetir la consulta en la misma ejecución.
+    Thread-safe via _config_lock.
     """
     global _cache_parametros
 
-    if _cache_parametros:
-        return _cache_parametros
+    with _config_lock:
+        if _cache_parametros:
+            return _cache_parametros
 
-    engine = obtener_engine()
-
-    with engine.connect() as conexion:
-        columna_parametro = _resolver_columna_parametro(conexion)
-        resultado = conexion.execute(text(f"""
-            SELECT {columna_parametro} AS Parametro, Valor
-            FROM Config.Parametros_Pipeline
-        """))
-        _cache_parametros = {
-            fila.Parametro: fila.Valor
-            for fila in resultado.fetchall()
-        }
+        engine = obtener_engine()
+        with engine.connect() as conexion:
+            columna_parametro = _resolver_columna_parametro(conexion)
+            resultado = conexion.execute(text(f"""
+                SELECT {columna_parametro} AS Parametro, Valor
+                FROM Config.Parametros_Pipeline
+            """))
+            _cache_parametros = {
+                fila.Parametro: fila.Valor
+                for fila in resultado.fetchall()
+            }
 
     return _cache_parametros
 

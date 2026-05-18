@@ -261,8 +261,11 @@ def _render_login() -> bool:
     return False
 
 
-
 def login_gate() -> bool:
+    if not st.session_state.get("autenticado"):
+        return _render_login()
+    return True
+
     if st.session_state.get("autenticado"):
         if _token_expirado():
             cerrar_sesion()

@@ -7,6 +7,8 @@ import subprocess
 import sys
 import os
 import time
+
+from dotenv import load_dotenv
 import signal
 import threading
 import urllib.request
@@ -40,17 +42,23 @@ BG_BLUE = "\033[44m"
 BASE = Path(__file__).parent
 VENV = BASE / ".venv" / "Scripts"
 
+# Puertos por defecto alejados de 8000/8501 (muy usados por otras apps).
+load_dotenv(BASE / "backend" / ".env")
+load_dotenv(BASE / ".env")
+_PUERTO_BACKEND = int(os.getenv("ACP_PUERTO", "8810"))
+_PUERTO_STREAMLIT = int(os.getenv("ACP_STREAMLIT_PORT", "8510"))
+
 SERVICIOS = [
     {
         "nombre":   "Backend FastAPI",
         "icono":    "⚙",
         "cmd":      [str(VENV / "uvicorn.exe"), "main:aplicacion",
-                     "--host", "0.0.0.0", "--port", "8000"],
+                     "--host", "0.0.0.0", "--port", str(_PUERTO_BACKEND)],
         "cwd":      BASE / "backend",
-        "health":   "http://localhost:8000/health/live",
-        "url":      "http://localhost:8000/docs",
+        "health":   f"http://localhost:{_PUERTO_BACKEND}/health/live",
+        "url":      f"http://localhost:{_PUERTO_BACKEND}/docs",
         "log":      BASE / "backend" / "logs" / "backend.log",
-        "puerto":   8000,
+        "puerto":   _PUERTO_BACKEND,
         "color":    BLUE,
         "proceso":  None,
     },
@@ -70,13 +78,13 @@ SERVICIOS = [
         "nombre":   "Portal MDM",
         "icono":    "🌐",
         "cmd":      [str(VENV / "streamlit.exe"), "run", "app.py",
-                     "--server.port", "8501",
+                     "--server.port", str(_PUERTO_STREAMLIT),
                      "--server.headless", "true"],
         "cwd":      BASE / "acp_mdm_portal",
-        "health":   "http://localhost:8501/_stcore/health",
-        "url":      "http://localhost:8501",
+        "health":   f"http://localhost:{_PUERTO_STREAMLIT}/_stcore/health",
+        "url":      f"http://localhost:{_PUERTO_STREAMLIT}",
         "log":      BASE / "backend" / "logs" / "portal.log",
-        "puerto":   8501,
+        "puerto":   _PUERTO_STREAMLIT,
         "color":    CYAN,
         "proceso":  None,
     },
@@ -161,14 +169,32 @@ def health_check(url: str, intentos: int = 1) -> bool:
 
 # ─── Inicio de servicios ─────────────────────────────────────────────────────
 
+def _liberar_puerto(puerto: int) -> None:
+    """Mata el proceso huérfano que ocupa el puerto."""
+    try:
+        r = subprocess.run(["netstat", "-ano"], capture_output=True, text=True)
+        for line in r.stdout.splitlines():
+            if f":{puerto} " in line and "LISTENING" in line:
+                pid = line.strip().split()[-1]
+                if pid.isdigit() and pid != "0":
+                    subprocess.run(["taskkill", "/F", "/PID", pid], capture_output=True)
+                    log(f"Proceso huérfano {pid} en puerto {puerto} terminado", "WARN")
+                    time.sleep(0.5)
+                    break
+    except Exception:
+        pass
+
+
 def iniciar_servicio(svc: dict) -> bool:
     nombre = svc["nombre"]
     color  = svc["color"]
 
-    # Verificar si puerto ya está en uso
+    # Verificar si puerto ya está en uso; si es así, liberar el proceso huérfano
     if svc["puerto"] and puerto_en_uso(svc["puerto"]):
-        log(f"{color}{nombre}{RESET}  puerto {svc['puerto']} ya ocupado — omitido", "WARN")
-        return True
+        _liberar_puerto(svc["puerto"])
+        if puerto_en_uso(svc["puerto"]):
+            log(f"{color}{nombre}{RESET}  puerto {svc['puerto']} sigue ocupado — omitido", "WARN")
+            return True
 
     # Crear carpeta de logs
     svc["log"].parent.mkdir(parents=True, exist_ok=True)
@@ -353,9 +379,9 @@ def arrancar_servicios():
     if resultados.get("Backend FastAPI") and resultados.get("Portal MDM"):
         log("Abriendo navegador...", "INFO")
         time.sleep(1)
-        webbrowser.open("http://localhost:8501")
+        webbrowser.open(f"http://localhost:{_PUERTO_STREAMLIT}")
     elif resultados.get("Backend FastAPI"):
-        webbrowser.open("http://localhost:8000/docs")
+        webbrowser.open(f"http://localhost:{_PUERTO_BACKEND}/docs")
     else:
         log("Algunos servicios no respondieron. Revisa los logs.", "WARN")
 

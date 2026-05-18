@@ -23,6 +23,7 @@ def obtener_engine() -> Engine:
     Retorna el Engine SQLAlchemy singleton para el backend.
     Se construye a partir de settings — sin hardcodear nada.
     """
+    es_legacy = "ODBC" not in settings.db_driver  # driver "SQL Server" no soporta TrustServerCertificate
     trust = "yes" if settings.entorno == "dev" else "no"
 
     if settings.db_usuario:
@@ -36,6 +37,8 @@ def obtener_engine() -> Engine:
             f"TrustServerCertificate={trust};"
             f"APP=ACP_Backend;"
         )
+        if not es_legacy:
+            cadena_pyodbc += "TrustServerCertificate=yes;Login Timeout=5;"
     else:
         cadena_pyodbc = (
             f"DRIVER={{{settings.db_driver}}};"
@@ -46,5 +49,7 @@ def obtener_engine() -> Engine:
             f"TrustServerCertificate={trust};"
             f"APP=ACP_Backend;"
         )
+        if not es_legacy:
+            cadena_pyodbc += "TrustServerCertificate=yes;Login Timeout=5;"
 
 __all__ = ["obtener_engine", "resetear_engine", "verificar_conexion"]

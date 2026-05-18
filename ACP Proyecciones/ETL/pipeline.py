@@ -815,19 +815,12 @@ def ejecutar() -> None:
 if __name__ == '__main__':
     argumentos = _parsear_argumentos()
 
-    try:
-        if argumentos.modo_ejecucion == MODO_EJECUCION_FACTS:
-            ejecutar_reproceso_facts(
-                facts_solicitadas=argumentos.facts,
-                incluir_dependencias=not argumentos.sin_dependencias,
-                refrescar_gold=not argumentos.sin_gold,
-                forzar_relectura_bronce=not argumentos.sin_relectura_bronce,
-            )
-        else:
-            ejecutar()
-    except ValueError as error:
-        _imprimir(f'ERROR DE VALIDACION: {error}')
-        sys.exit(1)
-    except Exception as error:
-        _imprimir(f'ERROR: {error}')
-        sys.exit(1)
+    if argumentos.modo_ejecucion == MODO_EJECUCION_FACTS:
+        ejecutar_reproceso_facts(
+            facts_solicitadas=argumentos.facts,
+            incluir_dependencias=not argumentos.sin_dependencias,
+            refrescar_gold=not argumentos.sin_gold,
+            forzar_relectura_bronce=not argumentos.sin_relectura_bronce,
+        )
+    else:
+        ejecutar()

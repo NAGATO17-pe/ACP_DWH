@@ -2,14 +2,6 @@
 servicios/servicio_etl.py
 =========================
 Servicio ETL v3 — modelo controlado persistente.
-
-Ya NO lanza subprocess directamente.
-Ya NO usa broker SSE en memoria.
-
-Responsabilidades:
-  1. insertar_corrida → crea registro en Control.Corrida + encola en Control.Comando_Ejecucion
-  2. El runner externo (runner/runner.py) lee la cola y ejecuta el pipeline
-  3. stream_corrida → genera eventos SSE leyendo de Control.Corrida_Evento (poll persistente)
 """
 
 from __future__ import annotations
@@ -45,7 +37,6 @@ async def iniciar_corrida(
 ) -> dict:
     """
     Registra la corrida en Control.* y la pone en la cola del runner.
-    Retorna inmediatamente con los metadatos de la corrida — no espera ejecución.
     """
     id_corrida = str(uuid.uuid4())
     ahora      = datetime.now()
@@ -89,7 +80,7 @@ async def iniciar_corrida(
 
     return {
         "id_corrida":   id_corrida,
-        "id_log":       None,   # Se rellena cuando el runner arranca
+        "id_log":       None,
         "iniciado_por": iniciado_por,
         "fecha_inicio": ahora,
         "estado":       "PENDIENTE",
@@ -97,10 +88,7 @@ async def iniciar_corrida(
 
 
 async def cancelar_corrida(id_corrida: str, solicitado_por: str) -> bool:
-    """
-    Solicita la cancelación de una corrida activa.
-    Retorna True si la corrida estaba en estado cancelable.
-    """
+    """Solicita la cancelación de una corrida activa."""
     resultado = await asyncio.to_thread(
         r_corrida.solicitar_cancelacion,
         id_corrida, solicitado_por
@@ -116,18 +104,13 @@ async def cancelar_corrida(id_corrida: str, solicitado_por: str) -> bool:
 
 
 async def stream_eventos_corrida(id_corrida: str) -> AsyncGenerator[dict, None]:
-    """
-    Generador asíncrono para EventSourceResponse.
-    Lee Control.Corrida_Evento en polling incremental.
-    Termina cuando:
-      - La corrida llega a estado terminal (OK/ERROR/CANCELADO/TIMEOUT)
-      - Se alcanza el timeout global de streaming
-    """
+    """Generador asíncrono para EventSourceResponse con polling persistente."""
     ultimo_id_visto = 0
     tiempo_total    = 0.0
     estados_terminal = {"OK", "ERROR", "CANCELADO", "TIMEOUT"}
 
     while tiempo_total < _POLL_TIMEOUT_TOTAL_SEG:
+        eventos = await asyncio.to_thread(r_corrida.listar_eventos, id_corrida, ultimo_id_visto)
         eventos, estado_corrida = await asyncio.to_thread(
             r_corrida.listar_eventos_y_estado,
             id_corrida,
@@ -142,12 +125,14 @@ async def stream_eventos_corrida(id_corrida: str) -> AsyncGenerator[dict, None]:
                 "id":    str(evento["id_evento"]),
             }
 
+        corrida = await asyncio.to_thread(r_corrida.obtener_corrida, id_corrida)
+        if corrida and corrida.get("estado") in estados_terminal:
+            eventos_finales = await asyncio.to_thread(r_corrida.listar_eventos, id_corrida, ultimo_id_visto)
         if estado_corrida in estados_terminal:
             eventos_finales, _ = await asyncio.to_thread(
                 r_corrida.listar_eventos_y_estado, id_corrida, ultimo_id_visto
             )
             for evento in eventos_finales:
-                ultimo_id_visto = evento["id_evento"]
                 yield {
                     "event": evento["tipo"].lower(),
                     "data":  evento["mensaje"],
@@ -162,25 +147,32 @@ async def stream_eventos_corrida(id_corrida: str) -> AsyncGenerator[dict, None]:
     yield {"event": "error", "data": "[TIMEOUT_STREAM] La corrida excedió el tiempo de streaming."}
 
 
-def corrida_existe(id_corrida: str) -> bool:
-    """Verificación rápida de existencia para el endpoint de stream."""
-    return r_corrida.obtener_corrida(id_corrida) is not None
+async def corrida_existe(id_corrida: str) -> bool:
+    """Verificación rápida de existencia asíncrona."""
+    res = await asyncio.to_thread(r_corrida.obtener_corrida, id_corrida)
+    return res is not None
 
 
-def obtener_corrida(id_corrida: str) -> dict | None:
-    """Retorna el estado actual de una corrida."""
-    corrida = enriquecer_corrida_con_parametros(r_corrida.obtener_corrida(id_corrida))
-    if corrida is None:
+async def obtener_corrida(id_corrida: str) -> dict | None:
+    """Retorna el estado detallado de una corrida."""
+    raw = await asyncio.to_thread(r_corrida.obtener_corrida, id_corrida)
+    if raw is None:
         return None
-    corrida["pasos"] = r_corrida.listar_pasos_corrida(id_corrida)
+    corrida = enriquecer_corrida_con_parametros(raw)
+    pasos = await asyncio.to_thread(r_corrida.listar_pasos_corrida, id_corrida)
+    corrida["pasos"] = pasos
     return corrida
 
 
-def obtener_pasos_corrida(id_corrida: str) -> list[dict]:
-    """Retorna la traza persistida de pasos para una corrida."""
-    return r_corrida.listar_pasos_corrida(id_corrida)
+async def obtener_pasos_corrida(id_corrida: str) -> list[dict]:
+    """Retorna la traza de pasos de forma asíncrona."""
+    return await asyncio.to_thread(r_corrida.listar_pasos_corrida, id_corrida)
 
 
+async def listar_corridas_activas() -> list[dict]:
+    """Lista corridas activas (PENDIENTE/EJECUTANDO) asíncronamente."""
+    raw_list = await asyncio.to_thread(r_corrida.listar_corridas, limite=10, solo_activas=True)
+    return [enriquecer_corrida_con_parametros(c) for c in raw_list]
 def listar_corridas_activas(limite: int = 50) -> list[dict]:
     """Retorna corridas PENDIENTE o EJECUTANDO. Acepta limite configurable."""
     return [
@@ -189,6 +181,7 @@ def listar_corridas_activas(limite: int = 50) -> list[dict]:
     ]
 
 
-def listar_catalogo_facts() -> list[dict]:
-    """Retorna el catálogo oficial de facts soportadas por rerun."""
+async def listar_catalogo_facts() -> list[dict]:
+    """Retorna el catálogo oficial asíncronamente."""
+    # listar_facts_disponibles es memoria pura (lista estática), no requiere thread
     return listar_facts_disponibles()

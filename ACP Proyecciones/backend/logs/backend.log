@@ -1446,3 +1446,995 @@ INFO:     Waiting for application shutdown.
 [32m[INFO    ][0m 20:28:35 | main | Backend detenido limpiamente
 INFO:     Application shutdown complete.
 INFO:     Finished server process [30500]
+
+============================================================
+[2026-05-04 11:05:36.199865] INICIO
+============================================================
+INFO:     Started server process [30844]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 16:05:44 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 16:09:56 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [30844]
+
+============================================================
+[2026-05-04 11:09:59.253682] INICIO
+============================================================
+INFO:     Started server process [22348]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 16:10:03 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 16:13:31 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 16:14:01 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 16:16:13 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [22348]
+
+============================================================
+[2026-05-04 11:16:16.286997] INICIO
+============================================================
+INFO:     Started server process [736]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 16:16:21 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 16:17:46 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 16:18:53 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 16:26:04 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[33m[WARNING ][0m 18:59:49 | servicios.servicio_auth | Intento de login fallido  [request_id=30edf740 usuario=admin2]
+[32m[INFO    ][0m 18:59:59 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 19:25:36 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [736]
+
+============================================================
+[2026-05-04 14:25:40.761577] INICIO
+============================================================
+INFO:     Started server process [13352]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 19:25:48 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 19:26:11 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[33m[WARNING ][0m 21:14:03 | servicios.servicio_auth | Intento de login fallido  [request_id=4626612f usuario=admin2]
+[32m[INFO    ][0m 21:14:12 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 22:22:36 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 22:28:33 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13352]
+
+============================================================
+[2026-05-04 17:28:36.940506] INICIO
+============================================================
+INFO:     Started server process [12620]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 22:28:43 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 22:29:03 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 22:35:54 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [12620]
+
+============================================================
+[2026-05-05 08:05:45.460981] INICIO
+============================================================
+INFO:     Started server process [16264]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 13:05:49 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 13:06:08 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 16:45:18 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [16264]
+
+============================================================
+[2026-05-05 11:45:21.993907] INICIO
+============================================================
+INFO:     Started server process [34332]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 16:45:29 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 16:45:53 | servicios.servicio_auth | Login exitoso  [usuario=Admin2]
+[32m[INFO    ][0m 16:45:54 | servicios.servicio_auth | Login exitoso  [usuario=Admin2]
+[32m[INFO    ][0m 19:50:48 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 21:45:32 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 22:35:32 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [34332]
+
+============================================================
+[2026-05-07 08:25:41.794984] INICIO
+============================================================
+INFO:     Started server process [36568]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 13:25:46 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 13:26:04 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 14:33:20 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 15:28:19 | servicios.servicio_auth | Login exitoso  [usuario=ADMIN2]
+[32m[INFO    ][0m 15:36:54 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 20:24:48 | servicios.servicio_auth | Login exitoso  [usuario=ADMIN2]
+[32m[INFO    ][0m 22:19:15 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 22:36:44 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [36568]
+
+============================================================
+[2026-05-11 07:47:26.039495] INICIO
+============================================================
+INFO:     Started server process [17432]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 12:47:30 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 12:47:45 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 12:55:42 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 12:57:11 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 14:59:24 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[33m[WARNING ][0m 16:06:14 | servicios.servicio_auth | Intento de login fallido  [request_id=b262d416 usuario=admin2]
+[33m[WARNING ][0m 16:06:15 | servicios.servicio_auth | Intento de login fallido  [request_id=3c10ddbf usuario=admin2]
+[32m[INFO    ][0m 16:06:20 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 16:33:20 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 16:48:44 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 20:14:05 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 21:15:17 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[31m[ERROR   ][0m 21:16:25 | repositorios.repo_catalogos | Error al listar geografía
+Traceback (most recent call last):
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+pyodbc.ProgrammingError: ('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Cama'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Cama'. (207); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\repositorios\repo_catalogos.py", line 136, in _listar_catalogo
+    return _paginar(
+        con,
+    ...<3 lines>...
+        tamano=tamano,
+    )
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\repositorios\repo_catalogos.py", line 110, in _paginar
+    filas = con.execute(text(sql_datos), params).fetchall()
+            ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.ProgrammingError: (pyodbc.ProgrammingError) ('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Cama'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Cama'. (207); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+[SQL: 
+            SELECT
+                fn.Fundo            AS fundo,
+                sc.Sector           AS sector,
+                md.Modulo           AS modulo,
+                tr.Turno            AS turno,
+                vl.Valvula          AS valvula,
+                cm.Cama             AS cama,
+                g.Es_Test_Block      AS es_test_block,
+                g.Codigo_SAP_Campo   AS codigo_sap_campo,
+                g.Es_Vigente         AS es_vigente,
+                COUNT(*) OVER()     AS total_rows
+            FROM Silver.Dim_Geografia g WITH (NOLOCK)
+            JOIN Silver.Dim_Fundo_Catalogo fn WITH (NOLOCK) ON g.ID_Fundo_Catalogo = fn.ID_Fundo_Catalogo
+            JOIN Silver.Dim_Sector_Catalogo sc WITH (NOLOCK) ON g.ID_Sector_Catalogo = sc.ID_Sector_Catalogo
+            JOIN Silver.Dim_Modulo_Catalogo md WITH (NOLOCK) ON g.ID_Modulo_Catalogo = md.ID_Modulo_Catalogo
+            JOIN Silver.Dim_Turno_Catalogo tr WITH (NOLOCK) ON g.ID_Turno_Catalogo = tr.ID_Turno_Catalogo
+            JOIN Silver.Dim_Valvula_Catalogo vl WITH (NOLOCK) ON g.ID_Valvula_Catalogo = vl.ID_Valvula_Catalogo
+            JOIN Silver.Dim_Cama_Catalogo cm WITH (NOLOCK) ON g.ID_Cama_Catalogo = cm.ID_Cama_Catalogo
+            WHERE g.Es_Vigente = 1
+            ORDER BY fn.Fundo, sc.Sector, md.Modulo, tr.Turno, vl.Valvula, cm.Cama
+            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+        ]
+[parameters: (0, 10000)]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 22:34:32 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [17432]
+
+============================================================
+[2026-05-12 07:39:31.831913] INICIO
+============================================================
+INFO:     Started server process [15736]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 12:39:35 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 12:39:49 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[31m[ERROR   ][0m 12:39:51 | nucleo.excepciones | Error no controlado en el servidor  [request_id=521e36d3]
+Traceback (most recent call last):
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\chernandez\AppData\Local\Python\pythoncore-3.14-64\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_utils.py", line 87, in collapse_excgroups
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\nucleo\middleware.py", line 84, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\api\rutas_etl.py", line 115, in listar_historial
+    return [RespuestaHistorialCorrida(**r) for r in registros]
+                                                    ^^^^^^^^^
+TypeError: 'coroutine' object is not iterable
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 420, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\chernandez\AppData\Local\Python\pythoncore-3.14-64\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_utils.py", line 87, in collapse_excgroups
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\nucleo\middleware.py", line 84, in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 674, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\fastapi\routing.py", line 330, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2518, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1002, in run
+    result = context.run(func, *args)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\api\rutas_etl.py", line 115, in listar_historial
+    return [RespuestaHistorialCorrida(**r) for r in registros]
+                                                    ^^^^^^^^^
+TypeError: 'coroutine' object is not iterable
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 12:42:23 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [15736]
+
+============================================================
+[2026-05-12 07:42:26.645470] INICIO
+============================================================
+INFO:     Started server process [9136]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 12:42:30 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 12:45:18 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[31m[ERROR   ][0m 12:56:54 | repositorios.repo_catalogos | Error al listar geografía
+Traceback (most recent call last):
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+pyodbc.ProgrammingError: ('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Cama'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Cama'. (207); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\repositorios\repo_catalogos.py", line 136, in _listar_catalogo
+    return _paginar(
+        con,
+    ...<3 lines>...
+        tamano=tamano,
+    )
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\repositorios\repo_catalogos.py", line 110, in _paginar
+    filas = con.execute(text(sql_datos), params).fetchall()
+            ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.ProgrammingError: (pyodbc.ProgrammingError) ('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Cama'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Cama'. (207); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+[SQL: 
+            SELECT
+                fn.Fundo            AS fundo,
+                sc.Sector           AS sector,
+                md.Modulo           AS modulo,
+                tr.Turno            AS turno,
+                vl.Valvula          AS valvula,
+                cm.Cama             AS cama,
+                g.Es_Test_Block      AS es_test_block,
+                g.Codigo_SAP_Campo   AS codigo_sap_campo,
+                g.Es_Vigente         AS es_vigente,
+                COUNT(*) OVER()     AS total_rows
+            FROM Silver.Dim_Geografia g WITH (NOLOCK)
+            JOIN Silver.Dim_Fundo_Catalogo fn WITH (NOLOCK) ON g.ID_Fundo_Catalogo = fn.ID_Fundo_Catalogo
+            JOIN Silver.Dim_Sector_Catalogo sc WITH (NOLOCK) ON g.ID_Sector_Catalogo = sc.ID_Sector_Catalogo
+            JOIN Silver.Dim_Modulo_Catalogo md WITH (NOLOCK) ON g.ID_Modulo_Catalogo = md.ID_Modulo_Catalogo
+            JOIN Silver.Dim_Turno_Catalogo tr WITH (NOLOCK) ON g.ID_Turno_Catalogo = tr.ID_Turno_Catalogo
+            JOIN Silver.Dim_Valvula_Catalogo vl WITH (NOLOCK) ON g.ID_Valvula_Catalogo = vl.ID_Valvula_Catalogo
+            JOIN Silver.Dim_Cama_Catalogo cm WITH (NOLOCK) ON g.ID_Cama_Catalogo = cm.ID_Cama_Catalogo
+            WHERE g.Es_Vigente = 1
+            ORDER BY fn.Fundo, sc.Sector, md.Modulo, tr.Turno, vl.Valvula, cm.Cama
+            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+        ]
+[parameters: (0, 10000)]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+[31m[ERROR   ][0m 13:01:55 | repositorios.repo_catalogos | Error al listar geografía
+Traceback (most recent call last):
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+pyodbc.ProgrammingError: ('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Cama'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Cama'. (207); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\repositorios\repo_catalogos.py", line 136, in _listar_catalogo
+    return _paginar(
+        con,
+    ...<3 lines>...
+        tamano=tamano,
+    )
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\repositorios\repo_catalogos.py", line 110, in _paginar
+    filas = con.execute(text(sql_datos), params).fetchall()
+            ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.ProgrammingError: (pyodbc.ProgrammingError) ('42S22', "[42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Cama'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid column name 'Cama'. (207); [42S22] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Statement(s) could not be prepared. (8180)")
+[SQL: 
+            SELECT
+                fn.Fundo            AS fundo,
+                sc.Sector           AS sector,
+                md.Modulo           AS modulo,
+                tr.Turno            AS turno,
+                vl.Valvula          AS valvula,
+                cm.Cama             AS cama,
+                g.Es_Test_Block      AS es_test_block,
+                g.Codigo_SAP_Campo   AS codigo_sap_campo,
+                g.Es_Vigente         AS es_vigente,
+                COUNT(*) OVER()     AS total_rows
+            FROM Silver.Dim_Geografia g WITH (NOLOCK)
+            JOIN Silver.Dim_Fundo_Catalogo fn WITH (NOLOCK) ON g.ID_Fundo_Catalogo = fn.ID_Fundo_Catalogo
+            JOIN Silver.Dim_Sector_Catalogo sc WITH (NOLOCK) ON g.ID_Sector_Catalogo = sc.ID_Sector_Catalogo
+            JOIN Silver.Dim_Modulo_Catalogo md WITH (NOLOCK) ON g.ID_Modulo_Catalogo = md.ID_Modulo_Catalogo
+            JOIN Silver.Dim_Turno_Catalogo tr WITH (NOLOCK) ON g.ID_Turno_Catalogo = tr.ID_Turno_Catalogo
+            JOIN Silver.Dim_Valvula_Catalogo vl WITH (NOLOCK) ON g.ID_Valvula_Catalogo = vl.ID_Valvula_Catalogo
+            JOIN Silver.Dim_Cama_Catalogo cm WITH (NOLOCK) ON g.ID_Cama_Catalogo = cm.ID_Cama_Catalogo
+            WHERE g.Es_Vigente = 1
+            ORDER BY fn.Fundo, sc.Sector, md.Modulo, tr.Turno, vl.Valvula, cm.Cama
+            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+        ]
+[parameters: (0, 10000)]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 13:02:20 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [9136]
+
+============================================================
+[2026-05-12 08:02:24.174485] INICIO
+============================================================
+INFO:     Started server process [28608]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 13:02:30 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 13:03:27 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 13:04:45 | servicios.servicio_etl | Corrida encolada
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 13:19:20 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [28608]
+
+============================================================
+[2026-05-12 08:19:28.367555] INICIO
+============================================================
+INFO:     Started server process [25684]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 13:20:32 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 13:32:21 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 13:35:42 | servicios.servicio_etl | Corrida encolada
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 15:08:55 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [25684]
+
+============================================================
+[2026-05-12 10:08:59.338086] INICIO
+============================================================
+INFO:     Started server process [25264]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 15:09:03 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 15:09:24 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 20:42:55 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [25264]
+
+============================================================
+[2026-05-12 15:42:59.429079] INICIO
+============================================================
+INFO:     Started server process [33328]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 20:43:03 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 20:43:23 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 22:31:33 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [33328]
+
+============================================================
+[2026-05-14 08:12:52.049808] INICIO
+============================================================
+INFO:     Started server process [6400]
+INFO:     Waiting for application startup.
+[33m[WARNING ][0m 13:12:59 | main | BD no disponible, reintentando...
+[33m[WARNING ][0m 13:13:04 | main | BD no disponible, reintentando...
+[33m[WARNING ][0m 13:13:09 | main | BD no disponible, reintentando...
+[33m[WARNING ][0m 13:13:09 | main | Backend iniciado — SIN conexión a SQL Server tras reintentos
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[31m[ERROR   ][0m 13:13:28 | repositorios.repo_usuarios | Error al buscar usuario  [usuario=admin2]
+Traceback (most recent call last):
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3317, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 177, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 121, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 175, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 121, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+pyodbc.InterfaceError: ('IM002', '[IM002] [Microsoft][Administrador de controladores ODBC] No se encuentra el nombre del origen de datos y no se especificó ningún controlador predeterminado (0) (SQLDriverConnect)')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\repositorios\repo_usuarios.py", line 34, in buscar_por_nombre
+    with obtener_engine().connect() as con:
+         ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3293, in connect
+    return self._connection_cls(self)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 145, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        err, dialect, engine
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2448, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3317, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 177, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 121, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 175, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 121, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.InterfaceError: (pyodbc.InterfaceError) ('IM002', '[IM002] [Microsoft][Administrador de controladores ODBC] No se encuentra el nombre del origen de datos y no se especificó ningún controlador predeterminado (0) (SQLDriverConnect)')
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+[31m[ERROR   ][0m 14:03:21 | repositorios.repo_usuarios | Error al buscar usuario  [usuario=admin2]
+Traceback (most recent call last):
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3317, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 177, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 121, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 175, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 121, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+pyodbc.OperationalError: ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes Provider: Could not open a connection to SQL Server [53].  (53) (SQLDriverConnect); [08001] [Microsoft][ODBC Driver 17 for SQL Server]Login timeout expired (0); [08001] [Microsoft][ODBC Driver 17 for SQL Server]A network-related or instance-specific error has occurred while establishing a connection to SQL Server. Server is not found or not accessible. Check if instance name is correct and if SQL Server is configured to allow remote connections. For more information see SQL Server Books Online. (53)')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\backend\repositorios\repo_usuarios.py", line 34, in buscar_por_nombre
+    with obtener_engine().connect() as con:
+         ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3293, in connect
+    return self._connection_cls(self)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 145, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        err, dialect, engine
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2448, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3317, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 177, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 121, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 175, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 121, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Proyecto2026\ACP_DWH\ACP Proyecciones\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (pyodbc.OperationalError) ('08001', '[08001] [Microsoft][ODBC Driver 17 for SQL Server]Named Pipes Provider: Could not open a connection to SQL Server [53].  (53) (SQLDriverConnect); [08001] [Microsoft][ODBC Driver 17 for SQL Server]Login timeout expired (0); [08001] [Microsoft][ODBC Driver 17 for SQL Server]A network-related or instance-specific error has occurred while establishing a connection to SQL Server. Server is not found or not accessible. Check if instance name is correct and if SQL Server is configured to allow remote connections. For more information see SQL Server Books Online. (53)')
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+============================================================
+[2026-05-14 09:05:48.378648] INICIO
+============================================================
+INFO:     Started server process [23072]
+INFO:     Waiting for application startup.
+[33m[WARNING ][0m 14:06:09 | main | BD no disponible, reintentando...
+[33m[WARNING ][0m 14:06:29 | main | BD no disponible, reintentando...
+[33m[WARNING ][0m 14:07:09 | main | BD no disponible, reintentando...
+[33m[WARNING ][0m 14:07:09 | main | Backend iniciado — SIN conexión a SQL Server tras reintentos
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 14:07:15 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [23072]
+
+============================================================
+[2026-05-14 09:07:43.321536] INICIO
+============================================================
+INFO:     Started server process [24224]
+INFO:     Waiting for application startup.
+[33m[WARNING ][0m 14:08:21 | main | BD no disponible, reintentando...
+[33m[WARNING ][0m 14:08:42 | main | BD no disponible, reintentando...
+[33m[WARNING ][0m 14:09:23 | main | BD no disponible, reintentando...
+[33m[WARNING ][0m 14:09:23 | main | Backend iniciado — SIN conexión a SQL Server tras reintentos
+INFO:     Application startup complete.
+ERROR:    [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): [winerror 10048] solo se permite un uso de cada dirección de socket (protocolo/dirección de red/puerto)
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 14:09:23 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+
+============================================================
+[2026-05-14 10:03:31.788559] INICIO
+============================================================
+INFO:     Started server process [22136]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 15:03:40 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[33m[WARNING ][0m 15:12:37 | servicios.servicio_auth | Intento de login fallido  [request_id=21f87ac2 usuario=admin2]
+[33m[WARNING ][0m 15:12:47 | servicios.servicio_auth | Intento de login fallido  [request_id=4414f94c usuario=admin2]
+[32m[INFO    ][0m 15:13:11 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[32m[INFO    ][0m 15:19:59 | main | Backend detenido limpiamente
+INFO:     Application shutdown complete.
+INFO:     Finished server process [22136]
+
+============================================================
+[2026-05-14 10:20:02.907982] INICIO
+============================================================
+INFO:     Started server process [23652]
+INFO:     Waiting for application startup.
+[32m[INFO    ][0m 15:20:09 | main | Backend iniciado — BD conectada
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[32m[INFO    ][0m 15:20:28 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 15:30:36 | servicios.servicio_auth | Login exitoso  [usuario=admin2]
+[32m[INFO    ][0m 18:21:14 | servicios.servicio_auth | Login exitoso  [usuario=Admin2]
+[32m[INFO    ][0m 20:24:56 | servicios.servicio_etl | Corrida encolada
+[32m[INFO    ][0m 20:32:54 | servicios.servicio_etl | Corrida encolada

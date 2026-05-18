@@ -12,6 +12,8 @@ import streamlit as st
 
 from utils.auth import tiene_permiso
 from utils.api_client import get_api, patch_api, post_api
+from utils.componentes import estado_vacio_html, seccion_tabla_con_guardar, banner_aviso
+from utils.formato import crear_paginacion_ui, header_pagina, crear_panel_metricas_premium
 from utils.componentes import estado_vacio_html, seccion_tabla_con_guardar
 from utils.constantes import PAGE_SIZE_DEFAULT
 from utils.formato import crear_paginacion_ui, header_pagina
@@ -22,7 +24,7 @@ from utils.formato import crear_paginacion_ui, header_pagina
 def cargar_sugerencias_pendientes() -> pd.DataFrame:
     resultado = get_api("/cuarentena?pagina=1&tamano=10000&estado=PENDIENTE")
     if not resultado.ok:
-        st.error("Error al cargar sugerencias pendientes. Si el problema persiste, inicia sesión nuevamente.")
+        banner_aviso("Error al cargar sugerencias pendientes. Si el problema persiste, inicia sesión nuevamente.")
         st.stop()
         
     if isinstance(resultado.data, dict):
@@ -45,7 +47,7 @@ def cargar_sugerencias_pendientes() -> pd.DataFrame:
 def cargar_historial_homologacion() -> pd.DataFrame:
     resultado = get_api("/cuarentena?pagina=1&tamano=10000&estado=RESUELTO")
     if not resultado.ok:
-        st.error("Error al cargar historial. Verifica tu conexión de red.")
+        banner_aviso("Error al cargar historial. Verifica tu conexión de red.")
         st.stop()
         
     if isinstance(resultado.data, dict):
@@ -129,10 +131,11 @@ def render() -> None:
         alta_conf = len(df[df["Score"] >= 0.85]) if "Score" in df.columns else 0
         baja_conf = total - alta_conf
 
-        c1, c2, c3 = st.columns(3)
-        c1.metric("📋 Total pendientes",       total)
-        c2.metric("🟢 Alta confianza (≥0.85)", alta_conf)
-        c3.metric("🟡 Baja confianza (<0.85)", baja_conf)
+        crear_panel_metricas_premium([
+            {"label": "Total pendientes",       "value": str(total),     "color": "#e8a020"},
+            {"label": "Alta confianza (≥0.85)", "value": str(alta_conf), "color": "#2db87a"},
+            {"label": "Baja confianza (<0.85)", "value": str(baja_conf), "color": "#8fa897"},
+        ])
 
         # ── HERRAMIENTA: Re-Inyección MDM ────────────────────────────────────
         if tiene_permiso("escribir"):
@@ -157,18 +160,17 @@ def render() -> None:
                     """
                 )
                 if candidatos == 0:
-                    st.info("ℹ️ No hay registros RESUELTOS pendientes de reinyección en este momento.", icon="🟢")
+                    banner_aviso("No hay registros RESUELTOS pendientes de reinyección en este momento.")
                 else:
-                    st.warning(
-                        f"⚠️ ¡Atención! Esta acción modificará `{candidatos}` filas en la capa Bronce. "
-                        f"Asegúrate de haber aprobado las correcciones antes de continuar.",
-                        icon="🟡",
+                    banner_aviso(
+                        f"Esta acción modificará **{candidatos}** filas en la capa Bronce. "
+                        f"Asegúrate de haber aprobado las correcciones antes de continuar."
                     )
                     if st.button(
                         f"🔄 Re-encolar {candidatos} registro(s) al Pipeline",
                         key="btn_reinyectar",
                         type="primary",
-                        use_container_width=True,
+                        width="stretch",
                     ):
                         with st.spinner("⏳ Reinyectando en Bronce..."):
                             res = post_api("/reinyeccion/ejecutar", payload={})
@@ -229,7 +231,7 @@ def render() -> None:
             opciones_combo = obtener_opciones_maestras(campo_sel)
 
         if campo_sel == "Todos":
-            st.info("💡 **Paso 1:** Filtra por un 'Campo' específico (arriba a la derecha) para poder corregir los registros con los valores Oficiales del Data Warehouse.", icon="🔍")
+            banner_aviso("**Paso 1:** Filtra por un campo específico para corregir registros con los valores oficiales del Data Warehouse.")
             col_correccion = st.column_config.TextColumn(
                 "Corrección ✍️", 
                 help="Filtra por campo arriba para activar las opciones maestras."
@@ -298,7 +300,7 @@ def render() -> None:
             st.markdown("<hr style='margin: 16px 0; border: none; border-top: 1px solid #4ade8055;'>", unsafe_allow_html=True)
             b1, b2 = st.columns([1, 1])
             with b1:
-                if st.button("💾 Guardar Seleccionados", key="btn_aplicar", type="primary", use_container_width=True):
+                if st.button("💾 Guardar Seleccionados", key="btn_aplicar", type="primary", width="stretch"):
                     seleccionados = edited[edited["Seleccionar"] == True]
                     if len(seleccionados) == 0:
                         st.toast("Bloqueado: Selecciona al menos un registro en la tabla.", icon="⚠️")
@@ -330,7 +332,7 @@ def render() -> None:
                             st.rerun()
 
             with b2:
-                if st.button("🗑️ Rechazar Seleccionados", key="btn_rechazar", use_container_width=True):
+                if st.button("🗑️ Rechazar Seleccionados", key="btn_rechazar", width="stretch"):
                     seleccionados = edited[edited["Seleccionar"] == True]
                     if len(seleccionados) == 0:
                         st.toast("Bloqueado: Selecciona al menos un registro en la tabla.", icon="⚠️")
@@ -351,6 +353,6 @@ def render() -> None:
             crear_paginacion_ui(count, PAGE_SIZE_DEFAULT, "pendientes_edit")
 
         else:
-            st.info("🔒 Vista de solo lectura. Tu rol no puede aprobar ni rechazar sugerencias.", icon="⚠️")
+            banner_aviso("Vista de solo lectura. Tu rol no puede aprobar ni rechazar sugerencias.")
             st.dataframe(df_page, hide_index=True, width='stretch')
             crear_paginacion_ui(count, PAGE_SIZE_DEFAULT, "pendientes_edit")

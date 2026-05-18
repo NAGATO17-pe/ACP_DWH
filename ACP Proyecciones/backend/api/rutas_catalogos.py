@@ -46,11 +46,11 @@ def _construir_respuesta_paginada(resultado: dict, schema_fila) -> RespuestaPagi
     summary="Catálogo MDM de variedades (MDM.Catalogo_Variedades)",
     dependencies=[Depends(require_rol("viewer"))],
 )
-def obtener_variedades(
+async def obtener_variedades(
     pagina: int = Query(default=1, ge=1),
     tamano: int = Query(default=20, ge=1, le=10000),
 ) -> RespuestaPaginadaCatalogo:
-    resultado = listar_variedades(pagina=pagina, tamano=tamano)
+    resultado = await listar_variedades(pagina=pagina, tamano=tamano)
     return _construir_respuesta_paginada(resultado, RespuestaVariedad)
 
 
@@ -60,11 +60,11 @@ def obtener_variedades(
     description="Retorna todas las variedades ya homologadas en la dimensión Silver del DWH.",
     dependencies=[Depends(require_rol("viewer"))],
 )
-def obtener_dim_variedades(
+async def obtener_dim_variedades(
     pagina: int = Query(default=1, ge=1),
     tamano: int = Query(default=20, ge=1, le=10000),
 ) -> RespuestaPaginadaCatalogo:
-    resultado = listar_dim_variedades(pagina=pagina, tamano=tamano)
+    resultado = await listar_dim_variedades(pagina=pagina, tamano=tamano)
     return _construir_respuesta_paginada(resultado, RespuestaDimVariedad)
 
 
@@ -74,12 +74,12 @@ def obtener_dim_variedades(
     status_code=status.HTTP_201_CREATED,
     dependencies=[Depends(require_rol("admin"))],
 )
-def crear_variedad_dim(
+async def crear_variedad_dim(
     peticion: PeticionCrearDimVariedad,
 ) -> RespuestaOperacionVariedad:
     """Crea una nueva variedad activa en Silver.Dim_Variedad."""
     try:
-        dato = crear_dim_variedad(
+        dato = await crear_dim_variedad(
             nombre_variedad=peticion.nombre_variedad,
             breeder=peticion.breeder,
         )
@@ -97,10 +97,10 @@ def crear_variedad_dim(
     summary="Desactivar variedad (soft-delete) — solo admin",
     dependencies=[Depends(require_rol("admin"))],
 )
-def desactivar_variedad_dim(id_variedad: int) -> RespuestaOperacionVariedad:
+async def desactivar_variedad_dim(id_variedad: int) -> RespuestaOperacionVariedad:
     """Marca Es_Activa=0 en Silver.Dim_Variedad. El registro se conserva para trazabilidad."""
     try:
-        dato = cambiar_estado_dim_variedad(id_variedad=id_variedad, es_activa=False)
+        dato = await cambiar_estado_dim_variedad(id_variedad=id_variedad, es_activa=False)
         return RespuestaOperacionVariedad(
             ok=True,
             mensaje=f"Variedad ID {id_variedad} desactivada correctamente.",
@@ -115,10 +115,10 @@ def desactivar_variedad_dim(id_variedad: int) -> RespuestaOperacionVariedad:
     summary="Reactivar variedad — solo admin",
     dependencies=[Depends(require_rol("admin"))],
 )
-def reactivar_variedad_dim(id_variedad: int) -> RespuestaOperacionVariedad:
+async def reactivar_variedad_dim(id_variedad: int) -> RespuestaOperacionVariedad:
     """Restaura Es_Activa=1 en Silver.Dim_Variedad."""
     try:
-        dato = cambiar_estado_dim_variedad(id_variedad=id_variedad, es_activa=True)
+        dato = await cambiar_estado_dim_variedad(id_variedad=id_variedad, es_activa=True)
         return RespuestaOperacionVariedad(
             ok=True,
             mensaje=f"Variedad ID {id_variedad} reactivada correctamente.",
@@ -133,11 +133,11 @@ def reactivar_variedad_dim(id_variedad: int) -> RespuestaOperacionVariedad:
     summary="Lista la geografía vigente",
     dependencies=[Depends(require_rol("viewer"))],
 )
-def obtener_geografia(
+async def obtener_geografia(
     pagina: int = Query(default=1, ge=1),
     tamano: int = Query(default=20, ge=1, le=10000),
 ) -> RespuestaPaginadaCatalogo:
-    resultado = listar_geografia(pagina=pagina, tamano=tamano)
+    resultado = await listar_geografia(pagina=pagina, tamano=tamano)
     return _construir_respuesta_paginada(resultado, RespuestaGeografia)
 
 
@@ -146,9 +146,9 @@ def obtener_geografia(
     summary="Lista el catálogo de personal",
     dependencies=[Depends(require_rol("viewer"))],
 )
-def obtener_personal(
+async def obtener_personal(
     pagina: int = Query(default=1, ge=1),
     tamano: int = Query(default=20, ge=1, le=10000),
 ) -> RespuestaPaginadaCatalogo:
-    resultado = listar_personal(pagina=pagina, tamano=tamano)
+    resultado = await listar_personal(pagina=pagina, tamano=tamano)
     return _construir_respuesta_paginada(resultado, RespuestaPersonal)

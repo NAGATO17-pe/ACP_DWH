@@ -40,10 +40,10 @@ enrutador_reinyeccion = APIRouter(
     ),
     dependencies=[Depends(require_rol("analista_mdm"))],
 )
-def obtener_candidatos(
+async def obtener_candidatos(
     tabla: str | None = Query(default=None, description="Filtrar por tabla de origen (parcial)."),
 ) -> RespuestaConteoReinyeccion:
-    total = contar_candidatos(tabla_filtro=tabla)
+    total = await contar_candidatos(tabla_filtro=tabla)
     return RespuestaConteoReinyeccion(candidatos=total)
 
 
@@ -59,14 +59,14 @@ def obtener_candidatos(
     ),
     dependencies=[Depends(require_rol("analista_mdm"))],
 )
-def ejecutar(
+async def ejecutar(
     request: Request,
     usuario: Annotated[UsuarioActual, Depends(obtener_usuario_actual)],
     tabla: str | None = Query(default=None, description="Limitar a una tabla Bronce específica."),
 ) -> RespuestaReinyeccion:
-    resultado = ejecutar_reinyeccion(analista=usuario.nombre_usuario, tabla_filtro=tabla)
+    resultado = await ejecutar_reinyeccion(analista=usuario.nombre_usuario, tabla_filtro=tabla)
 
-    registrar_accion(
+    await registrar_accion(
         nombre_usuario=usuario.nombre_usuario,
         accion="REINYECCION_MDM",
         endpoint=str(request.url),
@@ -78,15 +78,8 @@ def ejecutar(
         ),
     )
 
-    n = resultado["reinyectados"]
-    omitidos = resultado["omitidos"]
     return RespuestaReinyeccion(
-        reinyectados=n,
-        omitidos=omitidos,
+        reinyectados=resultado["reinyectados"],
+        omitidos=resultado["omitidos"],
         detalle=resultado["detalle"],
-        mensaje=(
-            f"✅ {n} registros reactivados en Bronce. Ya pueden ser procesados por el pipeline."
-            if n > 0 else
-            f"ℹ️ No se encontraron candidatos para reinyectar (omitidos: {omitidos})."
-        ),
     )

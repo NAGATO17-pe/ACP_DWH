@@ -203,11 +203,11 @@ def parsear_fecha(valor: str | None) -> Optional[datetime]:
     # Excel a veces entrega float (número de serie de fecha)
     try:
         numero = float(valor)
-        # Número de serie de Excel → fecha
-        return datetime.fromordinal(
-            datetime(1899, 12, 30).toordinal() + int(numero)
-        )
-    except ValueError:
+        # Número de serie de Excel → fecha. Conservamos la parte decimal para la hora.
+        from datetime import timedelta
+        base = datetime(1899, 12, 30)
+        return base + timedelta(days=numero)
+    except (ValueError, TypeError):
         pass
 
     # Fallback conservador solo para formatos no contemplados.
@@ -310,6 +310,11 @@ def es_fecha_valida_campana(fecha: datetime | date | None,
     fecha_fin    = datetime.strptime(fin,    '%Y-%m-%d').date()
 
     fecha_date = fecha.date() if isinstance(fecha, datetime) else fecha
+
+    # Validacion quirurgica: evitar fechas futuras extremas (error de dedo comun)
+    anio_limite = datetime.now().year + 1
+    if fecha_date.year > anio_limite:
+        return False
 
     return fecha_inicio <= fecha_date <= fecha_fin
 

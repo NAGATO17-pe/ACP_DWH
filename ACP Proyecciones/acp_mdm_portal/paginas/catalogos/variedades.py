@@ -18,8 +18,8 @@ import streamlit as st
 
 from utils.api_client import get_api, patch_api, post_api
 from utils.auth import tiene_permiso
-from utils.componentes import estado_vacio_html
-from utils.formato import crear_tarjeta_kpi, header_pagina, renderizar_tabla_premium, crear_panel_metricas_premium
+from utils.componentes import estado_vacio_html, banner_aviso
+from utils.formato import header_pagina, renderizar_tabla_premium, crear_panel_metricas_premium
 
 
 # ── Constantes de fuentes ─────────────────────────────────────────────────────
@@ -28,7 +28,7 @@ _FUENTES = {
     "🗂️  Catálogo MDM": {
         "endpoint":    "/catalogos/variedades?pagina=1&tamano=10000",
         "badge_txt":   "MDM.Catalogo_Variedades",
-        "badge_color": "#065F46",
+        "badge_color": "#2db87a",
         "desc":        "Catálogo maestro oficial de variedades. Solo lectura.",
         "renombres": {
             "nombre_canonico": "Nombre Canónico",
@@ -42,7 +42,7 @@ _FUENTES = {
     "📐  Dim. DWH Silver": {
         "endpoint":    "/catalogos/variedades/dim?pagina=1&tamano=10000",
         "badge_txt":   "Silver.Dim_Variedad",
-        "badge_color": "#F59E0B",
+        "badge_color": "#e8a020",
         "desc":        "Dimensión DWH homologada. Admins pueden crear y desactivar.",
         "renombres": {
             "id_variedad":        "ID",
@@ -57,6 +57,37 @@ _FUENTES = {
         "escribible":  True,
     },
 }
+
+
+# ── Mediación de errores del backend ─────────────────────────────────────────
+
+def _mensaje_error_usuario(status_code: int | None, error_raw: str | None, accion: str) -> str:
+    """
+    Convierte la respuesta cruda del backend en un mensaje accionable para el
+    operador. Nunca expone stacktraces, queries SQL ni nombres internos.
+
+    accion : 'desactivar' | 'reactivar' | 'crear'
+    """
+    raw = (error_raw or "").lower()
+
+    if status_code == 401 or status_code == 403:
+        return "No tienes permisos para esta acción. Solicita acceso de Admin."
+    if status_code == 404:
+        return "El registro no existe o ya fue eliminado. Actualiza la página."
+    if status_code == 409:
+        if accion == "crear":
+            return "Ya existe una variedad con ese nombre en la dimensión."
+        return "El registro ya está en el estado solicitado."
+    if status_code is None or status_code >= 500:
+        return "El servidor no respondió. Reintenta en unos segundos."
+    if "timeout" in raw or "timed out" in raw:
+        return "La operación tardó demasiado. Reintenta."
+    if "connection" in raw or "refused" in raw:
+        return "Sin conexión con el backend. Verifica que el servidor esté activo."
+
+    # Mensaje genérico — nunca exponer raw
+    verbos = {"desactivar": "desactivar", "reactivar": "reactivar", "crear": "crear"}
+    return f"No se pudo {verbos.get(accion, 'completar')} la variedad. Intenta nuevamente."
 
 
 # ── Carga de datos ────────────────────────────────────────────────────────────
@@ -78,10 +109,10 @@ def _render_kpis_mdm(df: pd.DataFrame) -> None:
     inactivas = len(df) - activas
     breeders  = df["Breeder / Casa"].nunique() if "Breeder / Casa" in df.columns else 0
     crear_panel_metricas_premium([
-        {"label": "Total Variedades", "value": str(len(df)), "color": "#F59E0B"},
-        {"label": "Activas", "value": str(activas), "color": "#10B981"},
-        {"label": "Inactivas", "value": str(inactivas), "color": "#EF4444" if inactivas else "#94A3B8"},
-        {"label": "Casas Breeder", "value": str(breeders)}
+        {"label": "Total Variedades", "value": str(len(df)),   "color": "#e8a020"},
+        {"label": "Activas",          "value": str(activas),   "color": "#2db87a"},
+        {"label": "Inactivas",        "value": str(inactivas), "color": "#EF4444" if inactivas else "#8fa897"},
+        {"label": "Casas Breeder",    "value": str(breeders),  "color": "#8fa897"},
     ])
 
 
@@ -90,10 +121,10 @@ def _render_kpis_dim(df: pd.DataFrame) -> None:
     inactivas = len(df) - activas
     breeders  = df["Breeder / Casa"].nunique() if "Breeder / Casa" in df.columns else 0
     crear_panel_metricas_premium([
-        {"label": "Total Dim_Variedad", "value": str(len(df)), "color": "#F59E0B"},
-        {"label": "Activas", "value": str(activas), "color": "#10B981"},
-        {"label": "Desactivadas", "value": str(inactivas), "color": "#EF4444" if inactivas else "#94A3B8"},
-        {"label": "Casas Breeder", "value": str(breeders)}
+        {"label": "Total Dim_Variedad", "value": str(len(df)),   "color": "#e8a020"},
+        {"label": "Activas",            "value": str(activas),   "color": "#2db87a"},
+        {"label": "Desactivadas",       "value": str(inactivas), "color": "#EF4444" if inactivas else "#8fa897"},
+        {"label": "Casas Breeder",      "value": str(breeders),  "color": "#8fa897"},
     ])
 
 
@@ -164,13 +195,16 @@ def _render_formulario_crear(df: pd.DataFrame) -> bool:
 
         if submitted:
             if not nombre.strip():
-                st.error("El nombre de la variedad es obligatorio.")
+                banner_aviso("El nombre de la variedad es obligatorio.")
                 return False
 
             # Verificar que no exista ya en el DataFrame en memoria
-            nombres_existentes = df["Nombre Variedad"].str.lower().tolist() if "Nombre Variedad" in df.columns else []
+            nombres_existentes = (
+                df["Nombre Variedad"].str.lower().tolist()
+                if "Nombre Variedad" in df.columns else []
+            )
             if nombre.strip().lower() in nombres_existentes:
-                st.error(f"Ya existe una variedad con el nombre **{nombre.strip()}** en la dimensión.")
+                banner_aviso(f"Ya existe una variedad con el nombre **{nombre.strip()}** en la dimensión.")
                 return False
 
             resultado = post_api(
@@ -180,14 +214,62 @@ def _render_formulario_crear(df: pd.DataFrame) -> bool:
             if resultado.ok:
                 st.success(f"✅ Variedad **{nombre.strip()}** creada correctamente.")
                 return True
-            elif resultado.status_code == 409:
-                st.error(f"⚠️ Conflicto: {resultado.error}")
-            else:
-                st.error(f"❌ Error al crear: {resultado.error}")
+            banner_aviso(_mensaje_error_usuario(resultado.status_code, resultado.error, "crear"))
     return False
 
 
 # ── Botones de desactivar / reactivar por fila ────────────────────────────────
+
+_PENDIENTE_KEY = "var_accion_pendiente"  # {"accion": "...", "id": int, "nombre": str}
+
+
+def _render_banner_confirmacion(accion: str, nombre: str) -> tuple[bool, bool]:
+    """
+    Banner inline de confirmación (sin modal — restricción impeccable).
+    Retorna (confirmado, cancelado).
+    """
+    verbos = {
+        "desactivar": ("🔴", "Desactivar",  "se ocultará de las proyecciones futuras", "#EF4444"),
+        "reactivar":  ("🟢", "Reactivar",   "volverá a aparecer en las proyecciones",  "#2db87a"),
+    }
+    icono, verbo, consecuencia, color = verbos[accion]
+
+    st.markdown(f"""
+    <div style="
+        background:rgba(232,160,32,0.08);
+        border:1px solid rgba(232,160,32,0.35);
+        border-left:3px solid #e8a020;
+        border-radius:12px;
+        padding:14px 18px;
+        margin:12px 0;
+    ">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+            <span style="font-size:1.2rem;">{icono}</span>
+            <span style="font-weight:700;color:#e8f0ec;font-size:0.95rem;">
+                ¿Confirmar {verbo.lower()} variedad?
+            </span>
+        </div>
+        <div style="font-size:0.82rem;color:#8fa897;padding-left:30px;">
+            <b style="color:#e8f0ec;font-family:'JetBrains Mono',monospace;">{nombre}</b>
+            — {consecuencia}.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col_c, col_x, _ = st.columns([1, 1, 4])
+    confirmado = col_c.button(
+        f"✓ Sí, {verbo.lower()}",
+        key=f"confirm_{accion}",
+        type="primary",
+        use_container_width=True,
+    )
+    cancelado = col_x.button(
+        "✗ Cancelar",
+        key=f"cancel_{accion}",
+        use_container_width=True,
+    )
+    return confirmado, cancelado
+
 
 def _render_acciones_dim(df: pd.DataFrame) -> bool:
     """Renderiza controles de acción para Dim_Variedad. Devuelve True si hubo cambio."""
@@ -195,13 +277,13 @@ def _render_acciones_dim(df: pd.DataFrame) -> bool:
         return False
 
     st.markdown("#### ⚙️ Gestionar estado de variedad")
-    col_sel, col_btn_d, col_btn_r = st.columns([3, 1, 1])
 
     opciones = [f"[{int(row['ID'])}] {row['Nombre Variedad']}" for _, row in df.iterrows()]
     if not opciones:
-        st.info("No hay variedades que gestionar con los filtros actuales.")
+        banner_aviso("No hay variedades que gestionar con los filtros actuales.")
         return False
 
+    col_sel, col_btn_d, col_btn_r = st.columns([3, 1, 1])
     with col_sel:
         seleccion = st.selectbox(
             "Seleccionar variedad",
@@ -210,31 +292,52 @@ def _render_acciones_dim(df: pd.DataFrame) -> bool:
             label_visibility="collapsed",
         )
 
-    # Extraer ID de la selección
-    id_sel = int(seleccion.split("]")[0].replace("[", "").strip()) if seleccion else None
+    id_sel     = int(seleccion.split("]")[0].replace("[", "").strip()) if seleccion else None
+    nombre_sel = seleccion.split("] ", 1)[1] if seleccion and "] " in seleccion else ""
 
-    hubo_cambio = False
+    # Botones de inicio de acción — solo arman la confirmación en session_state
     with col_btn_d:
         if st.button("🔴 Desactivar", key="btn_var_desactivar", use_container_width=True):
             if id_sel:
-                res = patch_api(f"/catalogos/variedades/dim/{id_sel}/desactivar", {})
-                if res.ok:
-                    st.success(f"Variedad ID {id_sel} desactivada.")
-                    hubo_cambio = True
-                else:
-                    st.error(f"Error: {res.error}")
+                st.session_state[_PENDIENTE_KEY] = {
+                    "accion": "desactivar", "id": id_sel, "nombre": nombre_sel,
+                }
+                st.rerun()
 
     with col_btn_r:
         if st.button("🟢 Reactivar", key="btn_var_reactivar", use_container_width=True):
             if id_sel:
-                res = patch_api(f"/catalogos/variedades/dim/{id_sel}/reactivar", {})
-                if res.ok:
-                    st.success(f"Variedad ID {id_sel} reactivada.")
-                    hubo_cambio = True
-                else:
-                    st.error(f"Error: {res.error}")
+                st.session_state[_PENDIENTE_KEY] = {
+                    "accion": "reactivar", "id": id_sel, "nombre": nombre_sel,
+                }
+                st.rerun()
 
-    return hubo_cambio
+    # ── Banner de confirmación inline (si hay acción pendiente) ───────────────
+    pendiente = st.session_state.get(_PENDIENTE_KEY)
+    if not pendiente:
+        return False
+
+    confirmado, cancelado = _render_banner_confirmacion(
+        pendiente["accion"], pendiente["nombre"],
+    )
+
+    if cancelado:
+        del st.session_state[_PENDIENTE_KEY]
+        st.rerun()
+
+    if confirmado:
+        accion = pendiente["accion"]
+        id_op  = pendiente["id"]
+        res    = patch_api(f"/catalogos/variedades/dim/{id_op}/{accion}", {})
+        del st.session_state[_PENDIENTE_KEY]
+
+        if res.ok:
+            verbo_pasado = "desactivada" if accion == "desactivar" else "reactivada"
+            st.success(f"✅ Variedad **{pendiente['nombre']}** {verbo_pasado} correctamente.")
+            return True
+        banner_aviso(_mensaje_error_usuario(res.status_code, res.error, accion))
+
+    return False
 
 
 # ── Render principal ──────────────────────────────────────────────────────────
@@ -262,12 +365,12 @@ def render() -> None:
         f"""<div style="
             display:inline-flex; align-items:center; gap:8px;
             background:{cfg['badge_color']}15; border:1px solid {cfg['badge_color']}40;
-            border-left:4px solid {cfg['badge_color']}; border-radius:8px;
+            border-radius:8px;
             padding:8px 14px; margin-bottom:18px;
         ">
             <span style="font-size:0.75rem;font-weight:700;color:{cfg['badge_color']};
-                         font-family:monospace;">{cfg['badge_txt']}</span>
-            <span style="font-size:0.75rem;color:#64748B;">— {cfg['desc']}</span>
+                         font-family:'JetBrains Mono',monospace;">{cfg['badge_txt']}</span>
+            <span style="font-size:0.75rem;color:#8fa897;">— {cfg['desc']}</span>
         </div>""",
         unsafe_allow_html=True,
     )
@@ -317,9 +420,9 @@ def render() -> None:
 
     # ── Panel de gestión de estado (solo admin + Dim) ────────────────────────
     if es_dim and es_admin:
-        st.markdown("---")
+        st.divider()
         hubo_cambio = _render_acciones_dim(dff)
         if hubo_cambio:
             st.rerun()
     elif es_dim and not es_admin:
-        st.info("🔒 Las operaciones de creación y desactivación requieren rol **Admin**.")
+        banner_aviso("Las operaciones de creación y desactivación requieren rol **Admin**.")
