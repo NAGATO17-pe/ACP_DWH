@@ -1,0 +1,262 @@
+{"timestamp": "2026-05-18 10:57:04,676", "level": "INFO", "service": "acp-etl", "message": "DWH Geographic Phenology - ETL Pipeline"}
+{"timestamp": "2026-05-18 10:57:04,676", "level": "INFO", "service": "acp-etl", "message": "Inicio: 2026-05-18 10:57:04"}
+{"timestamp": "2026-05-18 10:57:04,706", "level": "INFO", "service": "acp-etl", "message": "[01/23] Verificando conexion SQL Server..."}
+{"timestamp": "2026-05-18 10:57:12,858", "level": "INFO", "service": "acp-etl", "message": "[02/23] Verificando esquema de objetos criticos en DB..."}
+{"timestamp": "2026-05-18 10:57:12,863", "level": "INFO", "service": "acp-etl", "message": "[03/23] Limpiando cache..."}
+{"timestamp": "2026-05-18 10:57:12,865", "level": "INFO", "service": "acp-etl", "message": "[04/23] Cargando archivos Excel a Bronce..."}
+{"timestamp": "2026-05-18 10:57:12,872", "level": "INFO", "service": "acp-etl", "message": "Bronce: sin archivos pendientes."}
+{"timestamp": "2026-05-18 10:57:12,872", "level": "INFO", "service": "acp-etl", "message": "[05/23] Cargando Dim_Personal (SCD1)..."}
+{"timestamp": "2026-05-18 10:57:12,887", "level": "INFO", "service": "acp-etl", "message": "[06/23] Sincronizando Dim_Geografia (arquitectura catálogos)..."}
+{"timestamp": "2026-05-18 10:57:12,891", "level": "INFO", "service": "acp-etl", "message": "INFO: Silver.Dim_Geografia_Obsoleta ausente. Se asume migración completa y catálogos estables."}
+{"timestamp": "2026-05-18 10:57:12,891", "level": "INFO", "service": "acp-etl", "message": "[07/23] Sincronizando catalogo/bridge de cama via SP..."}
+{"timestamp": "2026-05-18 10:57:12,892", "level": "INFO", "service": "acp-etl", "message": "SP_Cama omitido: no ingresaron tablas Bronce con cama en esta corrida."}
+{"timestamp": "2026-05-18 10:57:12,892", "level": "INFO", "service": "acp-etl", "message": "[08/23] Validando calidad de cama via SP..."}
+{"timestamp": "2026-05-18 10:57:12,895", "level": "INFO", "service": "acp-etl", "message": "[09/23] Cargando Fact_Ciclo_Poda..."}
+{"timestamp": "2026-05-18 10:57:12,906", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:57:12,909", "level": "INFO", "service": "acp-etl", "message": "[10/23] Sincronizando bridge de campanas via SP..."}
+{"timestamp": "2026-05-18 10:57:12,914", "level": "INFO", "service": "acp-etl", "message": "[10/23] Cargando Fact_Cosecha_SAP..."}
+{"timestamp": "2026-05-18 10:57:12,920", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:57:12,922", "level": "INFO", "service": "acp-etl", "message": "[11/23] Cargando Fact_Conteo_Fenologico..."}
+{"timestamp": "2026-05-18 10:57:12,927", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:57:12,928", "level": "INFO", "service": "acp-etl", "message": "[12/23] Cargando Fact_Maduracion..."}
+{"timestamp": "2026-05-18 10:57:12,933", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:57:12,934", "level": "INFO", "service": "acp-etl", "message": "[13/23] Cargando Fact_Peladas..."}
+{"timestamp": "2026-05-18 10:57:12,938", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:57:12,939", "level": "INFO", "service": "acp-etl", "message": "[14/23] Cargando Fact_Telemetria_Clima..."}
+{"timestamp": "2026-05-18 10:57:12,945", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:57:12,947", "level": "INFO", "service": "acp-etl", "message": "[15/23] Cargando Fact_Evaluacion_Pesos..."}
+{"timestamp": "2026-05-18 10:57:12,954", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:57:12,955", "level": "INFO", "service": "acp-etl", "message": "[16/23] Cargando Fact_Tareo..."}
+{"timestamp": "2026-05-18 10:57:12,958", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:57:12,959", "level": "INFO", "service": "acp-etl", "message": "[17/23] Cargando Fact_Fisiologia..."}
+{"timestamp": "2026-05-18 10:57:12,962", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:57:12,964", "level": "INFO", "service": "acp-etl", "message": "[18/23] Cargando Fact_Floracion..."}
+{"timestamp": "2026-05-18 10:57:12,972", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:57:12,973", "level": "INFO", "service": "acp-etl", "message": "[19/23] Cargando Fact_Induccion_Floral..."}
+{"timestamp": "2026-05-18 10:57:12,977", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:57:12,978", "level": "INFO", "service": "acp-etl", "message": "[20/23] Cargando Fact_Tasa_Crecimiento_Brotes..."}
+{"timestamp": "2026-05-18 10:57:12,982", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:57:12,984", "level": "INFO", "service": "acp-etl", "message": "[21/23] Cargando Fact_Sanidad_Activo..."}
+{"timestamp": "2026-05-18 10:57:12,986", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:57:12,988", "level": "INFO", "service": "acp-etl", "message": "[22/23] Refrescando Marts Gold..."}
+{"timestamp": "2026-05-18 10:57:12,993", "level": "INFO", "service": "acp-etl", "message": "[OK] Gold.Mart_Cosecha: 0 filas"}
+{"timestamp": "2026-05-18 10:57:12,994", "level": "INFO", "service": "acp-etl", "message": "ERROR en Gold: (pyodbc.Error) ('07008', '[07008] [Microsoft][ODBC SQL Server Driver][SQL Server]The select list for the INSERT statement contains fewer items than the insert list. The number of SELECT values must match the number of INSERT columns. (120) (SQLExecDirectW)')
+[SQL: 
+        INSERT INTO Gold.Mart_Proyecciones (
+            ID_Tiempo, ID_Geografia, ID_Variedad, ID_Escenario, ID_Campana,
+            Fundo, Modulo, Turno, Variedad, Fecha_Cutoff,
+            Kg_Proyectados, MAPE, Error_MAPE, Version_Modelo,
+            Flag_Override, Motivo_Override, Estado_Workflow,
+            Semana_Objetivo, Version_Escenario, Fecha_Generacion,
+            Kg_Real, Fecha_Actualizacion
+        )
+        SELECT
+            p.ID_Tiempo,
+            p.ID_Geografia,
+            p.ID_Variedad,
+            p.ID_Escenario,
+            ISNULL(p.ID_Campana, 0),
+            fc.Fundo,
+            mc.Modulo,
+            tc.Turno,
+            v.Nombre_Variedad,
+            p.Fecha_Cutoff,
+            p.Kg_Proyectados,
+            p.MAPE,
+            p.Version_Modelo,
+            p.Flag_Override,
+            p.Motivo_Override,
+            w.Estado,
+            t.Semana_ISO,
+            e.Tipo_Escenario,
+            CAST(p.Fecha_Sistema AS DATE),
+            real.Kg_Real,
+            SYSDATETIME()
+        FROM Silver.Fact_Proyecciones p
+        JOIN Silver.Dim_Tiempo                t  ON t.ID_Tiempo = p.ID_Tiempo
+        JOIN Silver.Dim_Geografia             g  ON g.ID_Geografia = p.ID_Geografia
+        LEFT JOIN Silver.Dim_Fundo_Catalogo   fc ON fc.ID_Fundo_Catalogo = g.ID_Fundo_Catalogo
+        LEFT JOIN Silver.Dim_Modulo_Catalogo  mc ON mc.ID_Modulo_Catalogo = g.ID_Modulo_Catalogo
+        LEFT JOIN Silver.Dim_Turno_Catalogo   tc ON tc.ID_Turno_Catalogo = g.ID_Turno_Catalogo
+        JOIN Silver.Dim_Variedad              v  ON v.ID_Variedad = p.ID_Variedad
+        JOIN Silver.Dim_Escenario_Proyeccion  e  ON e.ID_Escenario = p.ID_Escenario
+        JOIN Silver.Dim_Estado_Workflow       w  ON w.ID_Workflow = p.ID_Estado_Workflow
+        LEFT JOIN (
+            SELECT ID_Tiempo, ID_Geografia, ID_Variedad, SUM(Kg_Neto_MP) AS Kg_Real
+            FROM Silver.Fact_Cosecha_SAP
+            GROUP BY ID_Tiempo, ID_Geografia, ID_Variedad
+        ) real ON real.ID_Tiempo = p.ID_Tiempo
+               AND real.ID_Geografia = p.ID_Geografia
+               AND real.ID_Variedad = p.ID_Variedad
+    ]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)"}
+{"timestamp": "2026-05-18 10:57:12,994", "level": "INFO", "service": "acp-etl", "message": "[23/23] Finalizando..."}
+{"timestamp": "2026-05-18 10:57:12,994", "level": "INFO", "service": "acp-etl", "message": "RESUMEN FINAL"}
+{"timestamp": "2026-05-18 10:57:12,994", "level": "INFO", "service": "acp-etl", "message": "Servidor SQL                                  LCP-PAG-CHERNAN"}
+{"timestamp": "2026-05-18 10:57:12,994", "level": "INFO", "service": "acp-etl", "message": "Base SQL                                      ACP_DataWarehose_Proyecciones"}
+{"timestamp": "2026-05-18 10:57:12,994", "level": "INFO", "service": "acp-etl", "message": "Bronce archivos                               0"}
+{"timestamp": "2026-05-18 10:57:12,994", "level": "INFO", "service": "acp-etl", "message": "Bronce filas                                  0"}
+{"timestamp": "2026-05-18 10:57:12,994", "level": "INFO", "service": "acp-etl", "message": "Dim_Personal insertados                       0"}
+{"timestamp": "2026-05-18 10:57:12,994", "level": "INFO", "service": "acp-etl", "message": "Dim_Personal actualizados                     0"}
+{"timestamp": "2026-05-18 10:57:12,995", "level": "INFO", "service": "acp-etl", "message": "Dim_Geografia insertados                      0"}
+{"timestamp": "2026-05-18 10:57:12,995", "level": "INFO", "service": "acp-etl", "message": "Dim_Geografia cerrados                        0"}
+{"timestamp": "2026-05-18 10:57:12,995", "level": "INFO", "service": "acp-etl", "message": "Dim_Geografia sin_cambios                     0"}
+{"timestamp": "2026-05-18 10:57:12,995", "level": "INFO", "service": "acp-etl", "message": "SP_Cama estado                                OMITIDO_SIN_TABLAS_CON_CAMA_EN_ESTA_CORRIDA"}
+{"timestamp": "2026-05-18 10:57:12,995", "level": "INFO", "service": "acp-etl", "message": "SP_Cama fuera regla                           1"}
+{"timestamp": "2026-05-18 10:57:12,995", "level": "INFO", "service": "acp-etl", "message": "SP_Cama geo saturadas                         0"}
+{"timestamp": "2026-05-18 10:57:12,995", "level": "INFO", "service": "acp-etl", "message": "SP_Cama estado calidad                        REVISAR_PUNTUAL"}
+{"timestamp": "2026-05-18 10:57:12,995", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda                               0"}
+{"timestamp": "2026-05-18 10:57:12,995", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda leidos                        0"}
+{"timestamp": "2026-05-18 10:57:12,995", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda rechazados                    0"}
+{"timestamp": "2026-05-18 10:57:12,995", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda rechazo pct                   0.0%"}
+{"timestamp": "2026-05-18 10:57:12,995", "level": "INFO", "service": "acp-etl", "message": "SP_Campanas_Sync                              OK"}
+{"timestamp": "2026-05-18 10:57:12,995", "level": "INFO", "service": "acp-etl", "message": "Fact_Cosecha_SAP                              0"}
+{"timestamp": "2026-05-18 10:57:12,995", "level": "INFO", "service": "acp-etl", "message": "Fact_Cosecha_SAP leidos                       0"}
+{"timestamp": "2026-05-18 10:57:12,995", "level": "INFO", "service": "acp-etl", "message": "Fact_Cosecha_SAP rechazados                   0"}
+{"timestamp": "2026-05-18 10:57:12,995", "level": "INFO", "service": "acp-etl", "message": "Fact_Cosecha_SAP rechazo pct                  0.0%"}
+{"timestamp": "2026-05-18 10:57:12,995", "level": "INFO", "service": "acp-etl", "message": "Fact_Conteo_Fenologico                        0"}
+{"timestamp": "2026-05-18 10:57:12,995", "level": "INFO", "service": "acp-etl", "message": "Fact_Conteo_Fenologico leidos                 0"}
+{"timestamp": "2026-05-18 10:57:12,996", "level": "INFO", "service": "acp-etl", "message": "Fact_Conteo_Fenologico rechazados             0"}
+{"timestamp": "2026-05-18 10:57:12,996", "level": "INFO", "service": "acp-etl", "message": "Fact_Conteo_Fenologico rechazo pct            0.0%"}
+{"timestamp": "2026-05-18 10:57:12,996", "level": "INFO", "service": "acp-etl", "message": "Fact_Maduracion                               0"}
+{"timestamp": "2026-05-18 10:57:12,996", "level": "INFO", "service": "acp-etl", "message": "Fact_Maduracion leidos                        0"}
+{"timestamp": "2026-05-18 10:57:12,996", "level": "INFO", "service": "acp-etl", "message": "Fact_Maduracion rechazados                    0"}
+{"timestamp": "2026-05-18 10:57:12,996", "level": "INFO", "service": "acp-etl", "message": "Fact_Maduracion rechazo pct                   0.0%"}
+{"timestamp": "2026-05-18 10:57:12,996", "level": "INFO", "service": "acp-etl", "message": "Fact_Peladas                                  0"}
+{"timestamp": "2026-05-18 10:57:12,996", "level": "INFO", "service": "acp-etl", "message": "Fact_Peladas leidos                           0"}
+{"timestamp": "2026-05-18 10:57:12,996", "level": "INFO", "service": "acp-etl", "message": "Fact_Peladas rechazados                       0"}
+{"timestamp": "2026-05-18 10:57:12,996", "level": "INFO", "service": "acp-etl", "message": "Fact_Peladas rechazo pct                      0.0%"}
+{"timestamp": "2026-05-18 10:57:12,996", "level": "INFO", "service": "acp-etl", "message": "Fact_Telemetria_Clima                         0"}
+{"timestamp": "2026-05-18 10:57:12,996", "level": "INFO", "service": "acp-etl", "message": "Fact_Telemetria_Clima leidos                  0"}
+{"timestamp": "2026-05-18 10:57:12,996", "level": "INFO", "service": "acp-etl", "message": "Fact_Telemetria_Clima rechazados              0"}
+{"timestamp": "2026-05-18 10:57:12,996", "level": "INFO", "service": "acp-etl", "message": "Fact_Telemetria_Clima rechazo pct             0.0%"}
+{"timestamp": "2026-05-18 10:57:12,996", "level": "INFO", "service": "acp-etl", "message": "Fact_Evaluacion_Pesos                         0"}
+{"timestamp": "2026-05-18 10:57:12,996", "level": "INFO", "service": "acp-etl", "message": "Fact_Evaluacion_Pesos leidos                  0"}
+{"timestamp": "2026-05-18 10:57:12,997", "level": "INFO", "service": "acp-etl", "message": "Fact_Evaluacion_Pesos rechazados              0"}
+{"timestamp": "2026-05-18 10:57:12,997", "level": "INFO", "service": "acp-etl", "message": "Fact_Evaluacion_Pesos rechazo pct             0.0%"}
+{"timestamp": "2026-05-18 10:57:12,997", "level": "INFO", "service": "acp-etl", "message": "Fact_Tareo                                    0"}
+{"timestamp": "2026-05-18 10:57:12,997", "level": "INFO", "service": "acp-etl", "message": "Fact_Tareo leidos                             0"}
+{"timestamp": "2026-05-18 10:57:12,997", "level": "INFO", "service": "acp-etl", "message": "Fact_Tareo rechazados                         0"}
+{"timestamp": "2026-05-18 10:57:12,997", "level": "INFO", "service": "acp-etl", "message": "Fact_Tareo rechazo pct                        0.0%"}
+{"timestamp": "2026-05-18 10:57:12,997", "level": "INFO", "service": "acp-etl", "message": "Fact_Fisiologia                               0"}
+{"timestamp": "2026-05-18 10:57:12,997", "level": "INFO", "service": "acp-etl", "message": "Fact_Fisiologia leidos                        0"}
+{"timestamp": "2026-05-18 10:57:12,997", "level": "INFO", "service": "acp-etl", "message": "Fact_Fisiologia rechazados                    0"}
+{"timestamp": "2026-05-18 10:57:12,997", "level": "INFO", "service": "acp-etl", "message": "Fact_Fisiologia rechazo pct                   0.0%"}
+{"timestamp": "2026-05-18 10:57:12,998", "level": "INFO", "service": "acp-etl", "message": "Fact_Floracion                                0"}
+{"timestamp": "2026-05-18 10:57:12,998", "level": "INFO", "service": "acp-etl", "message": "Fact_Floracion leidos                         0"}
+{"timestamp": "2026-05-18 10:57:12,998", "level": "INFO", "service": "acp-etl", "message": "Fact_Floracion rechazados                     0"}
+{"timestamp": "2026-05-18 10:57:12,998", "level": "INFO", "service": "acp-etl", "message": "Fact_Floracion rechazo pct                    0.0%"}
+{"timestamp": "2026-05-18 10:57:12,998", "level": "INFO", "service": "acp-etl", "message": "Fact_Induccion_Floral                         0"}
+{"timestamp": "2026-05-18 10:57:12,998", "level": "INFO", "service": "acp-etl", "message": "Fact_Induccion_Floral leidos                  0"}
+{"timestamp": "2026-05-18 10:57:12,998", "level": "INFO", "service": "acp-etl", "message": "Fact_Induccion_Floral rechazados              0"}
+{"timestamp": "2026-05-18 10:57:12,998", "level": "INFO", "service": "acp-etl", "message": "Fact_Induccion_Floral rechazo pct             0.0%"}
+{"timestamp": "2026-05-18 10:57:12,998", "level": "INFO", "service": "acp-etl", "message": "Fact_Tasa_Crecimiento_Brotes                  0"}
+{"timestamp": "2026-05-18 10:57:12,998", "level": "INFO", "service": "acp-etl", "message": "Fact_Tasa_Crecimiento_Brotes leidos           0"}
+{"timestamp": "2026-05-18 10:57:12,998", "level": "INFO", "service": "acp-etl", "message": "Fact_Tasa_Crecimiento_Brotes rechazados       0"}
+{"timestamp": "2026-05-18 10:57:12,998", "level": "INFO", "service": "acp-etl", "message": "Fact_Tasa_Crecimiento_Brotes rechazo pct      0.0%"}
+{"timestamp": "2026-05-18 10:57:12,998", "level": "INFO", "service": "acp-etl", "message": "Fact_Sanidad_Activo                           0"}
+{"timestamp": "2026-05-18 10:57:12,998", "level": "INFO", "service": "acp-etl", "message": "Fact_Sanidad_Activo leidos                    0"}
+{"timestamp": "2026-05-18 10:57:12,998", "level": "INFO", "service": "acp-etl", "message": "Fact_Sanidad_Activo rechazados                0"}
+{"timestamp": "2026-05-18 10:57:12,998", "level": "INFO", "service": "acp-etl", "message": "Fact_Sanidad_Activo rechazo pct               0.0%"}
+{"timestamp": "2026-05-18 10:57:12,998", "level": "INFO", "service": "acp-etl", "message": "Gold ERROR                                    (pyodbc.Error) ('07008', '[07008] [Microsoft][ODBC SQL Server Driver][SQL Server]The select list for the INSERT statement contains fewer items than the insert list. The number of SELECT values must match the number of INSERT columns. (120) (SQLExecDirectW)')
+[SQL: 
+        INSERT INTO Gold.Mart_Proyecciones (
+            ID_Tiempo, ID_Geografia, ID_Variedad, ID_Escenario, ID_Campana,
+            Fundo, Modulo, Turno, Variedad, Fecha_Cutoff,
+            Kg_Proyectados, MAPE, Error_MAPE, Version_Modelo,
+            Flag_Override, Motivo_Override, Estado_Workflow,
+            Semana_Objetivo, Version_Escenario, Fecha_Generacion,
+            Kg_Real, Fecha_Actualizacion
+        )
+        SELECT
+            p.ID_Tiempo,
+            p.ID_Geografia,
+            p.ID_Variedad,
+            p.ID_Escenario,
+            ISNULL(p.ID_Campana, 0),
+            fc.Fundo,
+            mc.Modulo,
+            tc.Turno,
+            v.Nombre_Variedad,
+            p.Fecha_Cutoff,
+            p.Kg_Proyectados,
+            p.MAPE,
+            p.Version_Modelo,
+            p.Flag_Override,
+            p.Motivo_Override,
+            w.Estado,
+            t.Semana_ISO,
+            e.Tipo_Escenario,
+            CAST(p.Fecha_Sistema AS DATE),
+            real.Kg_Real,
+            SYSDATETIME()
+        FROM Silver.Fact_Proyecciones p
+        JOIN Silver.Dim_Tiempo                t  ON t.ID_Tiempo = p.ID_Tiempo
+        JOIN Silver.Dim_Geografia             g  ON g.ID_Geografia = p.ID_Geografia
+        LEFT JOIN Silver.Dim_Fundo_Catalogo   fc ON fc.ID_Fundo_Catalogo = g.ID_Fundo_Catalogo
+        LEFT JOIN Silver.Dim_Modulo_Catalogo  mc ON mc.ID_Modulo_Catalogo = g.ID_Modulo_Catalogo
+        LEFT JOIN Silver.Dim_Turno_Catalogo   tc ON tc.ID_Turno_Catalogo = g.ID_Turno_Catalogo
+        JOIN Silver.Dim_Variedad              v  ON v.ID_Variedad = p.ID_Variedad
+        JOIN Silver.Dim_Escenario_Proyeccion  e  ON e.ID_Escenario = p.ID_Escenario
+        JOIN Silver.Dim_Estado_Workflow       w  ON w.ID_Workflow = p.ID_Estado_Workflow
+        LEFT JOIN (
+            SELECT ID_Tiempo, ID_Geografia, ID_Variedad, SUM(Kg_Neto_MP) AS Kg_Real
+            FROM Silver.Fact_Cosecha_SAP
+            GROUP BY ID_Tiempo, ID_Geografia, ID_Variedad
+        ) real ON real.ID_Tiempo = p.ID_Tiempo
+               AND real.ID_Geografia = p.ID_Geografia
+               AND real.ID_Variedad = p.ID_Variedad
+    ]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)"}
+{"timestamp": "2026-05-18 10:57:12,999", "level": "INFO", "service": "acp-etl", "message": "Errores pipeline                              1"}
+{"timestamp": "2026-05-18 10:57:12,999", "level": "INFO", "service": "acp-etl", "message": "Pipeline error 1                              Gold: (pyodbc.Error) ('07008', '[07008] [Microsoft][ODBC SQL Server Driver][SQL Server]The select list for the INSERT statement contains fewer items than the insert list. The number of SELECT values must match the number of INSERT columns. (120) (SQLExecDirectW)')
+[SQL: 
+        INSERT INTO Gold.Mart_Proyecciones (
+            ID_Tiempo, ID_Geografia, ID_Variedad, ID_Escenario, ID_Campana,
+            Fundo, Modulo, Turno, Variedad, Fecha_Cutoff,
+            Kg_Proyectados, MAPE, Error_MAPE, Version_Modelo,
+            Flag_Override, Motivo_Override, Estado_Workflow,
+            Semana_Objetivo, Version_Escenario, Fecha_Generacion,
+            Kg_Real, Fecha_Actualizacion
+        )
+        SELECT
+            p.ID_Tiempo,
+            p.ID_Geografia,
+            p.ID_Variedad,
+            p.ID_Escenario,
+            ISNULL(p.ID_Campana, 0),
+            fc.Fundo,
+            mc.Modulo,
+            tc.Turno,
+            v.Nombre_Variedad,
+            p.Fecha_Cutoff,
+            p.Kg_Proyectados,
+            p.MAPE,
+            p.Version_Modelo,
+            p.Flag_Override,
+            p.Motivo_Override,
+            w.Estado,
+            t.Semana_ISO,
+            e.Tipo_Escenario,
+            CAST(p.Fecha_Sistema AS DATE),
+            real.Kg_Real,
+            SYSDATETIME()
+        FROM Silver.Fact_Proyecciones p
+        JOIN Silver.Dim_Tiempo                t  ON t.ID_Tiempo = p.ID_Tiempo
+        JOIN Silver.Dim_Geografia             g  ON g.ID_Geografia = p.ID_Geografia
+        LEFT JOIN Silver.Dim_Fundo_Catalogo   fc ON fc.ID_Fundo_Catalogo = g.ID_Fundo_Catalogo
+        LEFT JOIN Silver.Dim_Modulo_Catalogo  mc ON mc.ID_Modulo_Catalogo = g.ID_Modulo_Catalogo
+        LEFT JOIN Silver.Dim_Turno_Catalogo   tc ON tc.ID_Turno_Catalogo = g.ID_Turno_Catalogo
+        JOIN Silver.Dim_Variedad              v  ON v.ID_Variedad = p.ID_Variedad
+        JOIN Silver.Dim_Escenario_Proyeccion  e  ON e.ID_Escenario = p.ID_Escenario
+        JOIN Silver.Dim_Estado_Workflow       w  ON w.ID_Workflow = p.ID_Estado_Workflow
+        LEFT JOIN (
+            SELECT ID_Tiempo, ID_Geografia, ID_Variedad, SUM(Kg_Neto_MP) AS Kg_Real
+            FROM Silver.Fact_Cosecha_SAP
+            GROUP BY ID_Tiempo, ID_Geografia, ID_Variedad
+        ) real ON real.ID_Tiempo = p.ID_Tiempo
+               AND real.ID_Geografia = p.ID_Geografia
+               AND real.ID_Variedad = p.ID_Variedad
+    ]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)"}
+{"timestamp": "2026-05-18 10:57:12,999", "level": "INFO", "service": "acp-etl", "message": "Duracion total                                8.32s"}

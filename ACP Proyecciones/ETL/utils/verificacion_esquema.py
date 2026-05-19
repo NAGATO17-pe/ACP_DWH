@@ -32,7 +32,7 @@ _OBJETOS_CRITICOS: list[tuple[str, str, str]] = [
     # Bronce — siempre tablas
     ("Bronce", "Conteo_Fruta",           "U"),
     ("Bronce", "Evaluacion_Pesos",       "U"),
-    ("Bronce", "Evaluacion_Vegetativa",  "U"),
+    ("Bronce", "Floracion",              "U"),
 ]
 
 _TIPO_LABEL = {

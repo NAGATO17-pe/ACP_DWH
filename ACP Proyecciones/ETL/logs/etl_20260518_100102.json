@@ -1,0 +1,151 @@
+{"timestamp": "2026-05-18 10:01:02,519", "level": "INFO", "service": "acp-etl", "message": "DWH Geographic Phenology - ETL Pipeline"}
+{"timestamp": "2026-05-18 10:01:02,519", "level": "INFO", "service": "acp-etl", "message": "Inicio: 2026-05-18 10:01:02"}
+{"timestamp": "2026-05-18 10:01:02,556", "level": "INFO", "service": "acp-etl", "message": "[01/25] Verificando conexion SQL Server..."}
+{"timestamp": "2026-05-18 10:01:10,757", "level": "INFO", "service": "acp-etl", "message": "[02/25] Verificando esquema de objetos criticos en DB..."}
+{"timestamp": "2026-05-18 10:01:10,776", "level": "INFO", "service": "acp-etl", "message": "[03/25] Limpiando cache..."}
+{"timestamp": "2026-05-18 10:01:10,812", "level": "INFO", "service": "acp-etl", "message": "[04/25] Cargando archivos Excel a Bronce..."}
+{"timestamp": "2026-05-18 10:01:10,824", "level": "INFO", "service": "acp-etl", "message": "Bronce: sin archivos pendientes."}
+{"timestamp": "2026-05-18 10:01:10,824", "level": "INFO", "service": "acp-etl", "message": "[05/25] Cargando Dim_Personal (SCD1)..."}
+{"timestamp": "2026-05-18 10:01:10,848", "level": "INFO", "service": "acp-etl", "message": "[06/25] Sincronizando Dim_Geografia (arquitectura catálogos)..."}
+{"timestamp": "2026-05-18 10:01:10,852", "level": "INFO", "service": "acp-etl", "message": "INFO: Silver.Dim_Geografia_Obsoleta ausente. Se asume migración completa y catálogos estables."}
+{"timestamp": "2026-05-18 10:01:10,852", "level": "INFO", "service": "acp-etl", "message": "[07/25] Sincronizando catalogo/bridge de cama via SP..."}
+{"timestamp": "2026-05-18 10:01:10,852", "level": "INFO", "service": "acp-etl", "message": "SP_Cama omitido: no ingresaron tablas Bronce con cama en esta corrida."}
+{"timestamp": "2026-05-18 10:01:10,852", "level": "INFO", "service": "acp-etl", "message": "[08/25] Validando calidad de cama via SP..."}
+{"timestamp": "2026-05-18 10:01:10,859", "level": "INFO", "service": "acp-etl", "message": "[09/25] Cargando Fact_Ciclo_Poda..."}
+{"timestamp": "2026-05-18 10:01:10,972", "level": "INFO", "service": "acp-etl", "message": "  Homologando columna 'Variedad_Raw' via MDM..."}
+{"timestamp": "2026-05-18 10:01:19,098", "level": "INFO", "service": "acp-etl", "message": "  Registrando 5 resoluciones únicas en el diccionario..."}
+{"timestamp": "2026-05-18 10:01:19,167", "level": "INFO", "service": "acp-etl", "message": "Deduplicación temprana: 1230 IDs marcados para descarte (redundantes)."}
+{"timestamp": "2026-05-18 10:01:19,198", "level": "INFO", "service": "acp-etl", "message": "ERROR en Fact_Ciclo_Poda: name 'modulo_token' is not defined"}
+{"timestamp": "2026-05-18 10:01:19,207", "level": "INFO", "service": "acp-etl", "message": "[10/25] Cargando Fact_Cosecha_SAP..."}
+{"timestamp": "2026-05-18 10:01:19,217", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:01:19,223", "level": "INFO", "service": "acp-etl", "message": "[11/25] Cargando Fact_Conteo_Fenologico..."}
+{"timestamp": "2026-05-18 10:01:19,358", "level": "INFO", "service": "acp-etl", "message": "  Homologando columna 'Variedad_Raw' via MDM..."}
+{"timestamp": "2026-05-18 10:01:19,423", "level": "INFO", "service": "acp-etl", "message": "  Registrando 9 resoluciones únicas en el diccionario..."}
+{"timestamp": "2026-05-18 10:01:19,502", "level": "INFO", "service": "acp-etl", "message": "ERROR en Fact_Conteo_Fenologico: BaseFactProcessor._validar_y_resolver_geografia() got multiple values for argument 'turno'"}
+{"timestamp": "2026-05-18 10:01:19,508", "level": "INFO", "service": "acp-etl", "message": "[12/25] Cargando Fact_Maduracion..."}
+{"timestamp": "2026-05-18 10:01:19,605", "level": "INFO", "service": "acp-etl", "message": "  Homologando columna 'Variedad_Raw' via MDM..."}
+{"timestamp": "2026-05-18 10:01:19,668", "level": "INFO", "service": "acp-etl", "message": "  Registrando 7 resoluciones únicas en el diccionario..."}
+{"timestamp": "2026-05-18 10:01:19,733", "level": "INFO", "service": "acp-etl", "message": "ERROR en Fact_Maduracion: name 'modulo_token' is not defined"}
+{"timestamp": "2026-05-18 10:01:19,736", "level": "INFO", "service": "acp-etl", "message": "[13/25] Cargando Fact_Peladas..."}
+{"timestamp": "2026-05-18 10:01:19,773", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:01:19,776", "level": "INFO", "service": "acp-etl", "message": "[14/25] Cargando Fact_Telemetria_Clima..."}
+{"timestamp": "2026-05-18 10:01:19,795", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:01:19,798", "level": "INFO", "service": "acp-etl", "message": "[15/25] Cargando Fact_Evaluacion_Pesos..."}
+{"timestamp": "2026-05-18 10:01:19,844", "level": "INFO", "service": "acp-etl", "message": "  Homologando columna 'Variedad_Raw' via MDM..."}
+{"timestamp": "2026-05-18 10:01:19,863", "level": "INFO", "service": "acp-etl", "message": "  Registrando 7 resoluciones únicas en el diccionario..."}
+{"timestamp": "2026-05-18 10:01:19,926", "level": "INFO", "service": "acp-etl", "message": "Deduplicación temprana: 72 IDs marcados para descarte (redundantes)."}
+{"timestamp": "2026-05-18 10:01:19,930", "level": "INFO", "service": "acp-etl", "message": "ERROR en Fact_Evaluacion_Pesos: name 'modulo_token' is not defined"}
+{"timestamp": "2026-05-18 10:01:19,933", "level": "INFO", "service": "acp-etl", "message": "[16/25] Cargando Fact_Tareo..."}
+{"timestamp": "2026-05-18 10:01:19,973", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:01:19,976", "level": "INFO", "service": "acp-etl", "message": "[17/25] Cargando Fact_Fisiologia..."}
+{"timestamp": "2026-05-18 10:01:19,984", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:01:19,987", "level": "INFO", "service": "acp-etl", "message": "[18/25] Cargando Fact_Evaluacion_Vegetativa..."}
+{"timestamp": "2026-05-18 10:01:20,033", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:01:20,078", "level": "INFO", "service": "acp-etl", "message": "[19/25] Cargando Fact_Induccion_Floral..."}
+{"timestamp": "2026-05-18 10:01:20,137", "level": "INFO", "service": "acp-etl", "message": "  Homologando columna 'Variedad_Fuente_Raw' via MDM..."}
+{"timestamp": "2026-05-18 10:01:20,158", "level": "INFO", "service": "acp-etl", "message": "  Registrando 5 resoluciones únicas en el diccionario..."}
+{"timestamp": "2026-05-18 10:01:20,215", "level": "INFO", "service": "acp-etl", "message": "Deduplicación temprana: 962 IDs marcados para descarte (redundantes)."}
+{"timestamp": "2026-05-18 10:01:20,220", "level": "INFO", "service": "acp-etl", "message": "ERROR en Fact_Induccion_Floral: name 'modulo_token' is not defined"}
+{"timestamp": "2026-05-18 10:01:20,222", "level": "INFO", "service": "acp-etl", "message": "[20/25] Cargando Fact_Tasa_Crecimiento_Brotes..."}
+{"timestamp": "2026-05-18 10:01:20,523", "level": "INFO", "service": "acp-etl", "message": "  Homologando columna 'Variedad_Raw' via MDM..."}
+{"timestamp": "2026-05-18 10:01:20,687", "level": "INFO", "service": "acp-etl", "message": "  Registrando 8 resoluciones únicas en el diccionario..."}
+{"timestamp": "2026-05-18 10:01:20,737", "level": "INFO", "service": "acp-etl", "message": "Deduplicación temprana: 16382 IDs marcados para descarte (redundantes)."}
+{"timestamp": "2026-05-18 10:01:21,773", "level": "INFO", "service": "acp-etl", "message": "-> 16400 leidos | 0 insertados | 1 rechazados reales | 0% rechazo real"}
+{"timestamp": "2026-05-18 10:01:21,774", "level": "INFO", "service": "acp-etl", "message": "-> 16400 leidos | 0 insertados | 1 rechazados | 18 cuarentena | 0.01% rechazo"}
+{"timestamp": "2026-05-18 10:01:21,774", "level": "INFO", "service": "acp-etl", "message": "motivo: Geografia no encontrada en Silver.Dim_Geografia. Detalle: Geografia incompleta o nueva en catalogos. Enviada a MDM (F_ID=0 S_ID=0 M_ID=0) (18)"}
+{"timestamp": "2026-05-18 10:01:21,777", "level": "INFO", "service": "acp-etl", "message": "[21/25] Cargando Fact_Sanidad_Activo..."}
+{"timestamp": "2026-05-18 10:01:21,838", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:01:21,842", "level": "INFO", "service": "acp-etl", "message": "[22/25] Cargando Fact_Proyecciones_SixWeek..."}
+{"timestamp": "2026-05-18 10:01:21,847", "level": "INFO", "service": "acp-etl", "message": "[SixWeek] Parámetros — pesimista=0.9906, optimista=1.0107, escenario=4, ventana=4s"}
+{"timestamp": "2026-05-18 10:01:21,850", "level": "INFO", "service": "acp-etl", "message": "ERROR en Fact_Proyecciones_SixWeek: (pyodbc.Error) ('HYC00', '[HYC00] [Microsoft][ODBC SQL Server Driver]Característica opcional no implementada (0) (SQLBindParameter)')
+[SQL: 
+            SELECT ID_Tiempo
+            FROM Silver.Dim_Tiempo
+            WHERE ? BETWEEN Fecha AND Fecha
+               OR (Anio = YEAR(?) AND Semana_ISO = DATEPART(ISO_WEEK, ?))
+            ORDER BY ID_Tiempo DESC
+        ]
+[parameters: (datetime.date(2026, 5, 18), datetime.date(2026, 5, 18), datetime.date(2026, 5, 18))]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)"}
+{"timestamp": "2026-05-18 10:01:21,855", "level": "INFO", "service": "acp-etl", "message": "[23/25] Omitiendo Marts Gold por errores previos..."}
+{"timestamp": "2026-05-18 10:01:21,855", "level": "INFO", "service": "acp-etl", "message": "[24/25] Finalizando..."}
+{"timestamp": "2026-05-18 10:01:21,855", "level": "INFO", "service": "acp-etl", "message": "RESUMEN FINAL"}
+{"timestamp": "2026-05-18 10:01:21,855", "level": "INFO", "service": "acp-etl", "message": "Servidor SQL                                  LCP-PAG-CHERNAN"}
+{"timestamp": "2026-05-18 10:01:21,855", "level": "INFO", "service": "acp-etl", "message": "Base SQL                                      ACP_DataWarehose_Proyecciones"}
+{"timestamp": "2026-05-18 10:01:21,855", "level": "INFO", "service": "acp-etl", "message": "Bronce archivos                               0"}
+{"timestamp": "2026-05-18 10:01:21,855", "level": "INFO", "service": "acp-etl", "message": "Bronce filas                                  0"}
+{"timestamp": "2026-05-18 10:01:21,855", "level": "INFO", "service": "acp-etl", "message": "Dim_Personal insertados                       0"}
+{"timestamp": "2026-05-18 10:01:21,855", "level": "INFO", "service": "acp-etl", "message": "Dim_Personal actualizados                     0"}
+{"timestamp": "2026-05-18 10:01:21,855", "level": "INFO", "service": "acp-etl", "message": "Dim_Geografia insertados                      0"}
+{"timestamp": "2026-05-18 10:01:21,855", "level": "INFO", "service": "acp-etl", "message": "Dim_Geografia cerrados                        0"}
+{"timestamp": "2026-05-18 10:01:21,855", "level": "INFO", "service": "acp-etl", "message": "Dim_Geografia sin_cambios                     0"}
+{"timestamp": "2026-05-18 10:01:21,855", "level": "INFO", "service": "acp-etl", "message": "SP_Cama estado                                OMITIDO_SIN_TABLAS_CON_CAMA_EN_ESTA_CORRIDA"}
+{"timestamp": "2026-05-18 10:01:21,855", "level": "INFO", "service": "acp-etl", "message": "SP_Cama fuera regla                           1"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "SP_Cama geo saturadas                         0"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "SP_Cama estado calidad                        REVISAR_PUNTUAL"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda ERROR                         name 'modulo_token' is not defined"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Cosecha_SAP                              0"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Cosecha_SAP leidos                       0"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Cosecha_SAP rechazados                   0"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Cosecha_SAP rechazo pct                  0.0%"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Conteo_Fenologico ERROR                  BaseFactProcessor._validar_y_resolver_geografia() got multiple values for argument 'turno'"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Maduracion ERROR                         name 'modulo_token' is not defined"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Peladas                                  0"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Peladas leidos                           0"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Peladas rechazados                       0"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Peladas rechazo pct                      0.0%"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Telemetria_Clima                         0"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Telemetria_Clima leidos                  0"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Telemetria_Clima rechazados              0"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Telemetria_Clima rechazo pct             0.0%"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Evaluacion_Pesos ERROR                   name 'modulo_token' is not defined"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Tareo                                    0"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Tareo leidos                             0"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Tareo rechazados                         0"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Tareo rechazo pct                        0.0%"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Fisiologia                               0"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Fisiologia leidos                        0"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Fisiologia rechazados                    0"}
+{"timestamp": "2026-05-18 10:01:21,856", "level": "INFO", "service": "acp-etl", "message": "Fact_Fisiologia rechazo pct                   0.0%"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Fact_Evaluacion_Vegetativa                    0"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Fact_Evaluacion_Vegetativa leidos             0"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Fact_Evaluacion_Vegetativa rechazados         0"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Fact_Evaluacion_Vegetativa rechazo pct        0.0%"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Fact_Induccion_Floral ERROR                   name 'modulo_token' is not defined"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Fact_Tasa_Crecimiento_Brotes                  0"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Fact_Tasa_Crecimiento_Brotes leidos           16400"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Fact_Tasa_Crecimiento_Brotes rechazados       1"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Fact_Tasa_Crecimiento_Brotes rechazo pct      0.01%"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Fact_Tasa_Crecimiento_Brotes motivo 1         Geografia no encontrada en Silver.Dim_Geografia. Detalle: Geografia incompleta o nueva en catalogos. Enviada a MDM (F_ID=0 S_ID=0 M_ID=0) (18)"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Fact_Sanidad_Activo                           0"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Fact_Sanidad_Activo leidos                    0"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Fact_Sanidad_Activo rechazados                0"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Fact_Sanidad_Activo rechazo pct               0.0%"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Fact_Proyecciones_SixWeek ERROR               (pyodbc.Error) ('HYC00', '[HYC00] [Microsoft][ODBC SQL Server Driver]Característica opcional no implementada (0) (SQLBindParameter)')
+[SQL: 
+            SELECT ID_Tiempo
+            FROM Silver.Dim_Tiempo
+            WHERE ? BETWEEN Fecha AND Fecha
+               OR (Anio = YEAR(?) AND Semana_ISO = DATEPART(ISO_WEEK, ?))
+            ORDER BY ID_Tiempo DESC
+        ]
+[parameters: (datetime.date(2026, 5, 18), datetime.date(2026, 5, 18), datetime.date(2026, 5, 18))]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Gold estado                                   OMITIDO_POR_ERROR_EN_FACTS"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Errores pipeline                              6"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Pipeline error 1                              Fact_Ciclo_Poda: name 'modulo_token' is not defined"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Pipeline error 2                              Fact_Conteo_Fenologico: BaseFactProcessor._validar_y_resolver_geografia() got multiple values for argument 'turno'"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Pipeline error 3                              Fact_Maduracion: name 'modulo_token' is not defined"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Pipeline error 4                              Fact_Evaluacion_Pesos: name 'modulo_token' is not defined"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Pipeline error 5                              Fact_Induccion_Floral: name 'modulo_token' is not defined"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Pipeline error 6                              Fact_Proyecciones_SixWeek: (pyodbc.Error) ('HYC00', '[HYC00] [Microsoft][ODBC SQL Server Driver]Característica opcional no implementada (0) (SQLBindParameter)')
+[SQL: 
+            SELECT ID_Tiempo
+            FROM Silver.Dim_Tiempo
+            WHERE ? BETWEEN Fecha AND Fecha
+               OR (Anio = YEAR(?) AND Semana_ISO = DATEPART(ISO_WEEK, ?))
+            ORDER BY ID_Tiempo DESC
+        ]
+[parameters: (datetime.date(2026, 5, 18), datetime.date(2026, 5, 18), datetime.date(2026, 5, 18))]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)"}
+{"timestamp": "2026-05-18 10:01:21,857", "level": "INFO", "service": "acp-etl", "message": "Duracion total                                19.34s"}

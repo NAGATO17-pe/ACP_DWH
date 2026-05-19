@@ -1,0 +1,27 @@
+{"timestamp": "2026-05-18 10:55:49,245", "level": "INFO", "service": "acp-etl", "message": "DWH Geographic Phenology - ETL Pipeline"}
+{"timestamp": "2026-05-18 10:55:49,245", "level": "INFO", "service": "acp-etl", "message": "Inicio: 2026-05-18 10:55:49"}
+{"timestamp": "2026-05-18 10:55:49,277", "level": "INFO", "service": "acp-etl", "message": "[01/6] Verificando conexion SQL Server..."}
+{"timestamp": "2026-05-18 10:55:57,439", "level": "INFO", "service": "acp-etl", "message": "[02/6] Limpiando cache..."}
+{"timestamp": "2026-05-18 10:55:57,440", "level": "INFO", "service": "acp-etl", "message": "[03/6] Ejecutando dependencia Dim_Geografia..."}
+{"timestamp": "2026-05-18 10:55:57,442", "level": "INFO", "service": "acp-etl", "message": "INFO: Silver.Dim_Geografia_Obsoleta ausente. Se asume migración completa y catálogos estables."}
+{"timestamp": "2026-05-18 10:55:57,442", "level": "INFO", "service": "acp-etl", "message": "[04/6] Reprocesando Fact_Cosecha_SAP..."}
+{"timestamp": "2026-05-18 10:55:57,460", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:55:57,463", "level": "INFO", "service": "acp-etl", "message": "[05/6] Refrescando Marts Gold impactados..."}
+{"timestamp": "2026-05-18 10:55:57,479", "level": "INFO", "service": "acp-etl", "message": "[OK] Gold.Mart_Cosecha: 0 filas"}
+{"timestamp": "2026-05-18 10:55:57,480", "level": "INFO", "service": "acp-etl", "message": "[06/6] Finalizando..."}
+{"timestamp": "2026-05-18 10:55:57,480", "level": "INFO", "service": "acp-etl", "message": "RESUMEN FINAL"}
+{"timestamp": "2026-05-18 10:55:57,480", "level": "INFO", "service": "acp-etl", "message": "Modo ejecucion                                REPROCESO_FACTS"}
+{"timestamp": "2026-05-18 10:55:57,480", "level": "INFO", "service": "acp-etl", "message": "Facts solicitadas                             Fact_Cosecha_SAP"}
+{"timestamp": "2026-05-18 10:55:57,480", "level": "INFO", "service": "acp-etl", "message": "Servidor SQL                                  LCP-PAG-CHERNAN"}
+{"timestamp": "2026-05-18 10:55:57,481", "level": "INFO", "service": "acp-etl", "message": "Base SQL                                      ACP_DataWarehose_Proyecciones"}
+{"timestamp": "2026-05-18 10:55:57,481", "level": "INFO", "service": "acp-etl", "message": "Dim_Geografia insertados                      0"}
+{"timestamp": "2026-05-18 10:55:57,481", "level": "INFO", "service": "acp-etl", "message": "Dim_Geografia cerrados                        0"}
+{"timestamp": "2026-05-18 10:55:57,481", "level": "INFO", "service": "acp-etl", "message": "Dim_Geografia sin_cambios                     0"}
+{"timestamp": "2026-05-18 10:55:57,481", "level": "INFO", "service": "acp-etl", "message": "Fact_Cosecha_SAP bronce reabiertas            0"}
+{"timestamp": "2026-05-18 10:55:57,481", "level": "INFO", "service": "acp-etl", "message": "Fact_Cosecha_SAP destino limpiado             0"}
+{"timestamp": "2026-05-18 10:55:57,481", "level": "INFO", "service": "acp-etl", "message": "Fact_Cosecha_SAP                              0"}
+{"timestamp": "2026-05-18 10:55:57,481", "level": "INFO", "service": "acp-etl", "message": "Fact_Cosecha_SAP leidos                       0"}
+{"timestamp": "2026-05-18 10:55:57,481", "level": "INFO", "service": "acp-etl", "message": "Fact_Cosecha_SAP rechazados                   0"}
+{"timestamp": "2026-05-18 10:55:57,481", "level": "INFO", "service": "acp-etl", "message": "Fact_Cosecha_SAP rechazo pct                  0.0%"}
+{"timestamp": "2026-05-18 10:55:57,481", "level": "INFO", "service": "acp-etl", "message": "Gold.Mart_Cosecha                             0"}
+{"timestamp": "2026-05-18 10:55:57,481", "level": "INFO", "service": "acp-etl", "message": "Duracion total                                8.23s"}

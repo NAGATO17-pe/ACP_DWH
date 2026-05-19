@@ -81,6 +81,7 @@ class ProcesadorFisiologia(BaseFactProcessor):
                 'Hinchadas':        self.a_int(self.get_raw_val(fila, 'Hinchadas_Raw',  v_raw)),
                 'Productivas':      self.a_int(self.get_raw_val(fila, 'Productivas_Raw', v_raw)),
                 'Total_Organos':    self.a_int(self.get_raw_val(fila, 'Total_Org_Raw',  v_raw)),
+                'Aux':              self.get_raw_val(fila, 'Aux_Raw', v_raw) or self.get_raw_val(fila, 'AUXILIAR_Raw', v_raw),
                 'Fecha_Evento':     fecha,
                 'Estado_DQ':        'OK',
                 'id_origen_rastreo': id_origen,

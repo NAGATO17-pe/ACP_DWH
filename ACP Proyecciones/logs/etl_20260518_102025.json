@@ -1,0 +1,27 @@
+{"timestamp": "2026-05-18 10:20:25,176", "level": "INFO", "service": "acp-etl", "message": "DWH Geographic Phenology - ETL Pipeline"}
+{"timestamp": "2026-05-18 10:20:25,177", "level": "INFO", "service": "acp-etl", "message": "Inicio: 2026-05-18 10:20:25"}
+{"timestamp": "2026-05-18 10:20:25,217", "level": "INFO", "service": "acp-etl", "message": "[01/5] Verificando conexion SQL Server..."}
+{"timestamp": "2026-05-18 10:20:33,483", "level": "INFO", "service": "acp-etl", "message": "[02/5] Limpiando cache..."}
+{"timestamp": "2026-05-18 10:20:33,527", "level": "INFO", "service": "acp-etl", "message": "[03/5] Reprocesando Fact_Fisiologia..."}
+{"timestamp": "2026-05-18 10:20:33,659", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:20:33,674", "level": "INFO", "service": "acp-etl", "message": "[04/5] Reprocesando Fact_Floracion..."}
+{"timestamp": "2026-05-18 10:20:33,740", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:20:33,760", "level": "INFO", "service": "acp-etl", "message": "[05/5] Finalizando..."}
+{"timestamp": "2026-05-18 10:20:33,760", "level": "INFO", "service": "acp-etl", "message": "RESUMEN FINAL"}
+{"timestamp": "2026-05-18 10:20:33,760", "level": "INFO", "service": "acp-etl", "message": "Modo ejecucion                                REPROCESO_FACTS"}
+{"timestamp": "2026-05-18 10:20:33,760", "level": "INFO", "service": "acp-etl", "message": "Facts solicitadas                             Fact_Fisiologia, Fact_Floracion"}
+{"timestamp": "2026-05-18 10:20:33,760", "level": "INFO", "service": "acp-etl", "message": "Servidor SQL                                  LCP-PAG-CHERNAN"}
+{"timestamp": "2026-05-18 10:20:33,760", "level": "INFO", "service": "acp-etl", "message": "Base SQL                                      ACP_DataWarehose_Proyecciones"}
+{"timestamp": "2026-05-18 10:20:33,760", "level": "INFO", "service": "acp-etl", "message": "Fact_Fisiologia bronce reabiertas             0"}
+{"timestamp": "2026-05-18 10:20:33,760", "level": "INFO", "service": "acp-etl", "message": "Fact_Fisiologia destino limpiado              0"}
+{"timestamp": "2026-05-18 10:20:33,760", "level": "INFO", "service": "acp-etl", "message": "Fact_Fisiologia                               0"}
+{"timestamp": "2026-05-18 10:20:33,760", "level": "INFO", "service": "acp-etl", "message": "Fact_Fisiologia leidos                        0"}
+{"timestamp": "2026-05-18 10:20:33,760", "level": "INFO", "service": "acp-etl", "message": "Fact_Fisiologia rechazados                    0"}
+{"timestamp": "2026-05-18 10:20:33,760", "level": "INFO", "service": "acp-etl", "message": "Fact_Fisiologia rechazo pct                   0.0%"}
+{"timestamp": "2026-05-18 10:20:33,761", "level": "INFO", "service": "acp-etl", "message": "Fact_Floracion bronce reabiertas              0"}
+{"timestamp": "2026-05-18 10:20:33,761", "level": "INFO", "service": "acp-etl", "message": "Fact_Floracion destino limpiado               0"}
+{"timestamp": "2026-05-18 10:20:33,761", "level": "INFO", "service": "acp-etl", "message": "Fact_Floracion                                0"}
+{"timestamp": "2026-05-18 10:20:33,761", "level": "INFO", "service": "acp-etl", "message": "Fact_Floracion leidos                         0"}
+{"timestamp": "2026-05-18 10:20:33,761", "level": "INFO", "service": "acp-etl", "message": "Fact_Floracion rechazados                     0"}
+{"timestamp": "2026-05-18 10:20:33,761", "level": "INFO", "service": "acp-etl", "message": "Fact_Floracion rechazo pct                    0.0%"}
+{"timestamp": "2026-05-18 10:20:33,761", "level": "INFO", "service": "acp-etl", "message": "Duracion total                                8.58s"}

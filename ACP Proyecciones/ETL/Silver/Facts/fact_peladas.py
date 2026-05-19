@@ -66,6 +66,7 @@ def _leer_bronce(engine: Engine) -> pd.DataFrame:
             _columna_sql('BayasCremas_Raw'),
             _columna_sql('BayasMaduras_Raw'),
             _columna_sql('BayasCosechables_Raw'),
+            _columna_sql('YemasActivadas_Raw'),
             _columna_sql('PlantasProductivas_Raw'),
             _columna_sql('PlantasNoProductivas_Raw'),
             _columna_sql('Valores_Raw'),
@@ -170,6 +171,7 @@ class ProcesadorPeladas(BaseFactProcessor):
                 'Bayas_Cremas':           _a_int(_obtener_campo(fila, 'BayasCremas_Raw', valores_raw)),
                 'Bayas_Maduras':          _a_int(_obtener_campo(fila, 'BayasMaduras_Raw', valores_raw)),
                 'Bayas_Cosechables':      _a_int(_obtener_campo(fila, 'BayasCosechables_Raw', valores_raw)),
+                'Yemas_Activadas':        _a_int(_obtener_campo(fila, 'YemasActivadas_Raw', valores_raw)),
                 'Plantas_Productivas':    _a_int(_obtener_campo(fila, 'PlantasProductivas_Raw', valores_raw)),
                 'Plantas_No_Productivas': _a_int(_obtener_campo(fila, 'PlantasNoProductivas_Raw', valores_raw)),
                 'Fecha_Evento':           fecha,
@@ -187,7 +189,7 @@ def cargar_fact_peladas(engine: Engine) -> dict:
         'Variedad_Raw', 'DNI_Raw', 'Evaluador_Raw', 'Punto_Raw', 'Muestras_Raw',
         'BotonesFlorales_Raw', 'Flores_Raw', 'BayasPequenas_Raw', 'BayasGrandes_Raw',
         'Fase1_Raw', 'Fase2_Raw', 'BayasCremas_Raw', 'BayasMaduras_Raw',
-        'BayasCosechables_Raw', 'PlantasProductivas_Raw', 'PlantasNoProductivas_Raw',
+        'BayasCosechables_Raw', 'YemasActivadas_Raw', 'PlantasProductivas_Raw', 'PlantasNoProductivas_Raw',
         'Valores_Raw'
     ]
     df = proc.leer_bronce(cols_raw)

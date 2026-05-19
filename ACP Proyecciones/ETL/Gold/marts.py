@@ -95,7 +95,8 @@ def refrescar_mart_cosecha(conexion) -> int:
             cs.Kg_Brutos,
             cs.Kg_Neto_MP, -- Kg_Neto_Real
             cs.Kg_Neto_MP, -- Kg_Neto_MP
-            p.Kg_Proyectados,
+            p.Kg_Proyectados, -- Kg_Proyectados
+            p.Kg_Proyectados, -- Kg_Proyectado
             cs.Cantidad_Jabas,
             c.Sustrato,
             CAST(cs.Fecha_Evento AS NVARCHAR),
@@ -140,6 +141,7 @@ def refrescar_mart_proyecciones(conexion) -> int:
             v.Nombre_Variedad,
             p.Fecha_Cutoff,
             p.Kg_Proyectados,
+            CAST(p.MAPE AS NVARCHAR(50)),
             p.MAPE,
             p.Version_Modelo,
             p.Flag_Override,
@@ -382,7 +384,7 @@ def refrescar_mart_evaluacion_vegetativa(conexion) -> int:
             SUM(ev.Cantidad_Plantas_en_Floracion),
             AVG(CAST(ev.Cantidad_Plantas_en_Floracion AS DECIMAL(10,2)) / NULLIF(ev.Cantidad_Plantas_Evaluadas, 0) * 100),
             SYSDATETIME()
-        FROM Silver.Fact_Evaluacion_Vegetativa ev
+        FROM Silver.Fact_Floracion ev
         JOIN Silver.Dim_Tiempo t ON t.ID_Tiempo = ev.ID_Tiempo
         JOIN Silver.Dim_Geografia g ON g.ID_Geografia = ev.ID_Geografia
         LEFT JOIN Silver.Dim_Fundo_Catalogo fc ON fc.ID_Fundo_Catalogo = g.ID_Fundo_Catalogo
@@ -497,6 +499,10 @@ def refrescar_mart_ciclo_poda(conexion) -> int:
         INSERT INTO Gold.Mart_Ciclo_Poda (
             ID_Tiempo, ID_Geografia, ID_Variedad, ID_Campana,
             Fundo, Modulo, Variedad, Semana_ISO,
+            Tipo_Evaluacion, Tallos_Planta_Total, Longitud_Tallo_Total,
+            Diametro_Tallo_Total, Ramilla_Planta_Total, Tocones_Planta_Total,
+            Cortes_Defectuosos_Total, Altura_Poda_Total,
+            Fecha_Actualizacion, N_Muestras
             Tipo_Evaluacion,
             Tallos_Planta_Total, Longitud_Tallo_Total,
             Diametro_Tallo_Total, Ramilla_Planta_Total,
@@ -508,6 +514,12 @@ def refrescar_mart_ciclo_poda(conexion) -> int:
             p.ID_Tiempo, p.ID_Geografia, p.ID_Variedad, ISNULL(p.ID_Campana, 0),
             fc.Fundo, mc.Modulo, v.Nombre_Variedad, t.Semana_ISO,
             p.Tipo_Evaluacion,
+            AVG(p.Tallos_Planta), AVG(p.Longitud_Tallo),
+            AVG(p.Diametro_Tallo), AVG(p.Ramilla_Planta),
+            AVG(p.Tocones_Planta), AVG(p.Cortes_Defectuosos),
+            AVG(p.Altura_Poda),
+            SYSDATETIME(),
+            COUNT(*)
             SUM(p.Tallos_Planta), SUM(p.Longitud_Tallo),
             SUM(p.Diametro_Tallo), SUM(p.Ramilla_Planta),
             SUM(p.Tocones_Planta), SUM(p.Cortes_Defectuosos),

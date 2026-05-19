@@ -1,0 +1,27 @@
+{"timestamp": "2026-05-18 08:12:19,600", "level": "INFO", "service": "acp-etl", "message": "DWH Geographic Phenology - ETL Pipeline"}
+{"timestamp": "2026-05-18 08:12:19,601", "level": "INFO", "service": "acp-etl", "message": "Inicio: 2026-05-18 08:12:19"}
+{"timestamp": "2026-05-18 08:12:19,639", "level": "INFO", "service": "acp-etl", "message": "[01/25] Verificando conexion SQL Server..."}
+{"timestamp": "2026-05-18 08:12:23,770", "level": "INFO", "service": "acp-etl", "message": "[02/25] Verificando esquema de objetos criticos en DB..."}
+{"timestamp": "2026-05-18 08:12:23,799", "level": "INFO", "service": "acp-etl", "message": "[03/25] Limpiando cache..."}
+{"timestamp": "2026-05-18 08:12:23,845", "level": "INFO", "service": "acp-etl", "message": "[04/25] Cargando archivos Excel a Bronce..."}
+{"timestamp": "2026-05-18 08:12:23,858", "level": "INFO", "service": "acp-etl", "message": "Bronce: 3 archivo(s) encontrado(s)."}
+{"timestamp": "2026-05-18 08:12:23,858", "level": "INFO", "service": "acp-etl", "message": "Cargando Reporte_Tasa_de_Crecimiento.xlsx -> Bronce.Tasa_Crecimiento_Brotes..."}
+{"timestamp": "2026-05-18 08:12:24,332", "level": "INFO", "service": "acp-etl", "message": "[ERROR] Worksheet named 'BD_General' not found"}
+{"timestamp": "2026-05-18 08:12:24,333", "level": "INFO", "service": "acp-etl", "message": "Cargando Evaluacion Poda_20260504_164852.xlsx -> Bronce.Evaluacion_Calidad_Poda..."}
+{"timestamp": "2026-05-18 08:12:24,747", "level": "INFO", "service": "acp-etl", "message": "[ERROR] "}
+{"timestamp": "2026-05-18 08:12:24,748", "level": "INFO", "service": "acp-etl", "message": "Cargando Reporte_Evaluacion_Maduracion.xlsx -> Bronce.Maduracion..."}
+{"timestamp": "2026-05-18 08:12:25,080", "level": "INFO", "service": "acp-etl", "message": "[ERROR] "}
+{"timestamp": "2026-05-18 08:12:25,080", "level": "INFO", "service": "acp-etl", "message": "[05/25] Cargando Dim_Personal (SCD1)..."}
+{"timestamp": "2026-05-18 08:12:25,099", "level": "INFO", "service": "acp-etl", "message": "[06/25] Sincronizando Dim_Geografia (arquitectura catálogos)..."}
+{"timestamp": "2026-05-18 08:12:25,102", "level": "INFO", "service": "acp-etl", "message": "INFO: Silver.Dim_Geografia_Obsoleta ausente. Se asume migración completa y catálogos estables."}
+{"timestamp": "2026-05-18 08:12:25,103", "level": "INFO", "service": "acp-etl", "message": "[07/25] Sincronizando catalogo/bridge de cama via SP..."}
+{"timestamp": "2026-05-18 08:12:25,103", "level": "INFO", "service": "acp-etl", "message": "SP_Cama omitido: no ingresaron tablas Bronce con cama en esta corrida."}
+{"timestamp": "2026-05-18 08:12:25,103", "level": "INFO", "service": "acp-etl", "message": "[08/25] Validando calidad de cama via SP..."}
+{"timestamp": "2026-05-18 08:12:25,120", "level": "INFO", "service": "acp-etl", "message": "[09/25] Cargando Fact_Ciclo_Poda..."}
+{"timestamp": "2026-05-18 08:12:25,186", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 08:12:25,230", "level": "INFO", "service": "acp-etl", "message": "[10/25] Sincronizando bridge de campanas via SP..."}
+{"timestamp": "2026-05-18 08:12:25,277", "level": "INFO", "service": "acp-etl", "message": "[10/25] Cargando Fact_Cosecha_SAP..."}
+{"timestamp": "2026-05-18 08:12:25,290", "level": "INFO", "service": "acp-etl", "message": "-> 0 leidos | 0 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 08:12:25,292", "level": "INFO", "service": "acp-etl", "message": "[11/25] Cargando Fact_Conteo_Fenologico..."}
+{"timestamp": "2026-05-18 08:12:25,366", "level": "INFO", "service": "acp-etl", "message": "  Homologando columna 'Variedad_Raw' via MDM..."}
+{"timestamp": "2026-05-18 08:12:29,505", "level": "INFO", "service": "acp-etl", "message": "  Registrando 7 resoluciones únicas en el diccionario..."}

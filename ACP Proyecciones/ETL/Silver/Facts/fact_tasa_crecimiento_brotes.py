@@ -11,6 +11,12 @@ from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
 from mdm.homologador import homologar_columna
+from mdm.bridges_tasa_crecimiento import (
+    garantizar_bridge_geografia_cama,
+    resolver_id_cama,
+    resolver_id_condicion,
+    sincronizar_bridge_modulo_campana_condicion,
+)
 from utils.contexto_transaccional import ContextoTransaccionalETL
 from utils.fechas import obtener_id_tiempo, procesar_fecha
 from silver.facts._base_processor import BaseFactProcessor
@@ -27,17 +33,19 @@ TABLA_DESTINO = 'Silver.Fact_Tasa_Crecimiento_Brotes'
 
 SQL_INSERT_FACT = text("""
     INSERT INTO Silver.Fact_Tasa_Crecimiento_Brotes (
-        ID_Geografia, ID_Tiempo, ID_Variedad, ID_Personal,
-        Tipo_Evaluacion, Condicion, Estado_Vegetativo,
+        ID_Geografia, ID_Cama_Catalogo, ID_Tiempo, ID_Variedad, ID_Personal,
+        ID_Condicion,
+        Tipo_Evaluacion, Estado_Vegetativo,
         Tipo_Tallo, Codigo_Ensayo, Codigo_Origen,
-        Campana, Observacion,
+        Observacion,
         Fecha_Poda_Aux, Dias_Desde_Poda, Medida_Crecimiento,
         Fecha_Evento, Fecha_Sistema, Estado_DQ
     ) VALUES (
-        :id_geo, :id_tiempo, :id_variedad, :id_personal,
-        :tipo_evaluacion, :condicion, :estado_vegetativo,
+        :id_geo, :id_cama, :id_tiempo, :id_variedad, :id_personal,
+        :id_condicion,
+        :tipo_evaluacion, :estado_vegetativo,
         :tipo_tallo, :codigo_ensayo, :codigo_origen,
-        :campana, :observacion,
+        :observacion,
         :fecha_poda_aux, :dias_desde_poda, :medida_crecimiento,
         :fecha_evento, SYSDATETIME(), 'OK'
     )
@@ -83,9 +91,11 @@ def _validar_layout_migrado(engine: Engine) -> str:
         },
         columnas_silver_requeridas={
             'ID_Geografia',
+            'ID_Cama_Catalogo',
             'ID_Tiempo',
             'ID_Variedad',
             'ID_Personal',
+            'ID_Condicion',
             'Codigo_Ensayo',
             'Codigo_Origen',
             'Fecha_Poda_Aux',
@@ -130,14 +140,17 @@ def _leer_bronce(engine: Engine, columna_id: str) -> pd.DataFrame:
 class ProcesadorTasaCrecimientoBrotes(BaseFactProcessor):
     def __init__(self, engine: Engine, columna_id: str):
         super().__init__(engine, TABLA_ORIGEN, TABLA_DESTINO, columna_id=columna_id)
-        # Grain: Geo + Tiempo + Variedad + Tipo_Evaluacion + Tipo_Tallo + Ensayo + Medida + Codigo_Origen
+        # Grain: Geo + Cama + Tiempo + Variedad + Tipo_Evaluacion + Tipo_Tallo + Ensayo + Medida + Codigo_Origen
         self.columnas_clave_unica = [
-            'ID_Geografia', 'ID_Tiempo', 'ID_Variedad',
+            'ID_Geografia', 'ID_Cama_Catalogo', 'ID_Tiempo', 'ID_Variedad',
             'Tipo_Evaluacion', 'Tipo_Tallo', 'Codigo_Ensayo', 'Codigo_Origen', 'Medida_Crecimiento'
         ]
         self._columna_id = columna_id
         # Cache para fecha_poda_aux (dominio historico, sin rechazo)
         self._cache_fecha_poda: dict[str, tuple] = {}
+        # Pares (id_geografia, id_cama, fecha_evento) que requieren upsert al Bridge_Geografia_Cama.
+        # Se procesan post-insercion para no impactar el path caliente.
+        self._pares_geo_cama: dict[tuple[int, int], object] = {}
 
     def _resolver_fecha_poda(self, valor) -> tuple:
         clave = str(valor).strip() if valor is not None else ''
@@ -198,21 +211,34 @@ class ProcesadorTasaCrecimientoBrotes(BaseFactProcessor):
 
             id_personal = self._validar_y_resolver_personal(fila.get('DNI_Raw'))
 
+            id_cama = resolver_id_cama(fila.get('Cama_Raw'), self.engine)
+            id_condicion = resolver_id_condicion(fila.get('Condicion_Raw'), self.engine)
+
+            id_geo = resultado_geo['id_geografia']
+            if id_geo is not None and id_cama is not None:
+                # Memoriza el par geo+cama (con la fecha mas antigua vista) para
+                # registrarlo en Bridge_Geografia_Cama tras la insercion masiva.
+                clave_par = (int(id_geo), int(id_cama))
+                fecha_actual = fecha_evento.date() if hasattr(fecha_evento, 'date') else fecha_evento
+                fecha_existente = self._pares_geo_cama.get(clave_par)
+                if fecha_existente is None or fecha_actual < fecha_existente:
+                    self._pares_geo_cama[clave_par] = fecha_actual
+
             if id_origen is not None:
                 self.ids_procesados.append(id_origen)
             payload.append({
-                'ID_Geografia':       resultado_geo['id_geografia'],
+                'ID_Geografia':       id_geo,
+                'ID_Cama_Catalogo':   id_cama,
                 '_id_modulo_catalogo': resultado_geo.get('id_modulo_catalogo'),
                 'ID_Tiempo':          obtener_id_tiempo(fecha_evento),
                 'ID_Variedad':        id_var,
                 'ID_Personal':        id_personal,
+                'ID_Condicion':       id_condicion,
                 'Tipo_Evaluacion':    _texto_nulo(fila.get('Tipo_Evaluacion_Raw')),
-                'Condicion':          _texto_nulo(fila.get('Condicion_Raw')),
                 'Estado_Vegetativo':  _texto_nulo(fila.get('Estado_Vegetativo_Raw')),
                 'Tipo_Tallo':         _texto_nulo(fila.get('Tipo_Tallo_Raw')),
                 'Codigo_Ensayo':      codigo_ensayo,
                 'Codigo_Origen':      _texto_nulo(fila.get('Codigo_Origen_Raw')),
-                'Campana':            _texto_nulo(fila.get('Campana_Raw')),
                 'Observacion':        _texto_nulo(fila.get('Observacion_Raw')),
                 'Fecha_Poda_Aux':     None if fecha_poda_aux is None else fecha_poda_aux.date(),
                 'Dias_Desde_Poda':    dias_desde_poda,
@@ -222,6 +248,52 @@ class ProcesadorTasaCrecimientoBrotes(BaseFactProcessor):
                 'id_origen_rastreo':  id_origen,
             })
         return payload
+
+    def _sincronizar_bridges(self, contexto: ContextoTransaccionalETL) -> None:
+        """
+        Post-insercion:
+        1. Garantiza filas en Bridge_Geografia_Cama para cada (geo, cama) usado.
+        2. Rellena ID_Condicion en Bridge_Modulo_Campana cuando aun es NULL,
+           tomando la condicion mayoritaria observada en el fact por
+           (modulo, variedad, campana).
+        """
+        if not self._pares_geo_cama:
+            return
+
+        conexion = contexto._conexion_activa()
+
+        for (id_geo, id_cama), fecha_inicio in self._pares_geo_cama.items():
+            garantizar_bridge_geografia_cama(conexion, id_geo, id_cama, fecha_inicio)
+
+        # Backfill puntual del bridge modulo-campana: rellena solo filas con
+        # ID_Condicion NULL usando la condicion mayoritaria del fact. Idempotente.
+        conexion.execute(text("""
+            WITH condicion_mayoritaria AS (
+                SELECT
+                    g.ID_Modulo_Catalogo,
+                    f.ID_Variedad,
+                    f.ID_Campana,
+                    f.ID_Condicion,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY g.ID_Modulo_Catalogo, f.ID_Variedad, f.ID_Campana
+                        ORDER BY COUNT(*) DESC
+                    ) AS rk
+                FROM Silver.Fact_Tasa_Crecimiento_Brotes f
+                JOIN Silver.Dim_Geografia g ON g.ID_Geografia = f.ID_Geografia
+                WHERE f.ID_Condicion IS NOT NULL
+                  AND f.ID_Campana   IS NOT NULL
+                GROUP BY g.ID_Modulo_Catalogo, f.ID_Variedad, f.ID_Campana, f.ID_Condicion
+            )
+            UPDATE bmc
+            SET bmc.ID_Condicion = cm.ID_Condicion
+            FROM Silver.Bridge_Modulo_Campana bmc
+            JOIN condicion_mayoritaria cm
+              ON cm.rk = 1
+             AND cm.ID_Modulo_Catalogo = bmc.ID_Modulo_Catalogo
+             AND cm.ID_Variedad        = bmc.ID_Variedad
+             AND cm.ID_Campana         = bmc.ID_Campana
+            WHERE bmc.ID_Condicion IS NULL
+        """))
 
 
 def cargar_fact_tasa_crecimiento_brotes(engine: Engine) -> dict:
@@ -254,5 +326,6 @@ def cargar_fact_tasa_crecimiento_brotes(engine: Engine) -> dict:
 
         payload = proc._construir_payload(df)
         proc._ejecutar_insercion_masiva_segura(contexto, payload, '#Temp_TasaCrecimientoBrotes')
+        proc._sincronizar_bridges(contexto)
 
         return proc.finalizar_proceso(contexto)

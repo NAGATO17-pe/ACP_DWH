@@ -117,10 +117,10 @@ CONFIG_FACTS = OrderedDict({
         "releer_bronce_por_estado": True,
         "estrategia_rerun": "rebuild_fact",
     },
-    "Fact_Evaluacion_Vegetativa": {
+    "Fact_Floracion": {
         "orden": 18,
-        "tabla_destino": "Silver.Fact_Evaluacion_Vegetativa",
-        "fuentes_bronce": ("Bronce.Evaluacion_Vegetativa",),
+        "tabla_destino": "Silver.Fact_Floracion",
+        "fuentes_bronce": ("Bronce.Floracion",),
         "dependencias": (
             DEPENDENCIA_DIM_PERSONAL,
             DEPENDENCIA_DIM_GEOGRAFIA,
@@ -157,18 +157,6 @@ CONFIG_FACTS = OrderedDict({
         "marts": (),
         "releer_bronce_por_estado": True,
         "estrategia_rerun": "rebuild_fact",
-    },
-    "Fact_Proyecciones_SixWeek": {
-        "orden": 22,
-        "tabla_destino": "Silver.Fact_Proyecciones",
-        # No consume Bronce directamente; lee desde Silver (Fact_Maduracion,
-        # Fact_Peladas, Fact_Cosecha_SAP) que ya deben estar procesadas.
-        "fuentes_bronce": (),
-        "dependencias": (DEPENDENCIA_DIM_GEOGRAFIA,),
-        "marts": ("Gold.Mart_Proyecciones",),
-        # Full-read: siempre recalcula porque los inputs Silver cambian cada corrida.
-        "releer_bronce_por_estado": False,
-        "estrategia_rerun": "rebuild_total_fact",
     },
 })
 

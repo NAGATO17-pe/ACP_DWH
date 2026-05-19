@@ -227,18 +227,22 @@ class BaseFactProcessor:
         turno: Any = None,
         valvula: Any = None,
         cama: Any = None,
+        sector: Any = None,
     ) -> dict | None:
         """
         Llama es_test_block() + normalizar_modulo() + resolver_geografia() con cache.
         Registra rechazo automaticamente si la geografia no se resuelve.
         Retorna el dict resultado_geo (con 'id_geografia') o None si falla.
+
+        sector es opcional y mantenido como keyword-only para compatibilidad
+        con facts que no lo traen (la mayoria). Solo Conteo_Fenologico lo usa.
         """
         from utils.texto import es_test_block, normalizar_modulo
         from mdm.lookup import resolver_geografia
         from silver.facts._helpers_fact_comunes import motivo_cuarentena_geografia
 
         modulo = normalizar_modulo(modulo_raw)
-        cache_key = (str(fundo), str(modulo), str(turno), str(valvula), str(cama))
+        cache_key = (str(fundo), str(sector), str(modulo), str(turno), str(valvula), str(cama))
 
         if cache_key in self._cache_geografia:
             resultado = self._cache_geografia[cache_key]
@@ -246,21 +250,21 @@ class BaseFactProcessor:
                 self.registrar_rechazo(
                     id_origen,
                     columna='Modulo_Raw',
-                    valor=f"Fundo={fundo} | Modulo={modulo_raw} | Turno={turno} | Valvula={valvula}",
+                    valor=f"Fundo={fundo} | Sector={sector} | Modulo={modulo_raw} | Turno={turno} | Valvula={valvula}",
                     motivo=motivo_cuarentena_geografia(resultado or {}),
                     tipo_regla='MDM',
                 )
                 return None
             return resultado
 
-        resultado = resolver_geografia(fundo, None, modulo, self.engine, turno=turno, valvula=valvula, cama=cama)
+        resultado = resolver_geografia(fundo, sector, modulo, self.engine, turno=turno, valvula=valvula, cama=cama)
         self._cache_geografia[cache_key] = resultado
 
         if not resultado or not resultado.get('id_geografia'):
             self.registrar_rechazo(
                 id_origen,
                 columna='Modulo_Raw',
-                valor=f"Fundo={fundo} | Modulo={modulo_raw} | Turno={turno} | Valvula={valvula}",
+                valor=f"Fundo={fundo} | Sector={sector} | Modulo={modulo_raw} | Turno={turno} | Valvula={valvula}",
                 motivo=motivo_cuarentena_geografia(resultado or {}),
                 tipo_regla='MDM',
             )
@@ -343,7 +347,7 @@ class BaseFactProcessor:
             return "FLOAT"
         if isinstance(valor, (datetime.date, datetime.datetime)):
             return "DATETIME2"
-        return "NVARCHAR(MAX)"
+        return "NVARCHAR(4000)"
 
     def _inferir_tipo_columna(self, lista_dicts: list[dict], col: str) -> str:
         """
@@ -356,7 +360,7 @@ class BaseFactProcessor:
             val = row.get(col)
             if val is not None:
                 return self._tipo_sql_para_valor(val)
-        return "NVARCHAR(MAX)"
+        return "NVARCHAR(4000)"
 
     def _crear_y_cargar_temp(
         self,
@@ -661,8 +665,11 @@ class BaseFactProcessor:
         _log.info(f"-> {total_leidos} leidos | {self.resumen.get('insertados', 0)} insertados | {unique_ids_rechazados} rechazados reales | {int(porcentaje_rechazo)}% rechazo real")
 
         # ── Circuit Breaker de calidad ─────────────────────────────────────────
+        # Muestra minima: con < 50 filas leidas, 1 rechazo ya dispara umbrales
+        # estadisticamente irrelevantes (ej. 1/18 = 5.6% > 5% CRITICO). Ignorar.
+        MIN_MUESTRA_BREAKER = 50
         nivel_bloqueo = None
-        if total_leidos > 0:
+        if total_leidos >= MIN_MUESTRA_BREAKER:
             if porcentaje_rechazo >= self.LIMITE_CRITICO:
                 nivel_bloqueo = "CRITICO"
                 _log.error(

@@ -79,8 +79,8 @@ def enviar_a_cuarentena(
             CREATE TABLE {nombre_temp} (
                 tabla_origen NVARCHAR(255),
                 campo_origen NVARCHAR(255),
-                valor_recibido NVARCHAR(MAX),
-                motivo NVARCHAR(MAX),
+                valor_recibido NVARCHAR(500),
+                motivo NVARCHAR(200),
                 tipo_regla NVARCHAR(100),
                 score FLOAT,
                 id_registro_origen BIGINT,
@@ -95,13 +95,19 @@ def enviar_a_cuarentena(
             for f in payload
         ]
         
-        # Obtenemos la conexión raw para fast_executemany
-        raw_conn = conexion.connection
+        # fast_executemany = False para evitar MemoryError con columnas NVARCHAR
+        # (pyodbc pre-aloca ~2GB por NVARCHAR(MAX) por fila cuando fast_executemany=True)
+        raw_conn = conexion.connection.dbapi_connection
         cursor = raw_conn.cursor()
-        cursor.fast_executemany = True
+        cursor.fast_executemany = False
         sql_temp = f"INSERT INTO {nombre_temp} ({','.join(cols)}) VALUES ({','.join(['?' for _ in cols])})"
-        cursor.executemany(sql_temp, datos)
-        cursor.close()
+        try:
+            TAM_LOTE = 5_000
+            for inicio in range(0, len(datos), TAM_LOTE):
+                lote = datos[inicio : inicio + TAM_LOTE]
+                cursor.executemany(sql_temp, lote)
+        finally:
+            cursor.close()
 
         # 3. Inserción final en MDM.Cuarentena con filtrado de duplicados PENDIENTES
         sql_final = text(f"""

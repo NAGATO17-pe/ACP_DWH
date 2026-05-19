@@ -1,0 +1,120 @@
+{"timestamp": "2026-05-18 10:51:19,003", "level": "INFO", "service": "acp-etl", "message": "DWH Geographic Phenology - ETL Pipeline"}
+{"timestamp": "2026-05-18 10:51:19,003", "level": "INFO", "service": "acp-etl", "message": "Inicio: 2026-05-18 10:51:19"}
+{"timestamp": "2026-05-18 10:51:19,053", "level": "INFO", "service": "acp-etl", "message": "[01/6] Verificando conexion SQL Server..."}
+{"timestamp": "2026-05-18 10:51:27,447", "level": "INFO", "service": "acp-etl", "message": "[02/6] Limpiando cache..."}
+{"timestamp": "2026-05-18 10:51:27,449", "level": "INFO", "service": "acp-etl", "message": "[03/6] Ejecutando dependencia Dim_Geografia..."}
+{"timestamp": "2026-05-18 10:51:27,452", "level": "INFO", "service": "acp-etl", "message": "INFO: Silver.Dim_Geografia_Obsoleta ausente. Se asume migración completa y catálogos estables."}
+{"timestamp": "2026-05-18 10:51:27,453", "level": "INFO", "service": "acp-etl", "message": "[04/6] Reprocesando Fact_Ciclo_Poda..."}
+{"timestamp": "2026-05-18 10:51:27,553", "level": "INFO", "service": "acp-etl", "message": "  Homologando columna 'Variedad_Raw' via MDM..."}
+{"timestamp": "2026-05-18 10:51:55,235", "level": "INFO", "service": "acp-etl", "message": "  Registrando 5 resoluciones únicas en el diccionario..."}
+{"timestamp": "2026-05-18 10:51:55,243", "level": "INFO", "service": "acp-etl", "message": "Deduplicación temprana: 610 IDs marcados para descarte (redundantes)."}
+{"timestamp": "2026-05-18 10:51:55,558", "level": "INFO", "service": "acp-etl", "message": "-> 620 leidos | 10 insertados | 0 rechazados reales | 0% rechazo real"}
+{"timestamp": "2026-05-18 10:51:55,559", "level": "INFO", "service": "acp-etl", "message": "-> 620 leidos | 10 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:51:55,561", "level": "INFO", "service": "acp-etl", "message": "[05/6] Refrescando Marts Gold impactados..."}
+{"timestamp": "2026-05-18 10:51:55,564", "level": "INFO", "service": "acp-etl", "message": "ERROR en Gold: (pyodbc.ProgrammingError) ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Tallos_Planta_Prom'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Longitud_Tallo_Prom'. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Diametro_Tallo_Prom'. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Ramilla_Planta_Prom'. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Tocones_Planta_Prom'. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Cortes_Defectuosos_Prom'. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Altura_Poda_Prom'. (207)")
+[SQL: 
+        INSERT INTO Gold.Mart_Ciclo_Poda (
+            ID_Tiempo, ID_Geografia, ID_Variedad, ID_Campana,
+            Fundo, Modulo, Variedad, Semana_ISO,
+            Tipo_Evaluacion, Tallos_Planta_Prom, Longitud_Tallo_Prom,
+            Diametro_Tallo_Prom, Ramilla_Planta_Prom, Tocones_Planta_Prom,
+            Cortes_Defectuosos_Prom, Altura_Poda_Prom,
+            Fecha_Actualizacion
+        )
+        SELECT
+            p.ID_Tiempo, p.ID_Geografia, p.ID_Variedad, ISNULL(p.ID_Campana, 0),
+            fc.Fundo, mc.Modulo, v.Nombre_Variedad, t.Semana_ISO,
+            p.Tipo_Evaluacion,
+            AVG(p.Tallos_Planta), AVG(p.Longitud_Tallo),
+            AVG(p.Diametro_Tallo), AVG(p.Ramilla_Planta),
+            AVG(p.Tocones_Planta), AVG(p.Cortes_Defectuosos),
+            AVG(p.Altura_Poda),
+            SYSDATETIME()
+        FROM Silver.Fact_Ciclo_Poda p
+        JOIN Silver.Dim_Tiempo t ON t.ID_Tiempo = p.ID_Tiempo
+        JOIN Silver.Dim_Geografia g ON g.ID_Geografia = p.ID_Geografia
+        LEFT JOIN Silver.Dim_Fundo_Catalogo fc ON fc.ID_Fundo_Catalogo = g.ID_Fundo_Catalogo
+        LEFT JOIN Silver.Dim_Modulo_Catalogo mc ON mc.ID_Modulo_Catalogo = g.ID_Modulo_Catalogo
+        JOIN Silver.Dim_Variedad v ON v.ID_Variedad = p.ID_Variedad
+        GROUP BY
+            p.ID_Tiempo, p.ID_Geografia, p.ID_Variedad, ISNULL(p.ID_Campana, 0),
+            fc.Fundo, mc.Modulo, v.Nombre_Variedad, t.Semana_ISO, p.Tipo_Evaluacion
+    ]
+(Background on this error at: https://sqlalche.me/e/20/f405)"}
+{"timestamp": "2026-05-18 10:51:55,564", "level": "INFO", "service": "acp-etl", "message": "[06/6] Finalizando..."}
+{"timestamp": "2026-05-18 10:51:55,564", "level": "INFO", "service": "acp-etl", "message": "RESUMEN FINAL"}
+{"timestamp": "2026-05-18 10:51:55,564", "level": "INFO", "service": "acp-etl", "message": "Modo ejecucion                                REPROCESO_FACTS"}
+{"timestamp": "2026-05-18 10:51:55,564", "level": "INFO", "service": "acp-etl", "message": "Facts solicitadas                             Fact_Ciclo_Poda"}
+{"timestamp": "2026-05-18 10:51:55,564", "level": "INFO", "service": "acp-etl", "message": "Servidor SQL                                  LCP-PAG-CHERNAN"}
+{"timestamp": "2026-05-18 10:51:55,565", "level": "INFO", "service": "acp-etl", "message": "Base SQL                                      ACP_DataWarehose_Proyecciones"}
+{"timestamp": "2026-05-18 10:51:55,565", "level": "INFO", "service": "acp-etl", "message": "Dim_Geografia insertados                      0"}
+{"timestamp": "2026-05-18 10:51:55,565", "level": "INFO", "service": "acp-etl", "message": "Dim_Geografia cerrados                        0"}
+{"timestamp": "2026-05-18 10:51:55,565", "level": "INFO", "service": "acp-etl", "message": "Dim_Geografia sin_cambios                     0"}
+{"timestamp": "2026-05-18 10:51:55,565", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda bronce reabiertas             620"}
+{"timestamp": "2026-05-18 10:51:55,565", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda destino limpiado              10"}
+{"timestamp": "2026-05-18 10:51:55,565", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda                               10"}
+{"timestamp": "2026-05-18 10:51:55,565", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda leidos                        620"}
+{"timestamp": "2026-05-18 10:51:55,565", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda rechazados                    0"}
+{"timestamp": "2026-05-18 10:51:55,565", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda rechazo pct                   0.0%"}
+{"timestamp": "2026-05-18 10:51:55,565", "level": "INFO", "service": "acp-etl", "message": "Gold ERROR                                    (pyodbc.ProgrammingError) ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Tallos_Planta_Prom'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Longitud_Tallo_Prom'. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Diametro_Tallo_Prom'. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Ramilla_Planta_Prom'. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Tocones_Planta_Prom'. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Cortes_Defectuosos_Prom'. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Altura_Poda_Prom'. (207)")
+[SQL: 
+        INSERT INTO Gold.Mart_Ciclo_Poda (
+            ID_Tiempo, ID_Geografia, ID_Variedad, ID_Campana,
+            Fundo, Modulo, Variedad, Semana_ISO,
+            Tipo_Evaluacion, Tallos_Planta_Prom, Longitud_Tallo_Prom,
+            Diametro_Tallo_Prom, Ramilla_Planta_Prom, Tocones_Planta_Prom,
+            Cortes_Defectuosos_Prom, Altura_Poda_Prom,
+            Fecha_Actualizacion
+        )
+        SELECT
+            p.ID_Tiempo, p.ID_Geografia, p.ID_Variedad, ISNULL(p.ID_Campana, 0),
+            fc.Fundo, mc.Modulo, v.Nombre_Variedad, t.Semana_ISO,
+            p.Tipo_Evaluacion,
+            AVG(p.Tallos_Planta), AVG(p.Longitud_Tallo),
+            AVG(p.Diametro_Tallo), AVG(p.Ramilla_Planta),
+            AVG(p.Tocones_Planta), AVG(p.Cortes_Defectuosos),
+            AVG(p.Altura_Poda),
+            SYSDATETIME()
+        FROM Silver.Fact_Ciclo_Poda p
+        JOIN Silver.Dim_Tiempo t ON t.ID_Tiempo = p.ID_Tiempo
+        JOIN Silver.Dim_Geografia g ON g.ID_Geografia = p.ID_Geografia
+        LEFT JOIN Silver.Dim_Fundo_Catalogo fc ON fc.ID_Fundo_Catalogo = g.ID_Fundo_Catalogo
+        LEFT JOIN Silver.Dim_Modulo_Catalogo mc ON mc.ID_Modulo_Catalogo = g.ID_Modulo_Catalogo
+        JOIN Silver.Dim_Variedad v ON v.ID_Variedad = p.ID_Variedad
+        GROUP BY
+            p.ID_Tiempo, p.ID_Geografia, p.ID_Variedad, ISNULL(p.ID_Campana, 0),
+            fc.Fundo, mc.Modulo, v.Nombre_Variedad, t.Semana_ISO, p.Tipo_Evaluacion
+    ]
+(Background on this error at: https://sqlalche.me/e/20/f405)"}
+{"timestamp": "2026-05-18 10:51:55,565", "level": "INFO", "service": "acp-etl", "message": "Errores pipeline                              1"}
+{"timestamp": "2026-05-18 10:51:55,565", "level": "INFO", "service": "acp-etl", "message": "Pipeline error 1                              Gold: (pyodbc.ProgrammingError) ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Tallos_Planta_Prom'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Longitud_Tallo_Prom'. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Diametro_Tallo_Prom'. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Ramilla_Planta_Prom'. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Tocones_Planta_Prom'. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Cortes_Defectuosos_Prom'. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'Altura_Poda_Prom'. (207)")
+[SQL: 
+        INSERT INTO Gold.Mart_Ciclo_Poda (
+            ID_Tiempo, ID_Geografia, ID_Variedad, ID_Campana,
+            Fundo, Modulo, Variedad, Semana_ISO,
+            Tipo_Evaluacion, Tallos_Planta_Prom, Longitud_Tallo_Prom,
+            Diametro_Tallo_Prom, Ramilla_Planta_Prom, Tocones_Planta_Prom,
+            Cortes_Defectuosos_Prom, Altura_Poda_Prom,
+            Fecha_Actualizacion
+        )
+        SELECT
+            p.ID_Tiempo, p.ID_Geografia, p.ID_Variedad, ISNULL(p.ID_Campana, 0),
+            fc.Fundo, mc.Modulo, v.Nombre_Variedad, t.Semana_ISO,
+            p.Tipo_Evaluacion,
+            AVG(p.Tallos_Planta), AVG(p.Longitud_Tallo),
+            AVG(p.Diametro_Tallo), AVG(p.Ramilla_Planta),
+            AVG(p.Tocones_Planta), AVG(p.Cortes_Defectuosos),
+            AVG(p.Altura_Poda),
+            SYSDATETIME()
+        FROM Silver.Fact_Ciclo_Poda p
+        JOIN Silver.Dim_Tiempo t ON t.ID_Tiempo = p.ID_Tiempo
+        JOIN Silver.Dim_Geografia g ON g.ID_Geografia = p.ID_Geografia
+        LEFT JOIN Silver.Dim_Fundo_Catalogo fc ON fc.ID_Fundo_Catalogo = g.ID_Fundo_Catalogo
+        LEFT JOIN Silver.Dim_Modulo_Catalogo mc ON mc.ID_Modulo_Catalogo = g.ID_Modulo_Catalogo
+        JOIN Silver.Dim_Variedad v ON v.ID_Variedad = p.ID_Variedad
+        GROUP BY
+            p.ID_Tiempo, p.ID_Geografia, p.ID_Variedad, ISNULL(p.ID_Campana, 0),
+            fc.Fundo, mc.Modulo, v.Nombre_Variedad, t.Semana_ISO, p.Tipo_Evaluacion
+    ]
+(Background on this error at: https://sqlalche.me/e/20/f405)"}
+{"timestamp": "2026-05-18 10:51:55,565", "level": "INFO", "service": "acp-etl", "message": "Duracion total                                36.56s"}

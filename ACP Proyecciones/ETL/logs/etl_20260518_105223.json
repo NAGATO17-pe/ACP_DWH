@@ -1,0 +1,31 @@
+{"timestamp": "2026-05-18 10:52:23,171", "level": "INFO", "service": "acp-etl", "message": "DWH Geographic Phenology - ETL Pipeline"}
+{"timestamp": "2026-05-18 10:52:23,171", "level": "INFO", "service": "acp-etl", "message": "Inicio: 2026-05-18 10:52:23"}
+{"timestamp": "2026-05-18 10:52:23,201", "level": "INFO", "service": "acp-etl", "message": "[01/6] Verificando conexion SQL Server..."}
+{"timestamp": "2026-05-18 10:52:31,395", "level": "INFO", "service": "acp-etl", "message": "[02/6] Limpiando cache..."}
+{"timestamp": "2026-05-18 10:52:31,396", "level": "INFO", "service": "acp-etl", "message": "[03/6] Ejecutando dependencia Dim_Geografia..."}
+{"timestamp": "2026-05-18 10:52:31,397", "level": "INFO", "service": "acp-etl", "message": "INFO: Silver.Dim_Geografia_Obsoleta ausente. Se asume migración completa y catálogos estables."}
+{"timestamp": "2026-05-18 10:52:31,397", "level": "INFO", "service": "acp-etl", "message": "[04/6] Reprocesando Fact_Ciclo_Poda..."}
+{"timestamp": "2026-05-18 10:52:31,456", "level": "INFO", "service": "acp-etl", "message": "  Homologando columna 'Variedad_Raw' via MDM..."}
+{"timestamp": "2026-05-18 10:52:39,592", "level": "INFO", "service": "acp-etl", "message": "  Registrando 5 resoluciones únicas en el diccionario..."}
+{"timestamp": "2026-05-18 10:52:39,600", "level": "INFO", "service": "acp-etl", "message": "Deduplicación temprana: 610 IDs marcados para descarte (redundantes)."}
+{"timestamp": "2026-05-18 10:52:39,807", "level": "INFO", "service": "acp-etl", "message": "-> 620 leidos | 10 insertados | 0 rechazados reales | 0% rechazo real"}
+{"timestamp": "2026-05-18 10:52:39,808", "level": "INFO", "service": "acp-etl", "message": "-> 620 leidos | 10 insertados | 0 rechazados | 0 cuarentena | 0.0% rechazo"}
+{"timestamp": "2026-05-18 10:52:39,810", "level": "INFO", "service": "acp-etl", "message": "[05/6] Refrescando Marts Gold impactados..."}
+{"timestamp": "2026-05-18 10:52:39,826", "level": "INFO", "service": "acp-etl", "message": "[OK] Gold.Mart_Ciclo_Poda: 10 filas"}
+{"timestamp": "2026-05-18 10:52:39,826", "level": "INFO", "service": "acp-etl", "message": "[06/6] Finalizando..."}
+{"timestamp": "2026-05-18 10:52:39,827", "level": "INFO", "service": "acp-etl", "message": "RESUMEN FINAL"}
+{"timestamp": "2026-05-18 10:52:39,827", "level": "INFO", "service": "acp-etl", "message": "Modo ejecucion                                REPROCESO_FACTS"}
+{"timestamp": "2026-05-18 10:52:39,827", "level": "INFO", "service": "acp-etl", "message": "Facts solicitadas                             Fact_Ciclo_Poda"}
+{"timestamp": "2026-05-18 10:52:39,827", "level": "INFO", "service": "acp-etl", "message": "Servidor SQL                                  LCP-PAG-CHERNAN"}
+{"timestamp": "2026-05-18 10:52:39,827", "level": "INFO", "service": "acp-etl", "message": "Base SQL                                      ACP_DataWarehose_Proyecciones"}
+{"timestamp": "2026-05-18 10:52:39,827", "level": "INFO", "service": "acp-etl", "message": "Dim_Geografia insertados                      0"}
+{"timestamp": "2026-05-18 10:52:39,827", "level": "INFO", "service": "acp-etl", "message": "Dim_Geografia cerrados                        0"}
+{"timestamp": "2026-05-18 10:52:39,827", "level": "INFO", "service": "acp-etl", "message": "Dim_Geografia sin_cambios                     0"}
+{"timestamp": "2026-05-18 10:52:39,827", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda bronce reabiertas             620"}
+{"timestamp": "2026-05-18 10:52:39,827", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda destino limpiado              10"}
+{"timestamp": "2026-05-18 10:52:39,827", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda                               10"}
+{"timestamp": "2026-05-18 10:52:39,827", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda leidos                        620"}
+{"timestamp": "2026-05-18 10:52:39,827", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda rechazados                    0"}
+{"timestamp": "2026-05-18 10:52:39,827", "level": "INFO", "service": "acp-etl", "message": "Fact_Ciclo_Poda rechazo pct                   0.0%"}
+{"timestamp": "2026-05-18 10:52:39,828", "level": "INFO", "service": "acp-etl", "message": "Gold.Mart_Ciclo_Poda                          10"}
+{"timestamp": "2026-05-18 10:52:39,828", "level": "INFO", "service": "acp-etl", "message": "Duracion total                                16.66s"}

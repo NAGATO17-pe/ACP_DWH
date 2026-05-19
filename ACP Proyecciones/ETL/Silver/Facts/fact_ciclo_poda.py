@@ -90,6 +90,21 @@ class ProcesadorCicloPoda(BaseFactProcessor):
 
             self.ids_procesados.append(id_origen)
             payload.append({
+                'ID_Geografia':              resultado_geo['id_geografia'],
+                'ID_Tiempo':                 obtener_id_tiempo(fecha),
+                'ID_Variedad':               id_var,
+                'Tipo_Evaluacion':           titulo(fila.get('Tipo_Evaluacion_Raw')) or 'SIN_TIPO',
+                'Tallos_Planta':             _a_decimal(fila.get('TallosPlanta_Raw')),
+                'Longitud_Tallo':            _a_decimal(fila.get('LongitudTallo_Raw')),
+                'Diametro_Tallo':            _a_decimal(fila.get('DiametroTallo_Raw')),
+                'Ramilla_Planta':            _a_decimal(fila.get('RamillaPlanta_Raw')),
+                'Tocones_Planta':            _a_decimal(fila.get('ToconesPlanta_Raw')),
+                'Cortes_Defectuosos':        _a_decimal(fila.get('CortesDefectuosos_Raw')),
+                'Altura_Poda':               _a_decimal(fila.get('AlturaPoda_Raw')),
+                'Fecha_Evento':              fecha,
+                'Fecha_Sistema':             fila.get('Fecha_Sistema'),
+                'Estado_DQ':                 'OK',
+                'id_origen_rastreo':         id_origen,
                 'ID_Geografia':       resultado_geo['id_geografia'],
                 'ID_Tiempo':          obtener_id_tiempo(fecha),
                 'ID_Variedad':        id_var,

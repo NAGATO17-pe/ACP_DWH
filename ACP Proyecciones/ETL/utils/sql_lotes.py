@@ -24,11 +24,18 @@ def _normalizar_sentencia(sentencia: str | TextClause) -> TextClause:
 
 # ── Helper compartido para tablas temporales ───────────────────────────────────
 
+# Tamaño de lote para inserciones en tablas temporales.
+# 5 000 filas por lote evita el MemoryError de pyodbc/fast_executemany
+# cuando el dataset es grande (> 20 k filas), manteniendo buen throughput.
+TAM_LOTE_TEMP = 5_000
+
+
 def crear_e_insertar_temp(
     conexion: Connection,
     nombre_temp: str,
     columnas_con_tipos: list[tuple[str, str]],
     datos: list[tuple],
+    tam_lote: int = TAM_LOTE_TEMP,
 ) -> None:
     """
     Crea una #Temp table y la carga con fast_executemany en la misma sesión.
@@ -37,12 +44,17 @@ def crear_e_insertar_temp(
     + _insertar_en_temp y marcar_estado_carga_por_ids. Cualquier cambio en el
     patrón DROP/CREATE/INSERT afecta a ambos consumidores desde un único lugar.
 
+    Los datos se insertan en lotes de ``tam_lote`` filas para evitar
+    ``MemoryError`` en ``pyodbc.cursor.executemany()`` cuando el dataset
+    es grande (el driver pre-aloca buffers para todas las filas a la vez).
+
     Parámetros
     ----------
     conexion          : conexión activa dentro de la transacción del pipeline.
     nombre_temp       : nombre de la tabla temporal (ej. '#Temp_Batch_CosechaSAP').
     columnas_con_tipos: lista de (nombre_col, tipo_sql) para el DDL de la temp.
     datos             : filas como lista de tuplas, en el mismo orden que columnas_con_tipos.
+    tam_lote          : cantidad de filas por INSERT batch (default 5 000).
     """
     cols_ddl      = ', '.join(f'[{col}] {tipo}' for col, tipo in columnas_con_tipos)
     cols_quoted   = ', '.join(f'[{col}]' for col, _ in columnas_con_tipos)
@@ -55,9 +67,29 @@ def crear_e_insertar_temp(
 
     if datos:
         sql_insert = f"INSERT INTO {nombre_temp} ({cols_quoted}) VALUES ({placeholders})"
-        # exec_driver_sql envía SQL nativo al driver pyodbc respetando
-        # fast_executemany del engine, sin acceder a atributos internos de SQLAlchemy.
-        conexion.exec_driver_sql(sql_insert, datos)
+
+        # ── Workaround para MemoryError con fast_executemany + NVARCHAR(MAX) ──
+        #
+        # Cuando el engine tiene fast_executemany=True (configurado en conexion.py),
+        # pyodbc pre-aloca buffers basados en el tamaño máximo declarado de cada
+        # columna. Para columnas NVARCHAR(MAX) esto significa ~2 GB por columna
+        # por fila en el lote, lo que agota la memoria del proceso rápidamente.
+        #
+        # Solución: obtenemos el cursor raw de pyodbc y desactivamos
+        # fast_executemany solo para la carga de tablas temporales.
+        # Esto es seguro porque:
+        #   1. Las #Temp tables no necesitan throughput extremo.
+        #   2. El flag se restaura al valor original al terminar.
+        #   3. Otros usos del engine siguen con fast_executemany=True.
+        dbapi_conn = conexion.connection.dbapi_connection
+        cursor = dbapi_conn.cursor()
+        cursor.fast_executemany = False  # desactivar para evitar MemoryError
+        try:
+            for inicio in range(0, len(datos), tam_lote):
+                lote = datos[inicio : inicio + tam_lote]
+                cursor.executemany(sql_insert, lote)
+        finally:
+            cursor.close()
 
 
 # ── Funciones públicas ─────────────────────────────────────────────────────────
