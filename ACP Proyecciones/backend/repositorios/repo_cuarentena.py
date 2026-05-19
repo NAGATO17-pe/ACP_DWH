@@ -83,6 +83,22 @@ def listar_pendientes(
         raise ErrorBaseDatos()
 
 
+def contar_por_estado() -> dict[str, int]:
+    """
+    Devuelve el conteo de registros agrupado por Estado.
+    Retorna: {"PENDIENTE": N, "RESUELTO": M, "DESCARTADO": K, ...}
+    """
+    try:
+        with obtener_engine().connect() as con:
+            filas = con.execute(
+                text("SELECT Estado, COUNT(*) AS total FROM MDM.Cuarentena GROUP BY Estado")
+            ).fetchall()
+        return {fila.Estado: fila.total for fila in filas}
+    except SQLAlchemyError:
+        log.exception("Error al contar registros de cuarentena por estado")
+        raise ErrorBaseDatos()
+
+
 def marcar_resuelto(
     tabla_origen: str,
     id_registro: str,

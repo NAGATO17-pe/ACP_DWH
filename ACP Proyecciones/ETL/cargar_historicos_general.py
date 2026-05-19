@@ -179,6 +179,36 @@ def ejecutar_carga_directa(nombre_tarea, ruta_excel, procesador_init_func, tabla
         if cuar:
             print(f"    Top motivos de rechazo:")
             print(_resumen_rechazos(cuar))
+        # Validar FKs en el payload (causa #1/#3 del plan: FKs NULL => colapso por clave única)
+        fks_a_chequear = ('ID_Geografia', 'ID_Variedad', 'ID_Campana', 'ID_Modulo')
+        n_total = len(payload)
+        nulos_por_fk = {fk: sum(1 for r in payload if r.get(fk) in (None, 0, '0')) for fk in fks_a_chequear if any(fk in r for r in payload[:1])}
+        for fk, n_nulos in nulos_por_fk.items():
+            if n_nulos:
+                print(f"    AVISO FK NULL: {n_nulos}/{n_total} filas con {fk} en NULL/0 — pueden colapsarse como duplicados.")
+
+        print(f"    Insertando {n_total} registros en {proc.tabla_destino} (clave_unica={proc.columnas_clave_unica})...")
+        proc._ejecutar_insercion_masiva_segura(contexto, payload, f'#Temp_Hist_{nombre_tarea}')
+
+        # Finalizar: marca estados, envía cuarentena y evalúa circuit breaker
+        try:
+            proc.finalizar_proceso(contexto)
+        except Exception as e:
+            print(f"    AVISO finalizar_proceso lanzó: {type(e).__name__}: {e}")
+
+        ins = proc.resumen.get('insertados', 0)
+        upd = proc.resumen.get('actualizados_por_tiebreaker', 0)
+        cuar = len(proc.resumen.get('cuarentena', []))
+        dedup = proc.resumen.get('resueltos_por_tiebreaker', 0)
+        print(f"    RESUMEN {nombre_tarea}: insertados={ins} actualizados={upd} cuarentena={cuar} dedup_intra={dedup} (de {n_total} payload)")
+
+        if ins == 0 and upd == 0:
+            print(f"    !! 0 filas persistidas. Muestra de 2 filas del payload:")
+            for i, r in enumerate(payload[:2]):
+                claves = {k: r.get(k) for k in list(proc.columnas_clave_unica) + list(fks_a_chequear) if k in r}
+                print(f"       [{i}] {claves}")
+        else:
+            print(f"    EXITO {nombre_tarea}: {ins} insertados / {upd} actualizados.")
 
 if __name__ == "__main__":
     base_path = r'D:\Proyecto2026\ACP_DWH\ACP Proyecciones\ETL\data\Data Historica'

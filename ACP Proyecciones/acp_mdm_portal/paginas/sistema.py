@@ -32,6 +32,15 @@ from utils.componentes import badge_html, estado_vacio_html, banner_aviso
 from utils.formato import header_pagina
 
 # URL del API (misma que usa api_client para SSE y health)
+from utils.api_client import get_api, URL_BACKEND
+from utils.auth import tiene_permiso
+from utils.componentes import badge_html, estado_vacio_html
+from utils.constantes import AUTOREFRESH_OPCIONES, LOCK_ESTADOS as _LOCK_ESTADOS
+from utils.formato import crear_tarjeta_kpi, header_pagina
+
+# ── Constantes ────────────────────────────────────────────────────────────────
+
+_BASE_URL = URL_BACKEND
 
 _SUBSISTEMAS = [
         "key":      "live",
@@ -45,7 +54,7 @@ _SUBSISTEMAS = [
         "endpoint": "/health/ready",
         "label":    "Base de datos",
         "icono":    "🗄️",
-        "desc":     "Conexión activa con SQL Server · ACP_DataWarehose_Proyecciones.",
+        "desc":     "Conexión activa con SQL Server · ACP_DataWarehouse_Proyecciones.",
     },
     {
         "key":      "control",
@@ -358,7 +367,7 @@ def _render_autorefresh() -> None:
         )
         intervalo = st.select_slider(
             "Intervalo",
-            options=[0, 15, 30, 60, 120],
+            options=AUTOREFRESH_OPCIONES,
             value=st.session_state.get("health_refresh_interval", 0),
             format_func=lambda x: "Off" if x == 0 else f"{x}s",
             key="health_refresh_interval",

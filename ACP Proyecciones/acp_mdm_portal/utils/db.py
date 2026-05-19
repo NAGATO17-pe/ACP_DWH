@@ -49,6 +49,15 @@ def obtener_engine():
     # El driver legacy "SQL Server" no admite TrustServerCertificate ni Encrypt.
     # Los drivers modernos ODBC 17/18 sí los soportan.
     es_legacy = "ODBC" not in driver
+    """Engine compartido sin dependencias del módulo ETL."""
+    from dotenv import load_dotenv
+    load_dotenv()
+
+    servidor = os.getenv('DB_SERVIDOR', 'LCP-PAG-PRACTIC')
+    base     = os.getenv('DB_NOMBRE', 'ACP_DataWarehouse_Proyecciones')
+    usuario  = os.getenv('DB_USUARIO')
+    clave    = os.getenv('DB_CLAVE')
+    driver   = os.getenv('DB_DRIVER', 'ODBC Driver 17 for SQL Server')
 
     if not usuario:
         cadena_pyodbc = (

@@ -15,6 +15,8 @@ import urllib.request
 import urllib.error
 import webbrowser
 import ctypes
+import logging
+import logging.handlers
 from pathlib import Path
 from datetime import datetime
 
@@ -117,6 +119,35 @@ def log(msg, nivel="INFO"):
     colores = {"INFO": GREEN, "WARN": YELLOW, "ERR": RED, "OK": GREEN}
     c = colores.get(nivel, WHITE)
     print(f"  {DIM}[{ts()}]{RESET} {c}{nivel:4}{RESET}  {msg}")
+    _launcher_log.info(f"[{nivel}] {msg}")
+
+
+def _crear_log_rotativo(ruta: Path):
+    """Retorna un RotatingFileHandler para redirigir stdout/stderr del subproceso."""
+    ruta.parent.mkdir(parents=True, exist_ok=True)
+    handler = logging.handlers.RotatingFileHandler(
+        filename=ruta,
+        maxBytes=50 * 1024 * 1024,   # 50 MB por archivo
+        backupCount=10,
+        encoding="utf-8",
+    )
+    return handler
+
+
+# Logger del propio lanzador (separado de los subprocesos)
+_DIR_LOGS_LAUNCHER = BASE / "backend" / "logs"
+_DIR_LOGS_LAUNCHER.mkdir(parents=True, exist_ok=True)
+_launcher_log = logging.getLogger("acp_start")
+_launcher_log.setLevel(logging.INFO)
+if not _launcher_log.handlers:
+    _h = logging.handlers.RotatingFileHandler(
+        filename=_DIR_LOGS_LAUNCHER / "launcher.log",
+        maxBytes=10 * 1024 * 1024,
+        backupCount=5,
+        encoding="utf-8",
+    )
+    _h.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
+    _launcher_log.addHandler(_h)
 
 
 def puerto_en_uso(puerto: int) -> bool:
@@ -170,9 +201,13 @@ def iniciar_servicio(svc: dict) -> bool:
 
     log(f"Iniciando  {color}{nombre}{RESET} ...", "INFO")
 
-    log_file = open(svc["log"], "a", encoding="utf-8")
-    log_file.write(f"\n{'='*60}\n[{datetime.now()}] INICIO\n{'='*60}\n")
-    log_file.flush()
+    # Abre el archivo de log con rotación (50 MB, 10 backups).
+    # subprocess necesita un file object con fileno(), así que abrimos el
+    # archivo subyacente del handler directamente.
+    rot_handler = _crear_log_rotativo(svc["log"])
+    rot_handler.stream.write(f"\n{'='*60}\n[{datetime.now()}] INICIO\n{'='*60}\n")
+    rot_handler.stream.flush()
+    log_file = rot_handler.stream
 
     proc = subprocess.Popen(
         svc["cmd"],
@@ -182,7 +217,7 @@ def iniciar_servicio(svc: dict) -> bool:
         creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0,
     )
     svc["proceso"] = proc
-    PROCESOS_ACTIVOS.append((proc, log_file))
+    PROCESOS_ACTIVOS.append((proc, rot_handler))
     return True
 
 
@@ -243,7 +278,7 @@ def mostrar_estado():
 
 def detener_todo():
     log("Deteniendo todos los servicios...", "INFO")
-    for proc, log_file in PROCESOS_ACTIVOS:
+    for proc, handler in PROCESOS_ACTIVOS:
         try:
             if sys.platform == "win32":
                 proc.send_signal(signal.CTRL_BREAK_EVENT)
@@ -254,7 +289,7 @@ def detener_todo():
             proc.kill()
         finally:
             try:
-                log_file.close()
+                handler.close()
             except Exception:
                 pass
     log("Servicios detenidos.", "OK")

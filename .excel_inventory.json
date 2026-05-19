@@ -1,0 +1,4709 @@
+{
+  "file_path": "D:\\Proyecto2026\\ACP_DWH\\ACP Proyecciones\\1.- F-PYA.001 Presupuesto Campaña 2026 - 2027 Cultivo Arándano (26,273 t)_2025.08.08.xlsx",
+  "total_sheets": 7,
+  "sheets": {
+    "Resumen": {
+      "visible": true,
+      "dimensions": "A1:BB193",
+      "max_row": 164,
+      "max_col": 53,
+      "max_col_letter": "BA",
+      "merged_cells_count": 18,
+      "merged_cells": [
+        "M2:R2",
+        "C2:D4",
+        "V7:Z7",
+        "AM7:AQ7",
+        "S2:U2",
+        "AZ7:BA7",
+        "S4:U4",
+        "AR7:AU7",
+        "R7:U7",
+        "S3:U3",
+        "E7:H7",
+        "I7:L7",
+        "AE7:AH7",
+        "AI7:AL7",
+        "AV7:AY7",
+        "AA7:AD7",
+        "M3:R4",
+        "M7:Q7"
+      ],
+      "tables": [],
+      "charts_count": 10,
+      "total_formula_cells": 2841,
+      "unique_formulas_count": 2804,
+      "first_rows": [
+        {
+          "row": 2,
+          "data": {
+            "M2": "FORMATO",
+            "S2": "Código: F-PYA.001"
+          }
+        },
+        {
+          "row": 3,
+          "data": {
+            "M3": "PROYECCIÓN COSECHA GLOBAL - ARANDANO",
+            "S3": "Versión: 01"
+          }
+        },
+        {
+          "row": 4,
+          "data": {
+            "S4": "Fecha: 24-02-2024"
+          }
+        },
+        {
+          "row": 6,
+          "data": {
+            "E6": "=+E7",
+            "F6": "=+E7",
+            "G6": "=+E7",
+            "H6": "=+E7",
+            "I6": "=+I7",
+            "J6": "=+I7",
+            "K6": "=+I7",
+            "L6": "=+I7",
+            "M6": "=+M7",
+            "N6": "=+M7",
+            "O6": "=+M7",
+            "P6": "=+M7",
+            "Q6": "=+M7",
+            "R6": "=+R7",
+            "S6": "=+R7"
+          }
+        },
+        {
+          "row": 7,
+          "data": {
+            "C7": "Real",
+            "E7": "MAY 26'",
+            "I7": "JUN 26'",
+            "M7": "JUL 26'",
+            "R7": "AGO 26'"
+          }
+        },
+        {
+          "row": 8,
+          "data": {
+            "B8": "0",
+            "C8": "Variedades",
+            "D8": "Kg",
+            "E8": "Sem 19",
+            "F8": "Sem 20",
+            "G8": "Sem 21",
+            "H8": "Sem 22",
+            "I8": "Sem 23",
+            "J8": "Sem 24",
+            "K8": "Sem 25",
+            "L8": "Sem 26",
+            "M8": "Sem 27",
+            "N8": "Sem 28",
+            "O8": "Sem 29",
+            "P8": "Sem 30",
+            "Q8": "Sem 31",
+            "R8": "Sem 32",
+            "S8": "Sem 33"
+          }
+        },
+        {
+          "row": 9,
+          "data": {
+            "B9": "=CONCATENATE(C9,\". \",+TEXT(D9,\"##,###\"))",
+            "C9": "Convencional HORTIFRUT",
+            "D9": "=+D10",
+            "E9": "=+E10",
+            "F9": "=+F10",
+            "G9": "=+G10",
+            "H9": "=+H10",
+            "I9": "=+I10",
+            "J9": "=+J10",
+            "K9": "=+K10",
+            "L9": "=+L10",
+            "M9": "=+M10",
+            "N9": "=+N10",
+            "O9": "=+O10",
+            "P9": "=+P10",
+            "Q9": "=+Q10",
+            "R9": "=+R10",
+            "S9": "=+S10"
+          }
+        },
+        {
+          "row": 10,
+          "data": {
+            "C10": "Imperial",
+            "D10": "=+SUM(E10:BA10)",
+            "E10": "=SUMIFS(Curvas!J$10:J$212,Curvas!$F$10:$F$212,Resumen!$C$9,Curvas!$E$10:$E$212,Resumen!$C10)",
+            "F10": "=SUMIFS(Curvas!K$10:K$212,Curvas!$F$10:$F$212,Resumen!$C$9,Curvas!$E$10:$E$212,Resumen!$C10)",
+            "G10": "=SUMIFS(Curvas!L$10:L$212,Curvas!$F$10:$F$212,Resumen!$C$9,Curvas!$E$10:$E$212,Resumen!$C10)",
+            "H10": "=SUMIFS(Curvas!M$10:M$212,Curvas!$F$10:$F$212,Resumen!$C$9,Curvas!$E$10:$E$212,Resumen!$C10)",
+            "I10": "=SUMIFS(Curvas!N$10:N$212,Curvas!$F$10:$F$212,Resumen!$C$9,Curvas!$E$10:$E$212,Resumen!$C10)",
+            "J10": "=SUMIFS(Curvas!O$10:O$212,Curvas!$F$10:$F$212,Resumen!$C$9,Curvas!$E$10:$E$212,Resumen!$C10)",
+            "K10": "=SUMIFS(Curvas!P$10:P$212,Curvas!$F$10:$F$212,Resumen!$C$9,Curvas!$E$10:$E$212,Resumen!$C10)",
+            "L10": "=SUMIFS(Curvas!Q$10:Q$212,Curvas!$F$10:$F$212,Resumen!$C$9,Curvas!$E$10:$E$212,Resumen!$C10)",
+            "M10": "=SUMIFS(Curvas!R$10:R$212,Curvas!$F$10:$F$212,Resumen!$C$9,Curvas!$E$10:$E$212,Resumen!$C10)",
+            "N10": "=SUMIFS(Curvas!S$10:S$212,Curvas!$F$10:$F$212,Resumen!$C$9,Curvas!$E$10:$E$212,Resumen!$C10)",
+            "O10": "=SUMIFS(Curvas!T$10:T$212,Curvas!$F$10:$F$212,Resumen!$C$9,Curvas!$E$10:$E$212,Resumen!$C10)",
+            "P10": "=SUMIFS(Curvas!U$10:U$212,Curvas!$F$10:$F$212,Resumen!$C$9,Curvas!$E$10:$E$212,Resumen!$C10)",
+            "Q10": "=SUMIFS(Curvas!V$10:V$212,Curvas!$F$10:$F$212,Resumen!$C$9,Curvas!$E$10:$E$212,Resumen!$C10)",
+            "R10": "=SUMIFS(Curvas!W$10:W$212,Curvas!$F$10:$F$212,Resumen!$C$9,Curvas!$E$10:$E$212,Resumen!$C10)",
+            "S10": "=SUMIFS(Curvas!X$10:X$212,Curvas!$F$10:$F$212,Resumen!$C$9,Curvas!$E$10:$E$212,Resumen!$C10)"
+          }
+        }
+      ]
+    },
+    "Conteo": {
+      "visible": true,
+      "dimensions": "A1:AL741",
+      "max_row": 737,
+      "max_col": 35,
+      "max_col_letter": "AI",
+      "merged_cells_count": 7,
+      "merged_cells": [
+        "B7:P7",
+        "F2:AE2",
+        "B2:E4",
+        "F3:AE4",
+        "Z7:AH7",
+        "AF4:AH4",
+        "Q7:Y7"
+      ],
+      "tables": [
+        "Conteo"
+      ],
+      "charts_count": 0,
+      "total_formula_cells": 9538,
+      "unique_formulas_count": 3718,
+      "first_rows": [
+        {
+          "row": 2,
+          "data": {
+            "F2": "FORMATO"
+          }
+        },
+        {
+          "row": 3,
+          "data": {
+            "F3": "PROYECCIÓN COSECHA GLOBAL - ARANDANO 2022"
+          }
+        },
+        {
+          "row": 6,
+          "data": {
+            "I6": "=+SUBTOTAL(9,Conteo[Ha Sembradas])",
+            "J6": "=+SUBTOTAL(9,Conteo[Ha en Producción])",
+            "K6": "=+SUBTOTAL(9,Conteo[Plantas Presupuesto])",
+            "R6": "=+S6/SUBTOTAL(9,Conteo[Ha Sembradas])",
+            "S6": "=+SUBTOTAL(9,Conteo[Kg Total])"
+          }
+        },
+        {
+          "row": 7,
+          "data": {
+            "B7": "DATOS GENERALES DEL CULTIVO"
+          }
+        },
+        {
+          "row": 8,
+          "data": {
+            "B8": "Consumidor",
+            "C8": "Empresa",
+            "D8": "S",
+            "E8": "M",
+            "F8": "T",
+            "G8": "V",
+            "H8": "Variedad",
+            "I8": "Ha Sembradas",
+            "J8": "Ha en Producción",
+            "K8": "Plantas Presupuesto",
+            "L8": "Plantas/ha",
+            "M8": "Fecha de Siembra ",
+            "N8": "Edad Plantas (Años)",
+            "O8": "Condición",
+            "P8": "Vivero Procedencia",
+            "Q8": "Kg/Planta",
+            "R8": "Kg/Ha",
+            "S8": "Kg Total"
+          }
+        },
+        {
+          "row": 9,
+          "data": {
+            "B9": "=+CONCATENATE(\"S\",D9,\"M\",E9,\"T\",F9,\" \",H9)",
+            "C9": "ACP",
+            "D9": "6",
+            "E9": "1",
+            "F9": "1",
+            "G9": "1",
+            "H9": "Sekoya Pop",
+            "I9": "2.31",
+            "J9": "=+IF(Conteo[[#This Row],[Kg/Planta]]>0,Conteo[[#This Row],[Ha Sembradas]],0)",
+            "K9": "14166",
+            "L9": "=+Conteo[[#This Row],[Plantas Presupuesto]]/Conteo[[#This Row],[Ha en Producción]]",
+            "M9": "2025-01-03 00:00:00",
+            "N9": "=(TODAY()-M9)/365",
+            "O9": "Convencional",
+            "P9": "North Bay",
+            "Q9": "=+AVERAGEIFS('Histórico Cosecha'!$CW$10:$CW$43,'Histórico Cosecha'!$D$10:$D$43,Conteo[[#This Row],[V",
+            "R9": "=+Conteo[[#This Row],[Kg Total]]/Conteo[[#This Row],[Ha Sembradas]]",
+            "S9": "=+Conteo[[#This Row],[Kg/Planta]]*Conteo[[#This Row],[Plantas Presupuesto]]"
+          }
+        },
+        {
+          "row": 10,
+          "data": {
+            "B10": "=+CONCATENATE(\"S\",D10,\"M\",E10,\"T\",F10,\" \",H10)",
+            "C10": "ACP",
+            "D10": "6",
+            "E10": "1",
+            "F10": "1",
+            "G10": "2",
+            "H10": "Sekoya Pop",
+            "I10": "2.31",
+            "J10": "=+IF(Conteo[[#This Row],[Kg/Planta]]>0,Conteo[[#This Row],[Ha Sembradas]],0)",
+            "K10": "13908",
+            "L10": "=+Conteo[[#This Row],[Plantas Presupuesto]]/Conteo[[#This Row],[Ha en Producción]]",
+            "M10": "2025-01-06 00:00:00",
+            "N10": "=(TODAY()-M10)/365",
+            "O10": "Convencional",
+            "P10": "North Bay",
+            "Q10": "=+AVERAGEIFS('Histórico Cosecha'!$CW$10:$CW$43,'Histórico Cosecha'!$D$10:$D$43,Conteo[[#This Row],[V",
+            "R10": "=+Conteo[[#This Row],[Kg Total]]/Conteo[[#This Row],[Ha Sembradas]]",
+            "S10": "=+Conteo[[#This Row],[Kg/Planta]]*Conteo[[#This Row],[Plantas Presupuesto]]"
+          }
+        }
+      ]
+    },
+    "Curvas": {
+      "visible": true,
+      "dimensions": "A1:BI481",
+      "max_row": 481,
+      "max_col": 59,
+      "max_col_letter": "BG",
+      "merged_cells_count": 18,
+      "merged_cells": [
+        "R7:V7",
+        "C2:D4",
+        "AR7:AV7",
+        "E3:R4",
+        "AA7:AE7",
+        "BE7:BF7",
+        "S4:U4",
+        "AF7:AI7",
+        "W7:Z7",
+        "AJ7:AM7",
+        "BA7:BD7",
+        "AN7:AQ7",
+        "S3:U3",
+        "J7:M7",
+        "E2:R2",
+        "N7:Q7",
+        "S2:U2",
+        "AW7:AZ7"
+      ],
+      "tables": [],
+      "charts_count": 1,
+      "total_formula_cells": 16250,
+      "unique_formulas_count": 16213,
+      "first_rows": [
+        {
+          "row": 1,
+          "data": {
+            "J1": "=+SUM(J25:J29)",
+            "K1": "=+SUM(K25:K29)",
+            "L1": "=+SUM(L25:L29)",
+            "M1": "=+SUM(M25:M29)",
+            "N1": "=+SUM(N25:N29)",
+            "O1": "=+SUM(O25:O29)",
+            "P1": "=+SUM(P25:P29)",
+            "Q1": "=+SUM(Q25:Q29)",
+            "R1": "=+SUM(R25:R29)",
+            "S1": "=+SUM(S25:S29)"
+          }
+        },
+        {
+          "row": 2,
+          "data": {
+            "E2": "FORMATO",
+            "S2": "Código: F-PYA.001"
+          }
+        },
+        {
+          "row": 3,
+          "data": {
+            "E3": "PROYECCIÓN COSECHA GLOBAL - ARANDANO",
+            "S3": "=+Resumen!S3"
+          }
+        },
+        {
+          "row": 4,
+          "data": {
+            "S4": "=+Resumen!S4"
+          }
+        },
+        {
+          "row": 5,
+          "data": {
+            "J5": "=+J9",
+            "K5": "=+K9",
+            "L5": "=+L9",
+            "M5": "=+M9",
+            "N5": "=+N9",
+            "O5": "=+N5+1",
+            "P5": "=+O5+1",
+            "Q5": "=+P5+1",
+            "R5": "=+Q5+1",
+            "S5": "=+R5+1"
+          }
+        },
+        {
+          "row": 6,
+          "data": {
+            "J6": "=+J7",
+            "K6": "=+J7",
+            "L6": "=+J7",
+            "M6": "=+J7",
+            "N6": "=+N7",
+            "O6": "=+N7",
+            "P6": "=+N7",
+            "Q6": "=+N7",
+            "R6": "=+R7",
+            "S6": "=+R7"
+          }
+        },
+        {
+          "row": 7,
+          "data": {
+            "J7": "MAY 26'",
+            "N7": "JUN 26'",
+            "R7": "JUL 26'"
+          }
+        },
+        {
+          "row": 8,
+          "data": {
+            "F8": "=+I8-'Conteo'!S6",
+            "G8": "=+SUBTOTAL(9,G10:G212)",
+            "H8": "=+SUBTOTAL(9,H10:H212)",
+            "I8": "=+SUBTOTAL(9,I10:I212)",
+            "J8": "=+J213",
+            "K8": "=+K213",
+            "L8": "=+L213",
+            "M8": "=+M213",
+            "N8": "=+N213",
+            "O8": "=+O213",
+            "P8": "=+P213",
+            "Q8": "=+Q213",
+            "R8": "=+R213",
+            "S8": "=+S213"
+          }
+        },
+        {
+          "row": 9,
+          "data": {
+            "B9": "Sector",
+            "C9": "Módulo",
+            "D9": "Turno",
+            "E9": "Variedad",
+            "F9": "Condición",
+            "G9": "Ha Sembradas",
+            "H9": "Ha en Producción",
+            "I9": "Kg",
+            "J9": "19",
+            "K9": "20",
+            "L9": "21",
+            "M9": "22",
+            "N9": "23",
+            "O9": "24",
+            "P9": "25",
+            "Q9": "26",
+            "R9": "27",
+            "S9": "28"
+          }
+        },
+        {
+          "row": 10,
+          "data": {
+            "B10": "6",
+            "C10": "1",
+            "D10": "1",
+            "E10": "Sekoya Pop",
+            "F10": "Convencional NORTH BAY",
+            "G10": "=+SUMIFS(Conteo[Ha Sembradas],Conteo[T],Curvas!$D10,Conteo[M],Curvas!$C10,Conteo[Variedad],Curvas!$E",
+            "H10": "=+SUMIFS(Conteo[Ha en Producción],Conteo[T],Curvas!$D10,Conteo[M],Curvas!$C10,Conteo[Variedad],Curva",
+            "I10": "=+SUMIFS(Conteo[Kg Total],Conteo[T],Curvas!$D10,Conteo[M],Curvas!$C10,Conteo[Variedad],Curvas!$E10,C",
+            "J10": "=+AVERAGEIFS(J$219:J$276,$I$219:$I$276,$E10,$H$219:$H$276,$C10,$G$219:$G$276,$B10)*$I10",
+            "K10": "=+AVERAGEIFS(K$219:K$276,$I$219:$I$276,$E10,$H$219:$H$276,$C10,$G$219:$G$276,$B10)*$I10",
+            "L10": "=+AVERAGEIFS(L$219:L$276,$I$219:$I$276,$E10,$H$219:$H$276,$C10,$G$219:$G$276,$B10)*$I10",
+            "M10": "=+AVERAGEIFS(M$219:M$276,$I$219:$I$276,$E10,$H$219:$H$276,$C10,$G$219:$G$276,$B10)*$I10",
+            "N10": "=+AVERAGEIFS(N$219:N$276,$I$219:$I$276,$E10,$H$219:$H$276,$C10,$G$219:$G$276,$B10)*$I10",
+            "O10": "=+AVERAGEIFS(O$219:O$276,$I$219:$I$276,$E10,$H$219:$H$276,$C10,$G$219:$G$276,$B10)*$I10",
+            "P10": "=+AVERAGEIFS(P$219:P$276,$I$219:$I$276,$E10,$H$219:$H$276,$C10,$G$219:$G$276,$B10)*$I10",
+            "Q10": "=+AVERAGEIFS(Q$219:Q$276,$I$219:$I$276,$E10,$H$219:$H$276,$C10,$G$219:$G$276,$B10)*$I10",
+            "R10": "=+AVERAGEIFS(R$219:R$276,$I$219:$I$276,$E10,$H$219:$H$276,$C10,$G$219:$G$276,$B10)*$I10",
+            "S10": "=+AVERAGEIFS(S$219:S$276,$I$219:$I$276,$E10,$H$219:$H$276,$C10,$G$219:$G$276,$B10)*$I10"
+          }
+        }
+      ]
+    },
+    "Histórico Cosecha": {
+      "visible": true,
+      "dimensions": "A1:DQ86",
+      "max_row": 86,
+      "max_col": 121,
+      "max_col_letter": "DQ",
+      "merged_cells_count": 24,
+      "merged_cells": [
+        "AS6:AU6",
+        "AA3:AX4",
+        "AV7:AZ7",
+        "AF6:AH6",
+        "BZ7:CG7",
+        "AI7:AK7",
+        "BI6:BK6",
+        "AQ7:AU7",
+        "BL7:BQ7",
+        "BR7:BY7",
+        "BA7:BE7",
+        "AL7:AP7",
+        "AA7:AA8",
+        "AB7:AB8",
+        "CX7:DD7",
+        "AF7:AH7",
+        "P7:Z7",
+        "AA2:AX2",
+        "AC7:AE7",
+        "DE7:DK7"
+      ],
+      "tables": [],
+      "charts_count": 0,
+      "total_formula_cells": 828,
+      "unique_formulas_count": 828,
+      "first_rows": [
+        {
+          "row": 7,
+          "data": {
+            "C7": "=TODAY()",
+            "E7": "ha",
+            "P7": "Plantas"
+          }
+        },
+        {
+          "row": 8,
+          "data": {
+            "C8": "Sector/\nMódulo",
+            "D8": "Variedad",
+            "E8": "2016",
+            "F8": "2017",
+            "G8": "2018",
+            "H8": "2019",
+            "I8": "2020",
+            "J8": "2021",
+            "K8": "2022",
+            "L8": "2023",
+            "M8": "2024",
+            "N8": "2025",
+            "O8": "2026",
+            "P8": "2016",
+            "Q8": "2017",
+            "R8": "2018",
+            "S8": "2019"
+          }
+        },
+        {
+          "row": 9,
+          "data": {
+            "B9": "VARIEDADES EN PRODUCCIÓN"
+          }
+        },
+        {
+          "row": 10,
+          "data": {
+            "C10": "1",
+            "D10": "Sekoya Pop",
+            "N10": "46.18999999999998",
+            "O10": "=+SUMIFS(Conteo[Ha en Producción],Conteo[M],'Histórico Cosecha'!C10,Conteo[Variedad],'Histórico Cose"
+          }
+        }
+      ]
+    },
+    "Mensual": {
+      "visible": false,
+      "dimensions": "A1:CA199",
+      "max_row": 199,
+      "max_col": 57,
+      "max_col_letter": "BE",
+      "merged_cells_count": 31,
+      "merged_cells": [
+        "AW154:BA154",
+        "S142:V142",
+        "F142:H142",
+        "AF154:AI154",
+        "S154:V154",
+        "D3:K4",
+        "F154:H154",
+        "BB154:BE154",
+        "W142:AA142",
+        "L4:N4",
+        "I154:M154",
+        "AJ154:AN154",
+        "AS142:AV142",
+        "AO142:AR142",
+        "W154:AA154",
+        "B2:C4",
+        "D2:K2",
+        "AB142:AE142",
+        "AW142:BA142",
+        "F117:H117"
+      ],
+      "tables": [],
+      "charts_count": 0,
+      "total_formula_cells": 3055,
+      "unique_formulas_count": 2570,
+      "first_rows": [
+        {
+          "row": 2,
+          "data": {
+            "D2": "FORMATO",
+            "L2": "Código: F-PYA.001"
+          }
+        },
+        {
+          "row": 3,
+          "data": {
+            "D3": "PROYECCIÓN COSECHA GLOBAL - ARANDANO",
+            "L3": "Versión: 01"
+          }
+        },
+        {
+          "row": 4,
+          "data": {
+            "L4": "=+Resumen!S4"
+          }
+        },
+        {
+          "row": 6,
+          "data": {
+            "B6": "Proyección de Cosecha para la Campaña por Módulo 2024-2025"
+          }
+        },
+        {
+          "row": 8,
+          "data": {
+            "B8": "CONDICIÓN",
+            "C8": "UBICACIÓN",
+            "D8": "VARIEDAD",
+            "E8": "MAYO",
+            "F8": "JUNIO",
+            "G8": "JULIO",
+            "H8": "AGOSTO",
+            "I8": "SETIEMBRE",
+            "J8": "OCTUBRE",
+            "K8": "NOVIEMBRE",
+            "L8": "DICIEMBRE",
+            "M8": "ENERO",
+            "N8": "FEBRERO",
+            "O8": "MARZO",
+            "P8": "ABRIL",
+            "Q8": "TOTAL"
+          }
+        },
+        {
+          "row": 9,
+          "data": {
+            "B9": "=+Curvas!G386",
+            "C9": "=+Curvas!H386",
+            "D9": "=+Curvas!I386",
+            "E9": "=+Curvas!J386",
+            "F9": "=+Curvas!K386",
+            "G9": "=+Curvas!L386",
+            "H9": "=+Curvas!M386",
+            "I9": "=+Curvas!N386",
+            "J9": "=+Curvas!O386",
+            "K9": "=+Curvas!P386",
+            "L9": "=+Curvas!Q386",
+            "M9": "=+Curvas!R386",
+            "N9": "=+Curvas!S386",
+            "O9": "=+Curvas!T386",
+            "P9": "=+Curvas!U386",
+            "Q9": "=+SUM(E9:P9)"
+          }
+        },
+        {
+          "row": 10,
+          "data": {
+            "B10": "=+Curvas!G387",
+            "C10": "=+Curvas!H387",
+            "D10": "=+Curvas!I387",
+            "E10": "=+Curvas!J387",
+            "F10": "=+Curvas!K387",
+            "G10": "=+Curvas!L387",
+            "H10": "=+Curvas!M387",
+            "I10": "=+Curvas!N387",
+            "J10": "=+Curvas!O387",
+            "K10": "=+Curvas!P387",
+            "L10": "=+Curvas!Q387",
+            "M10": "=+Curvas!R387",
+            "N10": "=+Curvas!S387",
+            "O10": "=+Curvas!T387",
+            "P10": "=+Curvas!U387",
+            "Q10": "=+SUM(E10:P10)"
+          }
+        }
+      ]
+    },
+    "Fechas de Poda": {
+      "visible": false,
+      "dimensions": "A1:Y1535",
+      "max_row": 1535,
+      "max_col": 25,
+      "max_col_letter": "Y",
+      "merged_cells_count": 0,
+      "merged_cells": [],
+      "tables": [
+        "Tabla2",
+        "Semana_de_Poda"
+      ],
+      "charts_count": 0,
+      "total_formula_cells": 104,
+      "unique_formulas_count": 53,
+      "first_rows": [
+        {
+          "row": 2,
+          "data": {
+            "B2": "MATRIZ DE PODA Y COSECHA 2025",
+            "N2": "CURVAS DE COSECHA POR VARIEDAD"
+          }
+        },
+        {
+          "row": 3,
+          "data": {
+            "B3": "Fundo",
+            "C3": "Sector",
+            "D3": "Mód",
+            "E3": "Variedad",
+            "F3": "Actividad",
+            "G3": "Semana de poda 2025",
+            "H3": "Tiempo de Formación (sem presupuesto)",
+            "I3": "Tiempo de Formación (sem preliminar)",
+            "J3": "Tiempo de Formación (sem final)",
+            "K3": "Inicio Cosecha en 2025",
+            "L3": "Aux",
+            "N3": "Mód",
+            "O3": "Variedad",
+            "P3": "Curva",
+            "Q3": "Sem",
+            "R3": "Sector"
+          }
+        },
+        {
+          "row": 4,
+          "data": {
+            "B4": "ACP",
+            "C4": "6",
+            "D4": "1",
+            "E4": "Sekoya Pop",
+            "F4": "Siembra",
+            "G4": "2",
+            "H4": "24",
+            "I4": "24",
+            "J4": "24",
+            "K4": "=+IF(AND(G4>45,G4<=52),J4-(52-G4),J4+G4)",
+            "L4": "=+CONCATENATE(Semana_de_Poda[[#This Row],[Sector]],Semana_de_Poda[[#This Row],[Mód]],Semana_de_Poda[",
+            "N4": "1",
+            "O4": "Sekoya Pop",
+            "P4": "0.0020270809940528154",
+            "Q4": "1",
+            "R4": "6"
+          }
+        },
+        {
+          "row": 5,
+          "data": {
+            "B5": "ACP",
+            "C5": "6",
+            "D5": "2",
+            "E5": "Sekoya Pop",
+            "F5": "Siembra",
+            "G5": "2",
+            "H5": "24",
+            "I5": "24",
+            "J5": "24",
+            "K5": "=+IF(AND(G5>45,G5<=52),J5-(52-G5),J5+G5)",
+            "L5": "=+CONCATENATE(Semana_de_Poda[[#This Row],[Sector]],Semana_de_Poda[[#This Row],[Mód]],Semana_de_Poda[",
+            "N5": "1",
+            "O5": "Sekoya Pop",
+            "P5": "0.002266095873376401",
+            "Q5": "2",
+            "R5": "6"
+          }
+        },
+        {
+          "row": 6,
+          "data": {
+            "B6": "ACP",
+            "C6": "6",
+            "D6": "3",
+            "E6": "Sekoya Pop",
+            "F6": "Poda",
+            "G6": "4",
+            "H6": "24",
+            "I6": "24",
+            "J6": "24",
+            "K6": "=+IF(AND(G6>45,G6<=52),J6-(52-G6),J6+G6)",
+            "L6": "=+CONCATENATE(Semana_de_Poda[[#This Row],[Sector]],Semana_de_Poda[[#This Row],[Mód]],Semana_de_Poda[",
+            "N6": "1",
+            "O6": "Sekoya Pop",
+            "P6": "0.004547565974354298",
+            "Q6": "3",
+            "R6": "6"
+          }
+        },
+        {
+          "row": 7,
+          "data": {
+            "B7": "ACP",
+            "C7": "8",
+            "D7": "4",
+            "E7": "Biloxi",
+            "F7": "Poda",
+            "G7": "51",
+            "H7": "23",
+            "I7": "22",
+            "J7": "22",
+            "K7": "=+IF(AND(G7>45,G7<=52),J7-(52-G7),J7+G7)",
+            "L7": "=+CONCATENATE(Semana_de_Poda[[#This Row],[Sector]],Semana_de_Poda[[#This Row],[Mód]],Semana_de_Poda[",
+            "N7": "1",
+            "O7": "Sekoya Pop",
+            "P7": "0.007819114286316955",
+            "Q7": "4",
+            "R7": "6"
+          }
+        },
+        {
+          "row": 8,
+          "data": {
+            "B8": "ACP",
+            "C8": "8",
+            "D8": "5",
+            "E8": "Biloxi",
+            "F8": "Poda",
+            "G8": "51",
+            "H8": "23",
+            "I8": "22",
+            "J8": "22",
+            "K8": "=+IF(AND(G8>45,G8<=52),J8-(52-G8),J8+G8)",
+            "L8": "=+CONCATENATE(Semana_de_Poda[[#This Row],[Sector]],Semana_de_Poda[[#This Row],[Mód]],Semana_de_Poda[",
+            "N8": "1",
+            "O8": "Sekoya Pop",
+            "P8": "0.009695891834119176",
+            "Q8": "5",
+            "R8": "6"
+          }
+        },
+        {
+          "row": 9,
+          "data": {
+            "B9": "ACP",
+            "C9": "8",
+            "D9": "5",
+            "E9": "Ventura",
+            "F9": "Poda",
+            "G9": "51",
+            "H9": "26",
+            "I9": "26",
+            "J9": "26",
+            "K9": "=+IF(AND(G9>45,G9<=52),J9-(52-G9),J9+G9)",
+            "L9": "=+CONCATENATE(Semana_de_Poda[[#This Row],[Sector]],Semana_de_Poda[[#This Row],[Mód]],Semana_de_Poda[",
+            "N9": "1",
+            "O9": "Sekoya Pop",
+            "P9": "0.01603328116305087",
+            "Q9": "6",
+            "R9": "6"
+          }
+        },
+        {
+          "row": 10,
+          "data": {
+            "B10": "ACP",
+            "C10": "8",
+            "D10": "6",
+            "E10": "Magica",
+            "F10": "Siembra",
+            "G10": "20",
+            "H10": "24",
+            "I10": "24",
+            "J10": "19",
+            "K10": "=+IF(AND(G10>45,G10<=52),J10-(52-G10),J10+G10)",
+            "L10": "=+CONCATENATE(Semana_de_Poda[[#This Row],[Sector]],Semana_de_Poda[[#This Row],[Mód]],Semana_de_Poda[",
+            "N10": "1",
+            "O10": "Sekoya Pop",
+            "P10": "0.0275046144567249",
+            "Q10": "7",
+            "R10": "6"
+          }
+        }
+      ]
+    },
+    "Revisión Semanal": {
+      "visible": false,
+      "dimensions": "A1:DA57",
+      "max_row": 57,
+      "max_col": 105,
+      "max_col_letter": "DA",
+      "merged_cells_count": 0,
+      "merged_cells": [],
+      "tables": [],
+      "charts_count": 0,
+      "total_formula_cells": 1237,
+      "unique_formulas_count": 1237,
+      "first_rows": [
+        {
+          "row": 3,
+          "data": {
+            "A3": "M",
+            "B3": "Variedad",
+            "C3": "Suma de Kg Total",
+            "G3": "19",
+            "H3": "20",
+            "I3": "21",
+            "J3": "22",
+            "K3": "23",
+            "L3": "24",
+            "M3": "25",
+            "N3": "26",
+            "O3": "27",
+            "P3": "28",
+            "Q3": "29",
+            "R3": "30",
+            "S3": "31"
+          }
+        },
+        {
+          "row": 4,
+          "data": {
+            "A4": "1",
+            "B4": "Sekoya Pop",
+            "C4": "556242",
+            "D4": "=+A4",
+            "E4": "=+B4",
+            "F4": "=+C4",
+            "G4": "0",
+            "H4": "0",
+            "I4": "0",
+            "J4": "0",
+            "K4": "0",
+            "L4": "884.11",
+            "M4": "184.597",
+            "N4": "477.96158963719836",
+            "O4": "4914.235637132008",
+            "P4": "5423.648068609856",
+            "Q4": "9275.746504239252",
+            "R4": "25174.486657881313",
+            "S4": "14528.26890666667"
+          }
+        },
+        {
+          "row": 5,
+          "data": {
+            "A5": "2",
+            "B5": "Sekoya Pop",
+            "C5": "677994",
+            "D5": "=+A5",
+            "E5": "=+B5",
+            "F5": "=+C5",
+            "G5": "0",
+            "H5": "0",
+            "I5": "0",
+            "J5": "0",
+            "K5": "0",
+            "L5": "0",
+            "M5": "206.25999999999996",
+            "N5": "426.26315965053834",
+            "O5": "0",
+            "P5": "4087.741846300001",
+            "Q5": "4345.58196616274",
+            "R5": "8604.796011428287",
+            "S5": "31069.58244940745"
+          }
+        },
+        {
+          "row": 6,
+          "data": {
+            "A6": "3",
+            "B6": "Sekoya Pop",
+            "C6": "2157558.4000000004",
+            "D6": "=+A6",
+            "E6": "=+B6",
+            "F6": "=+C6",
+            "G6": "0",
+            "H6": "0",
+            "I6": "0",
+            "J6": "0",
+            "K6": "0",
+            "L6": "0",
+            "M6": "0",
+            "N6": "3267.1112384593794",
+            "O6": "19974.897701751608",
+            "P6": "68472.309136176",
+            "Q6": "271732.60862995073",
+            "R6": "186761.80570499998",
+            "S6": "181277.74702399998"
+          }
+        },
+        {
+          "row": 7,
+          "data": {
+            "A7": "4",
+            "B7": "Biloxi",
+            "C7": "593647.65",
+            "D7": "=+A7",
+            "E7": "=+B7",
+            "F7": "=+C7",
+            "G7": "0",
+            "H7": "0",
+            "I7": "1062.508",
+            "J7": "1884.8630000000003",
+            "K7": "4474.102",
+            "L7": "3932.414",
+            "M7": "10493.567000000003",
+            "N7": "15523.510245981079",
+            "O7": "30711.374257251744",
+            "P7": "55459.709014320004",
+            "Q7": "46275.421363453344",
+            "R7": "34351.69315937334",
+            "S7": "30012.10500346667"
+          }
+        },
+        {
+          "row": 8,
+          "data": {
+            "A8": "5",
+            "B8": "Biloxi",
+            "C8": "220006.35",
+            "D8": "=+A8",
+            "E8": "=+B8",
+            "F8": "=+C8",
+            "G8": "0",
+            "H8": "0",
+            "I8": "385.542",
+            "J8": "935.196",
+            "K8": "1950.102",
+            "L8": "1966.6370000000002",
+            "M8": "3951.6009999999997",
+            "N8": "5457.431391097176",
+            "O8": "10417.734870155095",
+            "P8": "16076.943671065319",
+            "Q8": "12661.3347252",
+            "R8": "9947.10847872",
+            "S8": "7096.41275616"
+          }
+        },
+        {
+          "row": 9,
+          "data": {
+            "A9": "5",
+            "B9": "Ventura",
+            "C9": "332493",
+            "D9": "=+A9",
+            "E9": "=+B9",
+            "F9": "=+C9",
+            "G9": "0",
+            "H9": "0",
+            "I9": "0",
+            "J9": "558.537",
+            "K9": "384.98800000000006",
+            "L9": "249.87400000000002",
+            "M9": "127.22999999999999",
+            "N9": "103.09337160120607",
+            "O9": "610.6041448141576",
+            "P9": "1077.7213301409422",
+            "Q9": "1816.9433651108254",
+            "R9": "1974.7270572893378",
+            "S9": "3230.4342823450074"
+          }
+        },
+        {
+          "row": 10,
+          "data": {
+            "A10": "6",
+            "B10": "Magica",
+            "C10": "0",
+            "D10": "=+A10",
+            "E10": "=+B10",
+            "F10": "=+C10",
+            "G10": "0",
+            "H10": "0",
+            "I10": "0",
+            "J10": "0",
+            "K10": "0",
+            "L10": "0",
+            "M10": "0",
+            "N10": "0",
+            "O10": "0",
+            "P10": "0",
+            "Q10": "0",
+            "R10": "0",
+            "S10": "0"
+          }
+        }
+      ]
+    }
+  },
+  "named_ranges": {},
+  "formulas_by_sheet": {
+    "Resumen": {
+      "total_formula_cells": 2841,
+      "unique_formulas_count": 2804,
+      "top_formulas": [
+        {
+          "formula": "=+M7",
+          "example_cell": "M6",
+          "count": 5,
+          "all_cells": [
+            "M6",
+            "N6",
+            "O6",
+            "P6",
+            "Q6"
+          ]
+        },
+        {
+          "formula": "=+AA7",
+          "example_cell": "Z6",
+          "count": 5,
+          "all_cells": [
+            "Z6",
+            "AA6",
+            "AB6",
+            "AC6",
+            "AD6"
+          ]
+        },
+        {
+          "formula": "=+AM7",
+          "example_cell": "AM6",
+          "count": 5,
+          "all_cells": [
+            "AM6",
+            "AN6",
+            "AO6",
+            "AP6",
+            "AQ6"
+          ]
+        },
+        {
+          "formula": "=+E7",
+          "example_cell": "E6",
+          "count": 4,
+          "all_cells": [
+            "E6",
+            "F6",
+            "G6",
+            "H6"
+          ]
+        },
+        {
+          "formula": "=+I7",
+          "example_cell": "I6",
+          "count": 4,
+          "all_cells": [
+            "I6",
+            "J6",
+            "K6",
+            "L6"
+          ]
+        },
+        {
+          "formula": "=+R7",
+          "example_cell": "R6",
+          "count": 4,
+          "all_cells": [
+            "R6",
+            "S6",
+            "T6",
+            "U6"
+          ]
+        },
+        {
+          "formula": "=+V7",
+          "example_cell": "V6",
+          "count": 4,
+          "all_cells": [
+            "V6",
+            "W6",
+            "X6",
+            "Y6"
+          ]
+        },
+        {
+          "formula": "=+AE7",
+          "example_cell": "AE6",
+          "count": 4,
+          "all_cells": [
+            "AE6",
+            "AF6",
+            "AG6",
+            "AH6"
+          ]
+        },
+        {
+          "formula": "=+AI7",
+          "example_cell": "AI6",
+          "count": 4,
+          "all_cells": [
+            "AI6",
+            "AJ6",
+            "AK6",
+            "AL6"
+          ]
+        },
+        {
+          "formula": "=+AR7",
+          "example_cell": "AR6",
+          "count": 4,
+          "all_cells": [
+            "AR6",
+            "AS6",
+            "AT6",
+            "AU6"
+          ]
+        },
+        {
+          "formula": "=+AV7",
+          "example_cell": "AV6",
+          "count": 4,
+          "all_cells": [
+            "AV6",
+            "AW6",
+            "AX6",
+            "AY6"
+          ]
+        },
+        {
+          "formula": "=+$AZ$7",
+          "example_cell": "AZ6",
+          "count": 2,
+          "all_cells": [
+            "AZ6",
+            "BA6"
+          ]
+        },
+        {
+          "formula": "=CONCATENATE(C9,\". \",+TEXT(D9,\"##,###\"))",
+          "example_cell": "B9",
+          "count": 1,
+          "all_cells": [
+            "B9"
+          ]
+        },
+        {
+          "formula": "=+D10",
+          "example_cell": "D9",
+          "count": 1,
+          "all_cells": [
+            "D9"
+          ]
+        },
+        {
+          "formula": "=+E10",
+          "example_cell": "E9",
+          "count": 1,
+          "all_cells": [
+            "E9"
+          ]
+        },
+        {
+          "formula": "=+F10",
+          "example_cell": "F9",
+          "count": 1,
+          "all_cells": [
+            "F9"
+          ]
+        },
+        {
+          "formula": "=+G10",
+          "example_cell": "G9",
+          "count": 1,
+          "all_cells": [
+            "G9"
+          ]
+        },
+        {
+          "formula": "=+H10",
+          "example_cell": "H9",
+          "count": 1,
+          "all_cells": [
+            "H9"
+          ]
+        },
+        {
+          "formula": "=+I10",
+          "example_cell": "I9",
+          "count": 1,
+          "all_cells": [
+            "I9"
+          ]
+        },
+        {
+          "formula": "=+J10",
+          "example_cell": "J9",
+          "count": 1,
+          "all_cells": [
+            "J9"
+          ]
+        },
+        {
+          "formula": "=+K10",
+          "example_cell": "K9",
+          "count": 1,
+          "all_cells": [
+            "K9"
+          ]
+        },
+        {
+          "formula": "=+L10",
+          "example_cell": "L9",
+          "count": 1,
+          "all_cells": [
+            "L9"
+          ]
+        },
+        {
+          "formula": "=+M10",
+          "example_cell": "M9",
+          "count": 1,
+          "all_cells": [
+            "M9"
+          ]
+        },
+        {
+          "formula": "=+N10",
+          "example_cell": "N9",
+          "count": 1,
+          "all_cells": [
+            "N9"
+          ]
+        },
+        {
+          "formula": "=+O10",
+          "example_cell": "O9",
+          "count": 1,
+          "all_cells": [
+            "O9"
+          ]
+        },
+        {
+          "formula": "=+P10",
+          "example_cell": "P9",
+          "count": 1,
+          "all_cells": [
+            "P9"
+          ]
+        },
+        {
+          "formula": "=+Q10",
+          "example_cell": "Q9",
+          "count": 1,
+          "all_cells": [
+            "Q9"
+          ]
+        },
+        {
+          "formula": "=+R10",
+          "example_cell": "R9",
+          "count": 1,
+          "all_cells": [
+            "R9"
+          ]
+        },
+        {
+          "formula": "=+S10",
+          "example_cell": "S9",
+          "count": 1,
+          "all_cells": [
+            "S9"
+          ]
+        },
+        {
+          "formula": "=+T10",
+          "example_cell": "T9",
+          "count": 1,
+          "all_cells": [
+            "T9"
+          ]
+        },
+        {
+          "formula": "=+U10",
+          "example_cell": "U9",
+          "count": 1,
+          "all_cells": [
+            "U9"
+          ]
+        },
+        {
+          "formula": "=+V10",
+          "example_cell": "V9",
+          "count": 1,
+          "all_cells": [
+            "V9"
+          ]
+        },
+        {
+          "formula": "=+W10",
+          "example_cell": "W9",
+          "count": 1,
+          "all_cells": [
+            "W9"
+          ]
+        },
+        {
+          "formula": "=+X10",
+          "example_cell": "X9",
+          "count": 1,
+          "all_cells": [
+            "X9"
+          ]
+        },
+        {
+          "formula": "=+Y10",
+          "example_cell": "Y9",
+          "count": 1,
+          "all_cells": [
+            "Y9"
+          ]
+        },
+        {
+          "formula": "=+Z10",
+          "example_cell": "Z9",
+          "count": 1,
+          "all_cells": [
+            "Z9"
+          ]
+        },
+        {
+          "formula": "=+AA10",
+          "example_cell": "AA9",
+          "count": 1,
+          "all_cells": [
+            "AA9"
+          ]
+        },
+        {
+          "formula": "=+AB10",
+          "example_cell": "AB9",
+          "count": 1,
+          "all_cells": [
+            "AB9"
+          ]
+        },
+        {
+          "formula": "=+AC10",
+          "example_cell": "AC9",
+          "count": 1,
+          "all_cells": [
+            "AC9"
+          ]
+        },
+        {
+          "formula": "=+AD10",
+          "example_cell": "AD9",
+          "count": 1,
+          "all_cells": [
+            "AD9"
+          ]
+        },
+        {
+          "formula": "=+AE10",
+          "example_cell": "AE9",
+          "count": 1,
+          "all_cells": [
+            "AE9"
+          ]
+        },
+        {
+          "formula": "=+AF10",
+          "example_cell": "AF9",
+          "count": 1,
+          "all_cells": [
+            "AF9"
+          ]
+        },
+        {
+          "formula": "=+AG10",
+          "example_cell": "AG9",
+          "count": 1,
+          "all_cells": [
+            "AG9"
+          ]
+        },
+        {
+          "formula": "=+AH10",
+          "example_cell": "AH9",
+          "count": 1,
+          "all_cells": [
+            "AH9"
+          ]
+        },
+        {
+          "formula": "=+AI10",
+          "example_cell": "AI9",
+          "count": 1,
+          "all_cells": [
+            "AI9"
+          ]
+        },
+        {
+          "formula": "=+AJ10",
+          "example_cell": "AJ9",
+          "count": 1,
+          "all_cells": [
+            "AJ9"
+          ]
+        },
+        {
+          "formula": "=+AK10",
+          "example_cell": "AK9",
+          "count": 1,
+          "all_cells": [
+            "AK9"
+          ]
+        },
+        {
+          "formula": "=+AL10",
+          "example_cell": "AL9",
+          "count": 1,
+          "all_cells": [
+            "AL9"
+          ]
+        },
+        {
+          "formula": "=+AM10",
+          "example_cell": "AM9",
+          "count": 1,
+          "all_cells": [
+            "AM9"
+          ]
+        },
+        {
+          "formula": "=+AN10",
+          "example_cell": "AN9",
+          "count": 1,
+          "all_cells": [
+            "AN9"
+          ]
+        }
+      ]
+    },
+    "Conteo": {
+      "total_formula_cells": 9538,
+      "unique_formulas_count": 3718,
+      "top_formulas": [
+        {
+          "formula": "=+Conteo[[#This Row],[Plantas Presupuesto]]/Conteo[[#This Row],[Ha en Producción]]",
+          "example_cell": "L9",
+          "count": 729,
+          "all_cells": [
+            "L9",
+            "L10",
+            "L11",
+            "L12",
+            "L13",
+            "L14",
+            "L15",
+            "L16",
+            "L17",
+            "L18",
+            "L19",
+            "L20",
+            "L21",
+            "L22",
+            "L23",
+            "L24",
+            "L25",
+            "L26",
+            "L27",
+            "L28",
+            "L29",
+            "L30",
+            "L31",
+            "L32",
+            "L33",
+            "L34",
+            "L35",
+            "L36",
+            "L37",
+            "L38",
+            "L39",
+            "L40",
+            "L41",
+            "L42",
+            "L43",
+            "L44",
+            "L45",
+            "L46",
+            "L47",
+            "L48",
+            "L49",
+            "L50",
+            "L51",
+            "L52",
+            "L53",
+            "L54",
+            "L55",
+            "L56",
+            "L57",
+            "L58"
+          ]
+        },
+        {
+          "formula": "=+Conteo[[#This Row],[Kg Total]]/Conteo[[#This Row],[Ha Sembradas]]",
+          "example_cell": "R9",
+          "count": 729,
+          "all_cells": [
+            "R9",
+            "R10",
+            "R11",
+            "R12",
+            "R13",
+            "R14",
+            "R15",
+            "R16",
+            "R17",
+            "R18",
+            "R19",
+            "R20",
+            "R21",
+            "R22",
+            "R23",
+            "R24",
+            "R25",
+            "R26",
+            "R27",
+            "R28",
+            "R29",
+            "R30",
+            "R31",
+            "R32",
+            "R33",
+            "R34",
+            "R35",
+            "R36",
+            "R37",
+            "R38",
+            "R39",
+            "R40",
+            "R41",
+            "R42",
+            "R43",
+            "R44",
+            "R45",
+            "R46",
+            "R47",
+            "R48",
+            "R49",
+            "R50",
+            "R51",
+            "R52",
+            "R53",
+            "R54",
+            "R55",
+            "R56",
+            "R57",
+            "R58"
+          ]
+        },
+        {
+          "formula": "=+Conteo[[#This Row],[Kg/Planta]]*Conteo[[#This Row],[Plantas Presupuesto]]",
+          "example_cell": "S9",
+          "count": 729,
+          "all_cells": [
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "S13",
+            "S14",
+            "S15",
+            "S16",
+            "S17",
+            "S18",
+            "S19",
+            "S20",
+            "S21",
+            "S22",
+            "S23",
+            "S24",
+            "S25",
+            "S26",
+            "S27",
+            "S28",
+            "S29",
+            "S30",
+            "S31",
+            "S32",
+            "S33",
+            "S34",
+            "S35",
+            "S36",
+            "S37",
+            "S38",
+            "S39",
+            "S40",
+            "S41",
+            "S42",
+            "S43",
+            "S44",
+            "S45",
+            "S46",
+            "S47",
+            "S48",
+            "S49",
+            "S50",
+            "S51",
+            "S52",
+            "S53",
+            "S54",
+            "S55",
+            "S56",
+            "S57",
+            "S58"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(Conteo[[#This Row],[Kg/Planta]]/Conteo[[#This Row],[Peso Fruta (Kg)]],\"\")",
+          "example_cell": "Y9",
+          "count": 729,
+          "all_cells": [
+            "Y9",
+            "Y10",
+            "Y11",
+            "Y12",
+            "Y13",
+            "Y14",
+            "Y15",
+            "Y16",
+            "Y17",
+            "Y18",
+            "Y19",
+            "Y20",
+            "Y21",
+            "Y22",
+            "Y23",
+            "Y24",
+            "Y25",
+            "Y26",
+            "Y27",
+            "Y28",
+            "Y29",
+            "Y30",
+            "Y31",
+            "Y32",
+            "Y33",
+            "Y34",
+            "Y35",
+            "Y36",
+            "Y37",
+            "Y38",
+            "Y39",
+            "Y40",
+            "Y41",
+            "Y42",
+            "Y43",
+            "Y44",
+            "Y45",
+            "Y46",
+            "Y47",
+            "Y48",
+            "Y49",
+            "Y50",
+            "Y51",
+            "Y52",
+            "Y53",
+            "Y54",
+            "Y55",
+            "Y56",
+            "Y57",
+            "Y58"
+          ]
+        },
+        {
+          "formula": "=+SUM(Conteo[[#This Row],[Plantas Buenas]:[Plantas Malas]])",
+          "example_cell": "AG9",
+          "count": 729,
+          "all_cells": [
+            "AG9",
+            "AG10",
+            "AG11",
+            "AG12",
+            "AG13",
+            "AG14",
+            "AG15",
+            "AG16",
+            "AG17",
+            "AG18",
+            "AG19",
+            "AG20",
+            "AG21",
+            "AG22",
+            "AG23",
+            "AG24",
+            "AG25",
+            "AG26",
+            "AG27",
+            "AG28",
+            "AG29",
+            "AG30",
+            "AG31",
+            "AG32",
+            "AG33",
+            "AG34",
+            "AG35",
+            "AG36",
+            "AG37",
+            "AG38",
+            "AG39",
+            "AG40",
+            "AG41",
+            "AG42",
+            "AG43",
+            "AG44",
+            "AG45",
+            "AG46",
+            "AG47",
+            "AG48",
+            "AG49",
+            "AG50",
+            "AG51",
+            "AG52",
+            "AG53",
+            "AG54",
+            "AG55",
+            "AG56",
+            "AG57",
+            "AG58"
+          ]
+        },
+        {
+          "formula": "=IFERROR(Conteo[[#This Row],[Plantas Buenas]]/Conteo[[#This Row],[Plantación Actual]],0)",
+          "example_cell": "AH9",
+          "count": 729,
+          "all_cells": [
+            "AH9",
+            "AH10",
+            "AH11",
+            "AH12",
+            "AH13",
+            "AH14",
+            "AH15",
+            "AH16",
+            "AH17",
+            "AH18",
+            "AH19",
+            "AH20",
+            "AH21",
+            "AH22",
+            "AH23",
+            "AH24",
+            "AH25",
+            "AH26",
+            "AH27",
+            "AH28",
+            "AH29",
+            "AH30",
+            "AH31",
+            "AH32",
+            "AH33",
+            "AH34",
+            "AH35",
+            "AH36",
+            "AH37",
+            "AH38",
+            "AH39",
+            "AH40",
+            "AH41",
+            "AH42",
+            "AH43",
+            "AH44",
+            "AH45",
+            "AH46",
+            "AH47",
+            "AH48",
+            "AH49",
+            "AH50",
+            "AH51",
+            "AH52",
+            "AH53",
+            "AH54",
+            "AH55",
+            "AH56",
+            "AH57",
+            "AH58"
+          ]
+        },
+        {
+          "formula": "=+IF(Conteo[[#This Row],[Kg/Planta]]>0,Conteo[[#This Row],[Ha Sembradas]],0)",
+          "example_cell": "J9",
+          "count": 726,
+          "all_cells": [
+            "J9",
+            "J10",
+            "J11",
+            "J12",
+            "J13",
+            "J14",
+            "J15",
+            "J16",
+            "J17",
+            "J18",
+            "J19",
+            "J20",
+            "J21",
+            "J22",
+            "J23",
+            "J24",
+            "J25",
+            "J26",
+            "J27",
+            "J28",
+            "J29",
+            "J30",
+            "J31",
+            "J32",
+            "J33",
+            "J34",
+            "J35",
+            "J36",
+            "J37",
+            "J38",
+            "J39",
+            "J40",
+            "J41",
+            "J42",
+            "J43",
+            "J44",
+            "J45",
+            "J46",
+            "J47",
+            "J48",
+            "J49",
+            "J50",
+            "J51",
+            "J52",
+            "J53",
+            "J54",
+            "J55",
+            "J56",
+            "J57",
+            "J58"
+          ]
+        },
+        {
+          "formula": "=+AVERAGEIFS('Histórico Cosecha'!$CW$10:$CW$43,'Histórico Cosecha'!$D$10:$D$43,Conteo[[#This Row],[Variedad]],'Histórico Cosecha'!$C$10:$C$43,Conteo[[#This Row],[M]])",
+          "example_cell": "Q9",
+          "count": 697,
+          "all_cells": [
+            "Q9",
+            "Q10",
+            "Q11",
+            "Q12",
+            "Q13",
+            "Q14",
+            "Q15",
+            "Q16",
+            "Q17",
+            "Q18",
+            "Q19",
+            "Q20",
+            "Q21",
+            "Q22",
+            "Q23",
+            "Q24",
+            "Q25",
+            "Q26",
+            "Q27",
+            "Q28",
+            "Q29",
+            "Q30",
+            "Q31",
+            "Q32",
+            "Q33",
+            "Q34",
+            "Q35",
+            "Q36",
+            "Q37",
+            "Q38",
+            "Q39",
+            "Q40",
+            "Q41",
+            "Q42",
+            "Q43",
+            "Q44",
+            "Q45",
+            "Q46",
+            "Q47",
+            "Q48",
+            "Q49",
+            "Q50",
+            "Q51",
+            "Q52",
+            "Q53",
+            "Q54",
+            "Q55",
+            "Q56",
+            "Q57",
+            "Q58"
+          ]
+        },
+        {
+          "formula": "=+AVERAGEIFS('Histórico Cosecha'!$CW$10:$CW$43,'Histórico Cosecha'!$C$10:$C$43,Conteo[[#This Row],[M]])",
+          "example_cell": "Q706",
+          "count": 32,
+          "all_cells": [
+            "Q706",
+            "Q707",
+            "Q708",
+            "Q709",
+            "Q710",
+            "Q711",
+            "Q712",
+            "Q713",
+            "Q714",
+            "Q715",
+            "Q716",
+            "Q717",
+            "Q718",
+            "Q719",
+            "Q720",
+            "Q721",
+            "Q722",
+            "Q723",
+            "Q724",
+            "Q725",
+            "Q726",
+            "Q727",
+            "Q728",
+            "Q729",
+            "Q730",
+            "Q731",
+            "Q732",
+            "Q733",
+            "Q734",
+            "Q735",
+            "Q736",
+            "Q737"
+          ]
+        },
+        {
+          "formula": "=+Resumen!S3",
+          "example_cell": "AF3",
+          "count": 1,
+          "all_cells": [
+            "AF3"
+          ]
+        },
+        {
+          "formula": "=+Resumen!S4",
+          "example_cell": "AF4",
+          "count": 1,
+          "all_cells": [
+            "AF4"
+          ]
+        },
+        {
+          "formula": "=+SUBTOTAL(9,Conteo[Ha Sembradas])",
+          "example_cell": "I6",
+          "count": 1,
+          "all_cells": [
+            "I6"
+          ]
+        },
+        {
+          "formula": "=+SUBTOTAL(9,Conteo[Ha en Producción])",
+          "example_cell": "J6",
+          "count": 1,
+          "all_cells": [
+            "J6"
+          ]
+        },
+        {
+          "formula": "=+SUBTOTAL(9,Conteo[Plantas Presupuesto])",
+          "example_cell": "K6",
+          "count": 1,
+          "all_cells": [
+            "K6"
+          ]
+        },
+        {
+          "formula": "=+S6/SUBTOTAL(9,Conteo[Ha Sembradas])",
+          "example_cell": "R6",
+          "count": 1,
+          "all_cells": [
+            "R6"
+          ]
+        },
+        {
+          "formula": "=+SUBTOTAL(9,Conteo[Kg Total])",
+          "example_cell": "S6",
+          "count": 1,
+          "all_cells": [
+            "S6"
+          ]
+        },
+        {
+          "formula": "=+SUBTOTAL(9,Conteo[Plantas Buenas])",
+          "example_cell": "Z6",
+          "count": 1,
+          "all_cells": [
+            "Z6"
+          ]
+        },
+        {
+          "formula": "=+SUBTOTAL(9,Conteo[Plantas Regulares])",
+          "example_cell": "AA6",
+          "count": 1,
+          "all_cells": [
+            "AA6"
+          ]
+        },
+        {
+          "formula": "=+SUBTOTAL(9,Conteo[Plantas Malas])",
+          "example_cell": "AB6",
+          "count": 1,
+          "all_cells": [
+            "AB6"
+          ]
+        },
+        {
+          "formula": "=+SUBTOTAL(9,Conteo[Plantación Actual])",
+          "example_cell": "AG6",
+          "count": 1,
+          "all_cells": [
+            "AG6"
+          ]
+        },
+        {
+          "formula": "=+CONCATENATE(\"S\",D9,\"M\",E9,\"T\",F9,\" \",H9)",
+          "example_cell": "B9",
+          "count": 1,
+          "all_cells": [
+            "B9"
+          ]
+        },
+        {
+          "formula": "=(TODAY()-M9)/365",
+          "example_cell": "N9",
+          "count": 1,
+          "all_cells": [
+            "N9"
+          ]
+        },
+        {
+          "formula": "=+IFERROR((SUM(Conteo[[#This Row],[Plantas Buenas]:[Plantas Malas]])*I9)/AG9,\"\")",
+          "example_cell": "AD9",
+          "count": 1,
+          "all_cells": [
+            "AD9"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(SUM(Conteo[[#This Row],[Plantas Buenas]:[ Plts Muertas]])/I9,\"\")",
+          "example_cell": "AE9",
+          "count": 1,
+          "all_cells": [
+            "AE9"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(I9-AD9,\"\")",
+          "example_cell": "AF9",
+          "count": 1,
+          "all_cells": [
+            "AF9"
+          ]
+        },
+        {
+          "formula": "=+CONCATENATE(\"S\",D10,\"M\",E10,\"T\",F10,\" \",H10)",
+          "example_cell": "B10",
+          "count": 1,
+          "all_cells": [
+            "B10"
+          ]
+        },
+        {
+          "formula": "=(TODAY()-M10)/365",
+          "example_cell": "N10",
+          "count": 1,
+          "all_cells": [
+            "N10"
+          ]
+        },
+        {
+          "formula": "=+IFERROR((SUM(Conteo[[#This Row],[Plantas Buenas]:[Plantas Malas]])*I10)/AG10,\"\")",
+          "example_cell": "AD10",
+          "count": 1,
+          "all_cells": [
+            "AD10"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(SUM(Conteo[[#This Row],[Plantas Buenas]:[ Plts Muertas]])/I10,\"\")",
+          "example_cell": "AE10",
+          "count": 1,
+          "all_cells": [
+            "AE10"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(I10-AD10,\"\")",
+          "example_cell": "AF10",
+          "count": 1,
+          "all_cells": [
+            "AF10"
+          ]
+        },
+        {
+          "formula": "=+CONCATENATE(\"S\",D11,\"M\",E11,\"T\",F11,\" \",H11)",
+          "example_cell": "B11",
+          "count": 1,
+          "all_cells": [
+            "B11"
+          ]
+        },
+        {
+          "formula": "=(TODAY()-M11)/365",
+          "example_cell": "N11",
+          "count": 1,
+          "all_cells": [
+            "N11"
+          ]
+        },
+        {
+          "formula": "=+IFERROR((SUM(Conteo[[#This Row],[Plantas Buenas]:[Plantas Malas]])*I11)/AG11,\"\")",
+          "example_cell": "AD11",
+          "count": 1,
+          "all_cells": [
+            "AD11"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(SUM(Conteo[[#This Row],[Plantas Buenas]:[ Plts Muertas]])/I11,\"\")",
+          "example_cell": "AE11",
+          "count": 1,
+          "all_cells": [
+            "AE11"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(I11-AD11,\"\")",
+          "example_cell": "AF11",
+          "count": 1,
+          "all_cells": [
+            "AF11"
+          ]
+        },
+        {
+          "formula": "=+CONCATENATE(\"S\",D12,\"M\",E12,\"T\",F12,\" \",H12)",
+          "example_cell": "B12",
+          "count": 1,
+          "all_cells": [
+            "B12"
+          ]
+        },
+        {
+          "formula": "=(TODAY()-M12)/365",
+          "example_cell": "N12",
+          "count": 1,
+          "all_cells": [
+            "N12"
+          ]
+        },
+        {
+          "formula": "=+IFERROR((SUM(Conteo[[#This Row],[Plantas Buenas]:[Plantas Malas]])*I12)/AG12,\"\")",
+          "example_cell": "AD12",
+          "count": 1,
+          "all_cells": [
+            "AD12"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(SUM(Conteo[[#This Row],[Plantas Buenas]:[ Plts Muertas]])/I12,\"\")",
+          "example_cell": "AE12",
+          "count": 1,
+          "all_cells": [
+            "AE12"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(I12-AD12,\"\")",
+          "example_cell": "AF12",
+          "count": 1,
+          "all_cells": [
+            "AF12"
+          ]
+        },
+        {
+          "formula": "=+CONCATENATE(\"S\",D13,\"M\",E13,\"T\",F13,\" \",H13)",
+          "example_cell": "B13",
+          "count": 1,
+          "all_cells": [
+            "B13"
+          ]
+        },
+        {
+          "formula": "=(TODAY()-M13)/365",
+          "example_cell": "N13",
+          "count": 1,
+          "all_cells": [
+            "N13"
+          ]
+        },
+        {
+          "formula": "=+IFERROR((SUM(Conteo[[#This Row],[Plantas Buenas]:[Plantas Malas]])*I13)/AG13,\"\")",
+          "example_cell": "AD13",
+          "count": 1,
+          "all_cells": [
+            "AD13"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(SUM(Conteo[[#This Row],[Plantas Buenas]:[ Plts Muertas]])/I13,\"\")",
+          "example_cell": "AE13",
+          "count": 1,
+          "all_cells": [
+            "AE13"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(I13-AD13,\"\")",
+          "example_cell": "AF13",
+          "count": 1,
+          "all_cells": [
+            "AF13"
+          ]
+        },
+        {
+          "formula": "=+CONCATENATE(\"S\",D14,\"M\",E14,\"T\",F14,\" \",H14)",
+          "example_cell": "B14",
+          "count": 1,
+          "all_cells": [
+            "B14"
+          ]
+        },
+        {
+          "formula": "=(TODAY()-M14)/365",
+          "example_cell": "N14",
+          "count": 1,
+          "all_cells": [
+            "N14"
+          ]
+        },
+        {
+          "formula": "=+IFERROR((SUM(Conteo[[#This Row],[Plantas Buenas]:[Plantas Malas]])*I14)/AG14,\"\")",
+          "example_cell": "AD14",
+          "count": 1,
+          "all_cells": [
+            "AD14"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(SUM(Conteo[[#This Row],[Plantas Buenas]:[ Plts Muertas]])/I14,\"\")",
+          "example_cell": "AE14",
+          "count": 1,
+          "all_cells": [
+            "AE14"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(I14-AD14,\"\")",
+          "example_cell": "AF14",
+          "count": 1,
+          "all_cells": [
+            "AF14"
+          ]
+        }
+      ]
+    },
+    "Curvas": {
+      "total_formula_cells": 16250,
+      "unique_formulas_count": 16213,
+      "top_formulas": [
+        {
+          "formula": "=+R7",
+          "example_cell": "R6",
+          "count": 5,
+          "all_cells": [
+            "R6",
+            "S6",
+            "T6",
+            "U6",
+            "V6"
+          ]
+        },
+        {
+          "formula": "=+AE7",
+          "example_cell": "AE6",
+          "count": 5,
+          "all_cells": [
+            "AE6",
+            "AF6",
+            "AG6",
+            "AH6",
+            "AI6"
+          ]
+        },
+        {
+          "formula": "=+AR7",
+          "example_cell": "AR6",
+          "count": 5,
+          "all_cells": [
+            "AR6",
+            "AS6",
+            "AT6",
+            "AU6",
+            "AV6"
+          ]
+        },
+        {
+          "formula": "=+J7",
+          "example_cell": "J6",
+          "count": 4,
+          "all_cells": [
+            "J6",
+            "K6",
+            "L6",
+            "M6"
+          ]
+        },
+        {
+          "formula": "=+N7",
+          "example_cell": "N6",
+          "count": 4,
+          "all_cells": [
+            "N6",
+            "O6",
+            "P6",
+            "Q6"
+          ]
+        },
+        {
+          "formula": "=+W7",
+          "example_cell": "W6",
+          "count": 4,
+          "all_cells": [
+            "W6",
+            "X6",
+            "Y6",
+            "Z6"
+          ]
+        },
+        {
+          "formula": "=+AA7",
+          "example_cell": "AA6",
+          "count": 4,
+          "all_cells": [
+            "AA6",
+            "AB6",
+            "AC6",
+            "AD6"
+          ]
+        },
+        {
+          "formula": "=+AJ7",
+          "example_cell": "AJ6",
+          "count": 4,
+          "all_cells": [
+            "AJ6",
+            "AK6",
+            "AL6",
+            "AM6"
+          ]
+        },
+        {
+          "formula": "=+AN7",
+          "example_cell": "AN6",
+          "count": 4,
+          "all_cells": [
+            "AN6",
+            "AO6",
+            "AP6",
+            "AQ6"
+          ]
+        },
+        {
+          "formula": "=+AW7",
+          "example_cell": "AW6",
+          "count": 4,
+          "all_cells": [
+            "AW6",
+            "AX6",
+            "AY6",
+            "AZ6"
+          ]
+        },
+        {
+          "formula": "=+BA7",
+          "example_cell": "BA6",
+          "count": 4,
+          "all_cells": [
+            "BA6",
+            "BB6",
+            "BC6",
+            "BD6"
+          ]
+        },
+        {
+          "formula": "=+BE7",
+          "example_cell": "BE6",
+          "count": 2,
+          "all_cells": [
+            "BE6",
+            "BF6"
+          ]
+        },
+        {
+          "formula": "=+SUM(J25:J29)",
+          "example_cell": "J1",
+          "count": 1,
+          "all_cells": [
+            "J1"
+          ]
+        },
+        {
+          "formula": "=+SUM(K25:K29)",
+          "example_cell": "K1",
+          "count": 1,
+          "all_cells": [
+            "K1"
+          ]
+        },
+        {
+          "formula": "=+SUM(L25:L29)",
+          "example_cell": "L1",
+          "count": 1,
+          "all_cells": [
+            "L1"
+          ]
+        },
+        {
+          "formula": "=+SUM(M25:M29)",
+          "example_cell": "M1",
+          "count": 1,
+          "all_cells": [
+            "M1"
+          ]
+        },
+        {
+          "formula": "=+SUM(N25:N29)",
+          "example_cell": "N1",
+          "count": 1,
+          "all_cells": [
+            "N1"
+          ]
+        },
+        {
+          "formula": "=+SUM(O25:O29)",
+          "example_cell": "O1",
+          "count": 1,
+          "all_cells": [
+            "O1"
+          ]
+        },
+        {
+          "formula": "=+SUM(P25:P29)",
+          "example_cell": "P1",
+          "count": 1,
+          "all_cells": [
+            "P1"
+          ]
+        },
+        {
+          "formula": "=+SUM(Q25:Q29)",
+          "example_cell": "Q1",
+          "count": 1,
+          "all_cells": [
+            "Q1"
+          ]
+        },
+        {
+          "formula": "=+SUM(R25:R29)",
+          "example_cell": "R1",
+          "count": 1,
+          "all_cells": [
+            "R1"
+          ]
+        },
+        {
+          "formula": "=+SUM(S25:S29)",
+          "example_cell": "S1",
+          "count": 1,
+          "all_cells": [
+            "S1"
+          ]
+        },
+        {
+          "formula": "=+SUM(T25:T29)",
+          "example_cell": "T1",
+          "count": 1,
+          "all_cells": [
+            "T1"
+          ]
+        },
+        {
+          "formula": "=+Resumen!S3",
+          "example_cell": "S3",
+          "count": 1,
+          "all_cells": [
+            "S3"
+          ]
+        },
+        {
+          "formula": "=+Resumen!S4",
+          "example_cell": "S4",
+          "count": 1,
+          "all_cells": [
+            "S4"
+          ]
+        },
+        {
+          "formula": "=+J9",
+          "example_cell": "J5",
+          "count": 1,
+          "all_cells": [
+            "J5"
+          ]
+        },
+        {
+          "formula": "=+K9",
+          "example_cell": "K5",
+          "count": 1,
+          "all_cells": [
+            "K5"
+          ]
+        },
+        {
+          "formula": "=+L9",
+          "example_cell": "L5",
+          "count": 1,
+          "all_cells": [
+            "L5"
+          ]
+        },
+        {
+          "formula": "=+M9",
+          "example_cell": "M5",
+          "count": 1,
+          "all_cells": [
+            "M5"
+          ]
+        },
+        {
+          "formula": "=+N9",
+          "example_cell": "N5",
+          "count": 1,
+          "all_cells": [
+            "N5"
+          ]
+        },
+        {
+          "formula": "=+N5+1",
+          "example_cell": "O5",
+          "count": 1,
+          "all_cells": [
+            "O5"
+          ]
+        },
+        {
+          "formula": "=+O5+1",
+          "example_cell": "P5",
+          "count": 1,
+          "all_cells": [
+            "P5"
+          ]
+        },
+        {
+          "formula": "=+P5+1",
+          "example_cell": "Q5",
+          "count": 1,
+          "all_cells": [
+            "Q5"
+          ]
+        },
+        {
+          "formula": "=+Q5+1",
+          "example_cell": "R5",
+          "count": 1,
+          "all_cells": [
+            "R5"
+          ]
+        },
+        {
+          "formula": "=+R5+1",
+          "example_cell": "S5",
+          "count": 1,
+          "all_cells": [
+            "S5"
+          ]
+        },
+        {
+          "formula": "=+S5+1",
+          "example_cell": "T5",
+          "count": 1,
+          "all_cells": [
+            "T5"
+          ]
+        },
+        {
+          "formula": "=+T5+1",
+          "example_cell": "U5",
+          "count": 1,
+          "all_cells": [
+            "U5"
+          ]
+        },
+        {
+          "formula": "=+U5+1",
+          "example_cell": "V5",
+          "count": 1,
+          "all_cells": [
+            "V5"
+          ]
+        },
+        {
+          "formula": "=+V5+1",
+          "example_cell": "W5",
+          "count": 1,
+          "all_cells": [
+            "W5"
+          ]
+        },
+        {
+          "formula": "=+W5+1",
+          "example_cell": "X5",
+          "count": 1,
+          "all_cells": [
+            "X5"
+          ]
+        },
+        {
+          "formula": "=+X5+1",
+          "example_cell": "Y5",
+          "count": 1,
+          "all_cells": [
+            "Y5"
+          ]
+        },
+        {
+          "formula": "=+Y5+1",
+          "example_cell": "Z5",
+          "count": 1,
+          "all_cells": [
+            "Z5"
+          ]
+        },
+        {
+          "formula": "=+Z5+1",
+          "example_cell": "AA5",
+          "count": 1,
+          "all_cells": [
+            "AA5"
+          ]
+        },
+        {
+          "formula": "=+AA5+1",
+          "example_cell": "AB5",
+          "count": 1,
+          "all_cells": [
+            "AB5"
+          ]
+        },
+        {
+          "formula": "=+AB5+1",
+          "example_cell": "AC5",
+          "count": 1,
+          "all_cells": [
+            "AC5"
+          ]
+        },
+        {
+          "formula": "=+AC5+1",
+          "example_cell": "AD5",
+          "count": 1,
+          "all_cells": [
+            "AD5"
+          ]
+        },
+        {
+          "formula": "=+AD5+1",
+          "example_cell": "AE5",
+          "count": 1,
+          "all_cells": [
+            "AE5"
+          ]
+        },
+        {
+          "formula": "=+AE5+1",
+          "example_cell": "AF5",
+          "count": 1,
+          "all_cells": [
+            "AF5"
+          ]
+        },
+        {
+          "formula": "=+AF5+1",
+          "example_cell": "AG5",
+          "count": 1,
+          "all_cells": [
+            "AG5"
+          ]
+        },
+        {
+          "formula": "=+AG5+1",
+          "example_cell": "AH5",
+          "count": 1,
+          "all_cells": [
+            "AH5"
+          ]
+        }
+      ]
+    },
+    "Histórico Cosecha": {
+      "total_formula_cells": 828,
+      "unique_formulas_count": 828,
+      "top_formulas": [
+        {
+          "formula": "=+Resumen!S3",
+          "example_cell": "AY3",
+          "count": 1,
+          "all_cells": [
+            "AY3"
+          ]
+        },
+        {
+          "formula": "=+Resumen!S4",
+          "example_cell": "AY4",
+          "count": 1,
+          "all_cells": [
+            "AY4"
+          ]
+        },
+        {
+          "formula": "=TODAY()",
+          "example_cell": "C7",
+          "count": 1,
+          "all_cells": [
+            "C7"
+          ]
+        },
+        {
+          "formula": "=+SUMIFS(Conteo[Ha en Producción],Conteo[M],'Histórico Cosecha'!C10,Conteo[Variedad],'Histórico Cosecha'!D10)",
+          "example_cell": "O10",
+          "count": 1,
+          "all_cells": [
+            "O10"
+          ]
+        },
+        {
+          "formula": "=+SUMIFS(Conteo[Plantas Presupuesto],Conteo[Variedad],'Histórico Cosecha'!$D10,Conteo[M],'Histórico Cosecha'!$C10,Conteo[Empresa],\"ACP\")",
+          "example_cell": "Z10",
+          "count": 1,
+          "all_cells": [
+            "Z10"
+          ]
+        },
+        {
+          "formula": "=+AVERAGEIFS(Conteo[[Fecha de Siembra ]],Conteo[M],'Histórico Cosecha'!C10,Conteo[Variedad],'Histórico Cosecha'!D10)",
+          "example_cell": "AA10",
+          "count": 1,
+          "all_cells": [
+            "AA10"
+          ]
+        },
+        {
+          "formula": "=($C$7-AA10)/365",
+          "example_cell": "AB10",
+          "count": 1,
+          "all_cells": [
+            "AB10"
+          ]
+        },
+        {
+          "formula": "=+(CE10/1000)/N10",
+          "example_cell": "CF10",
+          "count": 1,
+          "all_cells": [
+            "CF10"
+          ]
+        },
+        {
+          "formula": "=+CE10/Y10",
+          "example_cell": "CG10",
+          "count": 1,
+          "all_cells": [
+            "CG10"
+          ]
+        },
+        {
+          "formula": "=+CO10*Y10",
+          "example_cell": "CM10",
+          "count": 1,
+          "all_cells": [
+            "CM10"
+          ]
+        },
+        {
+          "formula": "=+(CM10/1000)/N10",
+          "example_cell": "CN10",
+          "count": 1,
+          "all_cells": [
+            "CN10"
+          ]
+        },
+        {
+          "formula": "=+CW10*Z10",
+          "example_cell": "CU10",
+          "count": 1,
+          "all_cells": [
+            "CU10"
+          ]
+        },
+        {
+          "formula": "=+(CU10/1000)/$O10",
+          "example_cell": "CV10",
+          "count": 1,
+          "all_cells": [
+            "CV10"
+          ]
+        },
+        {
+          "formula": "=+DD10*$Z10",
+          "example_cell": "DB10",
+          "count": 1,
+          "all_cells": [
+            "DB10"
+          ]
+        },
+        {
+          "formula": "=+(DB10/1000)/$O10",
+          "example_cell": "DC10",
+          "count": 1,
+          "all_cells": [
+            "DC10"
+          ]
+        },
+        {
+          "formula": "=+CW10*0.88",
+          "example_cell": "DD10",
+          "count": 1,
+          "all_cells": [
+            "DD10"
+          ]
+        },
+        {
+          "formula": "=+DK10*$Z10",
+          "example_cell": "DI10",
+          "count": 1,
+          "all_cells": [
+            "DI10"
+          ]
+        },
+        {
+          "formula": "=+(DI10/1000)/$O10",
+          "example_cell": "DJ10",
+          "count": 1,
+          "all_cells": [
+            "DJ10"
+          ]
+        },
+        {
+          "formula": "=+DD10/CW10",
+          "example_cell": "DM10",
+          "count": 1,
+          "all_cells": [
+            "DM10"
+          ]
+        },
+        {
+          "formula": "=+DK10/CW10",
+          "example_cell": "DN10",
+          "count": 1,
+          "all_cells": [
+            "DN10"
+          ]
+        },
+        {
+          "formula": "=+SUMIFS(Conteo[Ha en Producción],Conteo[M],'Histórico Cosecha'!C11,Conteo[Variedad],'Histórico Cosecha'!D11)",
+          "example_cell": "O11",
+          "count": 1,
+          "all_cells": [
+            "O11"
+          ]
+        },
+        {
+          "formula": "=+SUMIFS(Conteo[Plantas Presupuesto],Conteo[Variedad],'Histórico Cosecha'!$D11,Conteo[M],'Histórico Cosecha'!$C11,Conteo[Empresa],\"ACP\")",
+          "example_cell": "Z11",
+          "count": 1,
+          "all_cells": [
+            "Z11"
+          ]
+        },
+        {
+          "formula": "=+AVERAGEIFS(Conteo[[Fecha de Siembra ]],Conteo[M],'Histórico Cosecha'!C11,Conteo[Variedad],'Histórico Cosecha'!D11)",
+          "example_cell": "AA11",
+          "count": 1,
+          "all_cells": [
+            "AA11"
+          ]
+        },
+        {
+          "formula": "=($C$7-AA11)/365",
+          "example_cell": "AB11",
+          "count": 1,
+          "all_cells": [
+            "AB11"
+          ]
+        },
+        {
+          "formula": "=+(CE11/1000)/N11",
+          "example_cell": "CF11",
+          "count": 1,
+          "all_cells": [
+            "CF11"
+          ]
+        },
+        {
+          "formula": "=+CE11/Y11",
+          "example_cell": "CG11",
+          "count": 1,
+          "all_cells": [
+            "CG11"
+          ]
+        },
+        {
+          "formula": "=+CO11*Y11",
+          "example_cell": "CM11",
+          "count": 1,
+          "all_cells": [
+            "CM11"
+          ]
+        },
+        {
+          "formula": "=+(CM11/1000)/N11",
+          "example_cell": "CN11",
+          "count": 1,
+          "all_cells": [
+            "CN11"
+          ]
+        },
+        {
+          "formula": "=+CW11*Z11",
+          "example_cell": "CU11",
+          "count": 1,
+          "all_cells": [
+            "CU11"
+          ]
+        },
+        {
+          "formula": "=+(CU11/1000)/$O11",
+          "example_cell": "CV11",
+          "count": 1,
+          "all_cells": [
+            "CV11"
+          ]
+        },
+        {
+          "formula": "=+DD11*$Z11",
+          "example_cell": "DB11",
+          "count": 1,
+          "all_cells": [
+            "DB11"
+          ]
+        },
+        {
+          "formula": "=+(DB11/1000)/$O11",
+          "example_cell": "DC11",
+          "count": 1,
+          "all_cells": [
+            "DC11"
+          ]
+        },
+        {
+          "formula": "=+CW11*0.88",
+          "example_cell": "DD11",
+          "count": 1,
+          "all_cells": [
+            "DD11"
+          ]
+        },
+        {
+          "formula": "=+DK11*$Z11",
+          "example_cell": "DI11",
+          "count": 1,
+          "all_cells": [
+            "DI11"
+          ]
+        },
+        {
+          "formula": "=+(DI11/1000)/$O11",
+          "example_cell": "DJ11",
+          "count": 1,
+          "all_cells": [
+            "DJ11"
+          ]
+        },
+        {
+          "formula": "=+DD11/CW11",
+          "example_cell": "DM11",
+          "count": 1,
+          "all_cells": [
+            "DM11"
+          ]
+        },
+        {
+          "formula": "=+DK11/CW11",
+          "example_cell": "DN11",
+          "count": 1,
+          "all_cells": [
+            "DN11"
+          ]
+        },
+        {
+          "formula": "=+(DQ10*#REF!)/#REF!",
+          "example_cell": "DQ11",
+          "count": 1,
+          "all_cells": [
+            "DQ11"
+          ]
+        },
+        {
+          "formula": "=+SUMIFS(Conteo[Ha en Producción],Conteo[M],'Histórico Cosecha'!C12,Conteo[Variedad],'Histórico Cosecha'!D12)",
+          "example_cell": "O12",
+          "count": 1,
+          "all_cells": [
+            "O12"
+          ]
+        },
+        {
+          "formula": "=+SUMIFS(Conteo[Plantas Presupuesto],Conteo[Variedad],'Histórico Cosecha'!$D12,Conteo[M],'Histórico Cosecha'!$C12,Conteo[Empresa],\"ACP\")",
+          "example_cell": "Z12",
+          "count": 1,
+          "all_cells": [
+            "Z12"
+          ]
+        },
+        {
+          "formula": "=+AVERAGEIFS(Conteo[[Fecha de Siembra ]],Conteo[M],'Histórico Cosecha'!C12,Conteo[Variedad],'Histórico Cosecha'!D12)",
+          "example_cell": "AA12",
+          "count": 1,
+          "all_cells": [
+            "AA12"
+          ]
+        },
+        {
+          "formula": "=($C$7-AA12)/365",
+          "example_cell": "AB12",
+          "count": 1,
+          "all_cells": [
+            "AB12"
+          ]
+        },
+        {
+          "formula": "=+(CE12/1000)/N12",
+          "example_cell": "CF12",
+          "count": 1,
+          "all_cells": [
+            "CF12"
+          ]
+        },
+        {
+          "formula": "=+CE12/Y12",
+          "example_cell": "CG12",
+          "count": 1,
+          "all_cells": [
+            "CG12"
+          ]
+        },
+        {
+          "formula": "=+CO12*Y12",
+          "example_cell": "CM12",
+          "count": 1,
+          "all_cells": [
+            "CM12"
+          ]
+        },
+        {
+          "formula": "=+(CM12/1000)/N12",
+          "example_cell": "CN12",
+          "count": 1,
+          "all_cells": [
+            "CN12"
+          ]
+        },
+        {
+          "formula": "=+CW12*Z12",
+          "example_cell": "CU12",
+          "count": 1,
+          "all_cells": [
+            "CU12"
+          ]
+        },
+        {
+          "formula": "=+(CU12/1000)/$O12",
+          "example_cell": "CV12",
+          "count": 1,
+          "all_cells": [
+            "CV12"
+          ]
+        },
+        {
+          "formula": "=+DD12*$Z12",
+          "example_cell": "DB12",
+          "count": 1,
+          "all_cells": [
+            "DB12"
+          ]
+        },
+        {
+          "formula": "=+(DB12/1000)/$O12",
+          "example_cell": "DC12",
+          "count": 1,
+          "all_cells": [
+            "DC12"
+          ]
+        }
+      ]
+    },
+    "Mensual": {
+      "total_formula_cells": 3055,
+      "unique_formulas_count": 2570,
+      "top_formulas": [
+        {
+          "formula": "=+Curvas!#REF!",
+          "example_cell": "E156",
+          "count": 465,
+          "all_cells": [
+            "E156",
+            "F156",
+            "G156",
+            "H156",
+            "I156",
+            "BC156",
+            "BD156",
+            "E157",
+            "F157",
+            "G157",
+            "H157",
+            "I157",
+            "J157",
+            "K157",
+            "L157",
+            "M157",
+            "N157",
+            "O157",
+            "P157",
+            "Q157",
+            "R157",
+            "S157",
+            "T157",
+            "U157",
+            "V157",
+            "W157",
+            "X157",
+            "Y157",
+            "Z157",
+            "AA157",
+            "AB157",
+            "AC157",
+            "AD157",
+            "AE157",
+            "AF157",
+            "AG157",
+            "AH157",
+            "AI157",
+            "AJ157",
+            "AK157",
+            "AL157",
+            "AM157",
+            "AN157",
+            "AO157",
+            "AP157",
+            "AQ157",
+            "AR157",
+            "AS157",
+            "AT157",
+            "AU157"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T326",
+          "example_cell": "P156",
+          "count": 2,
+          "all_cells": [
+            "P156",
+            "Q156"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T327",
+          "example_cell": "P158",
+          "count": 2,
+          "all_cells": [
+            "P158",
+            "Q158"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T329",
+          "example_cell": "P160",
+          "count": 2,
+          "all_cells": [
+            "P160",
+            "Q160"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T330",
+          "example_cell": "P161",
+          "count": 2,
+          "all_cells": [
+            "P161",
+            "Q161"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T331",
+          "example_cell": "P162",
+          "count": 2,
+          "all_cells": [
+            "P162",
+            "Q162"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T332",
+          "example_cell": "P163",
+          "count": 2,
+          "all_cells": [
+            "P163",
+            "Q163"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T333",
+          "example_cell": "P165",
+          "count": 2,
+          "all_cells": [
+            "P165",
+            "Q165"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T334",
+          "example_cell": "P166",
+          "count": 2,
+          "all_cells": [
+            "P166",
+            "Q166"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T356",
+          "example_cell": "P167",
+          "count": 2,
+          "all_cells": [
+            "P167",
+            "Q167"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T357",
+          "example_cell": "P168",
+          "count": 2,
+          "all_cells": [
+            "P168",
+            "Q168"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T358",
+          "example_cell": "P169",
+          "count": 2,
+          "all_cells": [
+            "P169",
+            "Q169"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T359",
+          "example_cell": "P170",
+          "count": 2,
+          "all_cells": [
+            "P170",
+            "Q170"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T361",
+          "example_cell": "P171",
+          "count": 2,
+          "all_cells": [
+            "P171",
+            "Q171"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T371",
+          "example_cell": "P174",
+          "count": 2,
+          "all_cells": [
+            "P174",
+            "Q174"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T372",
+          "example_cell": "P175",
+          "count": 2,
+          "all_cells": [
+            "P175",
+            "Q175"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T373",
+          "example_cell": "P176",
+          "count": 2,
+          "all_cells": [
+            "P176",
+            "Q176"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T374",
+          "example_cell": "P177",
+          "count": 2,
+          "all_cells": [
+            "P177",
+            "Q177"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T376",
+          "example_cell": "P178",
+          "count": 2,
+          "all_cells": [
+            "P178",
+            "Q178"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T378",
+          "example_cell": "P179",
+          "count": 2,
+          "all_cells": [
+            "P179",
+            "Q179"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T379",
+          "example_cell": "P180",
+          "count": 2,
+          "all_cells": [
+            "P180",
+            "Q180"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T380",
+          "example_cell": "P181",
+          "count": 2,
+          "all_cells": [
+            "P181",
+            "Q181"
+          ]
+        },
+        {
+          "formula": "=+Resumen!S4",
+          "example_cell": "L4",
+          "count": 1,
+          "all_cells": [
+            "L4"
+          ]
+        },
+        {
+          "formula": "=+Curvas!G386",
+          "example_cell": "B9",
+          "count": 1,
+          "all_cells": [
+            "B9"
+          ]
+        },
+        {
+          "formula": "=+Curvas!H386",
+          "example_cell": "C9",
+          "count": 1,
+          "all_cells": [
+            "C9"
+          ]
+        },
+        {
+          "formula": "=+Curvas!I386",
+          "example_cell": "D9",
+          "count": 1,
+          "all_cells": [
+            "D9"
+          ]
+        },
+        {
+          "formula": "=+Curvas!J386",
+          "example_cell": "E9",
+          "count": 1,
+          "all_cells": [
+            "E9"
+          ]
+        },
+        {
+          "formula": "=+Curvas!K386",
+          "example_cell": "F9",
+          "count": 1,
+          "all_cells": [
+            "F9"
+          ]
+        },
+        {
+          "formula": "=+Curvas!L386",
+          "example_cell": "G9",
+          "count": 1,
+          "all_cells": [
+            "G9"
+          ]
+        },
+        {
+          "formula": "=+Curvas!M386",
+          "example_cell": "H9",
+          "count": 1,
+          "all_cells": [
+            "H9"
+          ]
+        },
+        {
+          "formula": "=+Curvas!N386",
+          "example_cell": "I9",
+          "count": 1,
+          "all_cells": [
+            "I9"
+          ]
+        },
+        {
+          "formula": "=+Curvas!O386",
+          "example_cell": "J9",
+          "count": 1,
+          "all_cells": [
+            "J9"
+          ]
+        },
+        {
+          "formula": "=+Curvas!P386",
+          "example_cell": "K9",
+          "count": 1,
+          "all_cells": [
+            "K9"
+          ]
+        },
+        {
+          "formula": "=+Curvas!Q386",
+          "example_cell": "L9",
+          "count": 1,
+          "all_cells": [
+            "L9"
+          ]
+        },
+        {
+          "formula": "=+Curvas!R386",
+          "example_cell": "M9",
+          "count": 1,
+          "all_cells": [
+            "M9"
+          ]
+        },
+        {
+          "formula": "=+Curvas!S386",
+          "example_cell": "N9",
+          "count": 1,
+          "all_cells": [
+            "N9"
+          ]
+        },
+        {
+          "formula": "=+Curvas!T386",
+          "example_cell": "O9",
+          "count": 1,
+          "all_cells": [
+            "O9"
+          ]
+        },
+        {
+          "formula": "=+Curvas!U386",
+          "example_cell": "P9",
+          "count": 1,
+          "all_cells": [
+            "P9"
+          ]
+        },
+        {
+          "formula": "=+SUM(E9:P9)",
+          "example_cell": "Q9",
+          "count": 1,
+          "all_cells": [
+            "Q9"
+          ]
+        },
+        {
+          "formula": "=+Curvas!G387",
+          "example_cell": "B10",
+          "count": 1,
+          "all_cells": [
+            "B10"
+          ]
+        },
+        {
+          "formula": "=+Curvas!H387",
+          "example_cell": "C10",
+          "count": 1,
+          "all_cells": [
+            "C10"
+          ]
+        },
+        {
+          "formula": "=+Curvas!I387",
+          "example_cell": "D10",
+          "count": 1,
+          "all_cells": [
+            "D10"
+          ]
+        },
+        {
+          "formula": "=+Curvas!J387",
+          "example_cell": "E10",
+          "count": 1,
+          "all_cells": [
+            "E10"
+          ]
+        },
+        {
+          "formula": "=+Curvas!K387",
+          "example_cell": "F10",
+          "count": 1,
+          "all_cells": [
+            "F10"
+          ]
+        },
+        {
+          "formula": "=+Curvas!L387",
+          "example_cell": "G10",
+          "count": 1,
+          "all_cells": [
+            "G10"
+          ]
+        },
+        {
+          "formula": "=+Curvas!M387",
+          "example_cell": "H10",
+          "count": 1,
+          "all_cells": [
+            "H10"
+          ]
+        },
+        {
+          "formula": "=+Curvas!N387",
+          "example_cell": "I10",
+          "count": 1,
+          "all_cells": [
+            "I10"
+          ]
+        },
+        {
+          "formula": "=+Curvas!O387",
+          "example_cell": "J10",
+          "count": 1,
+          "all_cells": [
+            "J10"
+          ]
+        },
+        {
+          "formula": "=+Curvas!P387",
+          "example_cell": "K10",
+          "count": 1,
+          "all_cells": [
+            "K10"
+          ]
+        },
+        {
+          "formula": "=+Curvas!Q387",
+          "example_cell": "L10",
+          "count": 1,
+          "all_cells": [
+            "L10"
+          ]
+        }
+      ]
+    },
+    "Fechas de Poda": {
+      "total_formula_cells": 104,
+      "unique_formulas_count": 53,
+      "top_formulas": [
+        {
+          "formula": "=+CONCATENATE(Semana_de_Poda[[#This Row],[Sector]],Semana_de_Poda[[#This Row],[Mód]],Semana_de_Poda[[#This Row],[Variedad]])",
+          "example_cell": "L4",
+          "count": 52,
+          "all_cells": [
+            "L4",
+            "L5",
+            "L6",
+            "L7",
+            "L8",
+            "L9",
+            "L10",
+            "L11",
+            "L12",
+            "L13",
+            "L14",
+            "L15",
+            "L16",
+            "L17",
+            "L18",
+            "L19",
+            "L20",
+            "L21",
+            "L22",
+            "L23",
+            "L24",
+            "L25",
+            "L26",
+            "L27",
+            "L28",
+            "L29",
+            "L30",
+            "L31",
+            "L32",
+            "L33",
+            "L34",
+            "L35",
+            "L36",
+            "L37",
+            "L38",
+            "L39",
+            "L40",
+            "L41",
+            "L42",
+            "L43",
+            "L44",
+            "L45",
+            "L46",
+            "L47",
+            "L48",
+            "L49",
+            "L50",
+            "L51",
+            "L52",
+            "L53"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G4>45,G4<=52),J4-(52-G4),J4+G4)",
+          "example_cell": "K4",
+          "count": 1,
+          "all_cells": [
+            "K4"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G5>45,G5<=52),J5-(52-G5),J5+G5)",
+          "example_cell": "K5",
+          "count": 1,
+          "all_cells": [
+            "K5"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G6>45,G6<=52),J6-(52-G6),J6+G6)",
+          "example_cell": "K6",
+          "count": 1,
+          "all_cells": [
+            "K6"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G7>45,G7<=52),J7-(52-G7),J7+G7)",
+          "example_cell": "K7",
+          "count": 1,
+          "all_cells": [
+            "K7"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G8>45,G8<=52),J8-(52-G8),J8+G8)",
+          "example_cell": "K8",
+          "count": 1,
+          "all_cells": [
+            "K8"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G9>45,G9<=52),J9-(52-G9),J9+G9)",
+          "example_cell": "K9",
+          "count": 1,
+          "all_cells": [
+            "K9"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G10>45,G10<=52),J10-(52-G10),J10+G10)",
+          "example_cell": "K10",
+          "count": 1,
+          "all_cells": [
+            "K10"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G11>45,G11<=52),J11-(52-G11),J11+G11)",
+          "example_cell": "K11",
+          "count": 1,
+          "all_cells": [
+            "K11"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G12>45,G12<=52),J12-(52-G12),J12+G12)",
+          "example_cell": "K12",
+          "count": 1,
+          "all_cells": [
+            "K12"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G13>45,G13<=52),J13-(52-G13),J13+G13)",
+          "example_cell": "K13",
+          "count": 1,
+          "all_cells": [
+            "K13"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G14>45,G14<=52),J14-(52-G14),J14+G14)",
+          "example_cell": "K14",
+          "count": 1,
+          "all_cells": [
+            "K14"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G15>45,G15<=52),J15-(52-G15),J15+G15)",
+          "example_cell": "K15",
+          "count": 1,
+          "all_cells": [
+            "K15"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G16>45,G16<=52),J16-(52-G16),J16+G16)",
+          "example_cell": "K16",
+          "count": 1,
+          "all_cells": [
+            "K16"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G17>45,G17<=52),J17-(52-G17),J17+G17)",
+          "example_cell": "K17",
+          "count": 1,
+          "all_cells": [
+            "K17"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G18>45,G18<=52),J18-(52-G18),J18+G18)",
+          "example_cell": "K18",
+          "count": 1,
+          "all_cells": [
+            "K18"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G19>45,G19<=52),J19-(52-G19),J19+G19)",
+          "example_cell": "K19",
+          "count": 1,
+          "all_cells": [
+            "K19"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G20>45,G20<=52),J20-(52-G20),J20+G20)",
+          "example_cell": "K20",
+          "count": 1,
+          "all_cells": [
+            "K20"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G21>45,G21<=52),J21-(52-G21),J21+G21)",
+          "example_cell": "K21",
+          "count": 1,
+          "all_cells": [
+            "K21"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G22>45,G22<=52),J22-(52-G22),J22+G22)",
+          "example_cell": "K22",
+          "count": 1,
+          "all_cells": [
+            "K22"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G23>45,G23<=52),J23-(52-G23),J23+G23)",
+          "example_cell": "K23",
+          "count": 1,
+          "all_cells": [
+            "K23"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G24>45,G24<=52),J24-(52-G24),J24+G24)",
+          "example_cell": "K24",
+          "count": 1,
+          "all_cells": [
+            "K24"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G25>45,G25<=52),J25-(52-G25),J25+G25)",
+          "example_cell": "K25",
+          "count": 1,
+          "all_cells": [
+            "K25"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G26>45,G26<=52),J26-(52-G26),J26+G26)",
+          "example_cell": "K26",
+          "count": 1,
+          "all_cells": [
+            "K26"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G27>45,G27<=52),J27-(52-G27),J27+G27)",
+          "example_cell": "K27",
+          "count": 1,
+          "all_cells": [
+            "K27"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G28>45,G28<=52),J28-(52-G28),J28+G28)",
+          "example_cell": "K28",
+          "count": 1,
+          "all_cells": [
+            "K28"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G29>45,G29<=52),J29-(52-G29),J29+G29)",
+          "example_cell": "K29",
+          "count": 1,
+          "all_cells": [
+            "K29"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G30>45,G30<=52),J30-(52-G30),J30+G30)",
+          "example_cell": "K30",
+          "count": 1,
+          "all_cells": [
+            "K30"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G31>45,G31<=52),J31-(52-G31),J31+G31)",
+          "example_cell": "K31",
+          "count": 1,
+          "all_cells": [
+            "K31"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G32>45,G32<=52),J32-(52-G32),J32+G32)",
+          "example_cell": "K32",
+          "count": 1,
+          "all_cells": [
+            "K32"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G33>45,G33<=52),J33-(52-G33),J33+G33)",
+          "example_cell": "K33",
+          "count": 1,
+          "all_cells": [
+            "K33"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G34>45,G34<=52),J34-(52-G34),J34+G34)",
+          "example_cell": "K34",
+          "count": 1,
+          "all_cells": [
+            "K34"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G35>45,G35<=52),J35-(52-G35),J35+G35)",
+          "example_cell": "K35",
+          "count": 1,
+          "all_cells": [
+            "K35"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G36>45,G36<=52),J36-(52-G36),J36+G36)",
+          "example_cell": "K36",
+          "count": 1,
+          "all_cells": [
+            "K36"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G37>45,G37<=52),J37-(52-G37),J37+G37)",
+          "example_cell": "K37",
+          "count": 1,
+          "all_cells": [
+            "K37"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G38>45,G38<=52),J38-(52-G38),J38+G38)",
+          "example_cell": "K38",
+          "count": 1,
+          "all_cells": [
+            "K38"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G39>45,G39<=52),J39-(52-G39),J39+G39)",
+          "example_cell": "K39",
+          "count": 1,
+          "all_cells": [
+            "K39"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G40>45,G40<=52),J40-(52-G40),J40+G40)",
+          "example_cell": "K40",
+          "count": 1,
+          "all_cells": [
+            "K40"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G41>45,G41<=52),J41-(52-G41),J41+G41)",
+          "example_cell": "K41",
+          "count": 1,
+          "all_cells": [
+            "K41"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G42>45,G42<=52),J42-(52-G42),J42+G42)",
+          "example_cell": "K42",
+          "count": 1,
+          "all_cells": [
+            "K42"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G43>45,G43<=52),J43-(52-G43),J43+G43)",
+          "example_cell": "K43",
+          "count": 1,
+          "all_cells": [
+            "K43"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G44>45,G44<=52),J44-(52-G44),J44+G44)",
+          "example_cell": "K44",
+          "count": 1,
+          "all_cells": [
+            "K44"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G45>45,G45<=52),J45-(52-G45),J45+G45)",
+          "example_cell": "K45",
+          "count": 1,
+          "all_cells": [
+            "K45"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G46>45,G46<=52),J46-(52-G46),J46+G46)",
+          "example_cell": "K46",
+          "count": 1,
+          "all_cells": [
+            "K46"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G47>45,G47<=52),J47-(52-G47),J47+G47)",
+          "example_cell": "K47",
+          "count": 1,
+          "all_cells": [
+            "K47"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G48>45,G48<=52),J48-(52-G48),J48+G48)",
+          "example_cell": "K48",
+          "count": 1,
+          "all_cells": [
+            "K48"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G49>45,G49<=52),J49-(52-G49),J49+G49)",
+          "example_cell": "K49",
+          "count": 1,
+          "all_cells": [
+            "K49"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G50>45,G50<=52),J50-(52-G50),J50+G50)",
+          "example_cell": "K50",
+          "count": 1,
+          "all_cells": [
+            "K50"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G51>45,G51<=52),J51-(52-G51),J51+G51)",
+          "example_cell": "K51",
+          "count": 1,
+          "all_cells": [
+            "K51"
+          ]
+        },
+        {
+          "formula": "=+IF(AND(G52>45,G52<=52),J52-(52-G52),J52+G52)",
+          "example_cell": "K52",
+          "count": 1,
+          "all_cells": [
+            "K52"
+          ]
+        }
+      ]
+    },
+    "Revisión Semanal": {
+      "total_formula_cells": 1237,
+      "unique_formulas_count": 1237,
+      "top_formulas": [
+        {
+          "formula": "=+A4",
+          "example_cell": "D4",
+          "count": 1,
+          "all_cells": [
+            "D4"
+          ]
+        },
+        {
+          "formula": "=+B4",
+          "example_cell": "E4",
+          "count": 1,
+          "all_cells": [
+            "E4"
+          ]
+        },
+        {
+          "formula": "=+C4",
+          "example_cell": "F4",
+          "count": 1,
+          "all_cells": [
+            "F4"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(G4/$F4,\"\")",
+          "example_cell": "BC4",
+          "count": 1,
+          "all_cells": [
+            "BC4"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(H4/$F4,\"\")",
+          "example_cell": "BD4",
+          "count": 1,
+          "all_cells": [
+            "BD4"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(I4/$F4,\"\")",
+          "example_cell": "BE4",
+          "count": 1,
+          "all_cells": [
+            "BE4"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(J4/$F4,\"\")",
+          "example_cell": "BF4",
+          "count": 1,
+          "all_cells": [
+            "BF4"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(K4/$F4,\"\")",
+          "example_cell": "BG4",
+          "count": 1,
+          "all_cells": [
+            "BG4"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(L4/$F4,\"\")",
+          "example_cell": "BH4",
+          "count": 1,
+          "all_cells": [
+            "BH4"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(M4/$F4,\"\")",
+          "example_cell": "BI4",
+          "count": 1,
+          "all_cells": [
+            "BI4"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(N4/$F4,\"\")",
+          "example_cell": "BJ4",
+          "count": 1,
+          "all_cells": [
+            "BJ4"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(O4/$F4,\"\")",
+          "example_cell": "BK4",
+          "count": 1,
+          "all_cells": [
+            "BK4"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(P4/$F4,\"\")",
+          "example_cell": "BL4",
+          "count": 1,
+          "all_cells": [
+            "BL4"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(Q4/$F4,\"\")",
+          "example_cell": "BM4",
+          "count": 1,
+          "all_cells": [
+            "BM4"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(R4/$F4,\"\")",
+          "example_cell": "BN4",
+          "count": 1,
+          "all_cells": [
+            "BN4"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(S4/$F4,\"\")",
+          "example_cell": "BO4",
+          "count": 1,
+          "all_cells": [
+            "BO4"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(T4/$F4,\"\")",
+          "example_cell": "BP4",
+          "count": 1,
+          "all_cells": [
+            "BP4"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(U4/$F4,\"\")",
+          "example_cell": "BQ4",
+          "count": 1,
+          "all_cells": [
+            "BQ4"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(V4/$F4,\"\")",
+          "example_cell": "BR4",
+          "count": 1,
+          "all_cells": [
+            "BR4"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(W4/$F4,\"\")",
+          "example_cell": "BS4",
+          "count": 1,
+          "all_cells": [
+            "BS4"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(X4/$F4,\"\")",
+          "example_cell": "BT4",
+          "count": 1,
+          "all_cells": [
+            "BT4"
+          ]
+        },
+        {
+          "formula": "=+CX4=A4",
+          "example_cell": "CZ4",
+          "count": 1,
+          "all_cells": [
+            "CZ4"
+          ]
+        },
+        {
+          "formula": "=+CY4=B4",
+          "example_cell": "DA4",
+          "count": 1,
+          "all_cells": [
+            "DA4"
+          ]
+        },
+        {
+          "formula": "=+A5",
+          "example_cell": "D5",
+          "count": 1,
+          "all_cells": [
+            "D5"
+          ]
+        },
+        {
+          "formula": "=+B5",
+          "example_cell": "E5",
+          "count": 1,
+          "all_cells": [
+            "E5"
+          ]
+        },
+        {
+          "formula": "=+C5",
+          "example_cell": "F5",
+          "count": 1,
+          "all_cells": [
+            "F5"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(G5/$F5,\"\")",
+          "example_cell": "BC5",
+          "count": 1,
+          "all_cells": [
+            "BC5"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(H5/$F5,\"\")",
+          "example_cell": "BD5",
+          "count": 1,
+          "all_cells": [
+            "BD5"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(I5/$F5,\"\")",
+          "example_cell": "BE5",
+          "count": 1,
+          "all_cells": [
+            "BE5"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(J5/$F5,\"\")",
+          "example_cell": "BF5",
+          "count": 1,
+          "all_cells": [
+            "BF5"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(K5/$F5,\"\")",
+          "example_cell": "BG5",
+          "count": 1,
+          "all_cells": [
+            "BG5"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(L5/$F5,\"\")",
+          "example_cell": "BH5",
+          "count": 1,
+          "all_cells": [
+            "BH5"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(M5/$F5,\"\")",
+          "example_cell": "BI5",
+          "count": 1,
+          "all_cells": [
+            "BI5"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(N5/$F5,\"\")",
+          "example_cell": "BJ5",
+          "count": 1,
+          "all_cells": [
+            "BJ5"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(O5/$F5,\"\")",
+          "example_cell": "BK5",
+          "count": 1,
+          "all_cells": [
+            "BK5"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(P5/$F5,\"\")",
+          "example_cell": "BL5",
+          "count": 1,
+          "all_cells": [
+            "BL5"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(Q5/$F5,\"\")",
+          "example_cell": "BM5",
+          "count": 1,
+          "all_cells": [
+            "BM5"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(R5/$F5,\"\")",
+          "example_cell": "BN5",
+          "count": 1,
+          "all_cells": [
+            "BN5"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(S5/$F5,\"\")",
+          "example_cell": "BO5",
+          "count": 1,
+          "all_cells": [
+            "BO5"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(T5/$F5,\"\")",
+          "example_cell": "BP5",
+          "count": 1,
+          "all_cells": [
+            "BP5"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(U5/$F5,\"\")",
+          "example_cell": "BQ5",
+          "count": 1,
+          "all_cells": [
+            "BQ5"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(V5/$F5,\"\")",
+          "example_cell": "BR5",
+          "count": 1,
+          "all_cells": [
+            "BR5"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(W5/$F5,\"\")",
+          "example_cell": "BS5",
+          "count": 1,
+          "all_cells": [
+            "BS5"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(X5/$F5,\"\")",
+          "example_cell": "BT5",
+          "count": 1,
+          "all_cells": [
+            "BT5"
+          ]
+        },
+        {
+          "formula": "=+CX5=A5",
+          "example_cell": "CZ5",
+          "count": 1,
+          "all_cells": [
+            "CZ5"
+          ]
+        },
+        {
+          "formula": "=+CY5=B5",
+          "example_cell": "DA5",
+          "count": 1,
+          "all_cells": [
+            "DA5"
+          ]
+        },
+        {
+          "formula": "=+A6",
+          "example_cell": "D6",
+          "count": 1,
+          "all_cells": [
+            "D6"
+          ]
+        },
+        {
+          "formula": "=+B6",
+          "example_cell": "E6",
+          "count": 1,
+          "all_cells": [
+            "E6"
+          ]
+        },
+        {
+          "formula": "=+C6",
+          "example_cell": "F6",
+          "count": 1,
+          "all_cells": [
+            "F6"
+          ]
+        },
+        {
+          "formula": "=+IFERROR(G6/$F6,\"\")",
+          "example_cell": "BC6",
+          "count": 1,
+          "all_cells": [
+            "BC6"
+          ]
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "sheets_that_feed": {
+      "Resumen": {
+        "Curvas": 5931
+      },
+      "Conteo": {
+        "Resumen": 2,
+        "Histórico Cosecha": 2155
+      },
+      "Curvas": {
+        "Resumen": 2,
+        "Conteo": 1
+      },
+      "Histórico Cosecha": {
+        "Resumen": 2
+      },
+      "Mensual": {
+        "Resumen": 1,
+        "Curvas": 2758
+      }
+    },
+    "sheets_that_consume": {
+      "Curvas": {
+        "Resumen": 5931,
+        "Mensual": 2758
+      },
+      "Resumen": {
+        "Conteo": 2,
+        "Curvas": 2,
+        "Histórico Cosecha": 2,
+        "Mensual": 1
+      },
+      "Histórico Cosecha": {
+        "Conteo": 2155
+      },
+      "Conteo": {
+        "Curvas": 1
+      }
+    }
+  },
+  "key_parameters": [
+    {
+      "cell": "Curvas!I276",
+      "references_count": 9975,
+      "value": "U. de la Florida"
+    },
+    {
+      "cell": "Curvas!H276",
+      "references_count": 9975,
+      "value": "Test Block"
+    },
+    {
+      "cell": "Curvas!G276",
+      "references_count": 9975,
+      "value": "8"
+    },
+    {
+      "cell": "Curvas!I219",
+      "references_count": 9947,
+      "value": "Sekoya Pop"
+    },
+    {
+      "cell": "Curvas!H219",
+      "references_count": 9947,
+      "value": "1"
+    },
+    {
+      "cell": "Curvas!G219",
+      "references_count": 9947,
+      "value": "6"
+    },
+    {
+      "cell": "Curvas!C10",
+      "references_count": 3776,
+      "value": "1"
+    },
+    {
+      "cell": "Curvas!E10",
+      "references_count": 2747,
+      "value": "Sekoya Pop"
+    },
+    {
+      "cell": "Curvas!B10",
+      "references_count": 2747,
+      "value": "6"
+    },
+    {
+      "cell": "Curvas!C213",
+      "references_count": 2695,
+      "value": null
+    },
+    {
+      "cell": "Curvas!E213",
+      "references_count": 2695,
+      "value": null
+    },
+    {
+      "cell": "Curvas!B213",
+      "references_count": 2695,
+      "value": "Acumulado ACP"
+    },
+    {
+      "cell": "Resumen!E10",
+      "references_count": 1913,
+      "value": "=SUMIFS(Curvas!J$10:J$212,Curvas!$F$10:$F$212,Resumen!$C$9,Curvas!$E$10:$E$212,Resumen!$C10)"
+    },
+    {
+      "cell": "Resumen!F10",
+      "references_count": 1912,
+      "value": "=SUMIFS(Curvas!K$10:K$212,Curvas!$F$10:$F$212,Resumen!$C$9,Curvas!$E$10:$E$212,Resumen!$C10)"
+    },
+    {
+      "cell": "Resumen!F212",
+      "references_count": 1911,
+      "value": null
+    },
+    {
+      "cell": "Resumen!E212",
+      "references_count": 1911,
+      "value": null
+    },
+    {
+      "cell": "Resumen!C23",
+      "references_count": 1422,
+      "value": "Organico VIVEROS VARIOS"
+    },
+    {
+      "cell": "Curvas!C212",
+      "references_count": 1081,
+      "value": "Test Block"
+    },
+    {
+      "cell": "Curvas!BF6",
+      "references_count": 816,
+      "value": "=+BE7"
+    },
+    {
+      "cell": "Conteo!CW10",
+      "references_count": 729,
+      "value": null
+    },
+    {
+      "cell": "Conteo!CW43",
+      "references_count": 729,
+      "value": null
+    },
+    {
+      "cell": "Conteo!C10",
+      "references_count": 729,
+      "value": "ACP"
+    },
+    {
+      "cell": "Conteo!C43",
+      "references_count": 729,
+      "value": "ACP"
+    },
+    {
+      "cell": "Conteo!D10",
+      "references_count": 698,
+      "value": "6"
+    },
+    {
+      "cell": "Conteo!D43",
+      "references_count": 698,
+      "value": "6"
+    },
+    {
+      "cell": "Curvas!M6",
+      "references_count": 583,
+      "value": "=+J7"
+    },
+    {
+      "cell": "Curvas!I386",
+      "references_count": 494,
+      "value": "Sekoya Pop"
+    },
+    {
+      "cell": "Curvas!I438",
+      "references_count": 494,
+      "value": "Sekoya Pop"
+    },
+    {
+      "cell": "Curvas!G386",
+      "references_count": 494,
+      "value": "Convencional"
+    },
+    {
+      "cell": "Curvas!G438",
+      "references_count": 494,
+      "value": "Orgánico"
+    }
+  ],
+  "main_formulas": {}
+}

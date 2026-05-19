@@ -503,6 +503,12 @@ def refrescar_mart_ciclo_poda(conexion) -> int:
             Diametro_Tallo_Total, Ramilla_Planta_Total, Tocones_Planta_Total,
             Cortes_Defectuosos_Total, Altura_Poda_Total,
             Fecha_Actualizacion, N_Muestras
+            Tipo_Evaluacion,
+            Tallos_Planta_Total, Longitud_Tallo_Total,
+            Diametro_Tallo_Total, Ramilla_Planta_Total,
+            Tocones_Planta_Total, Cortes_Defectuosos_Total,
+            Altura_Poda_Total, N_Muestras,
+            Fecha_Actualizacion
         )
         SELECT
             p.ID_Tiempo, p.ID_Geografia, p.ID_Variedad, ISNULL(p.ID_Campana, 0),
@@ -514,6 +520,11 @@ def refrescar_mart_ciclo_poda(conexion) -> int:
             AVG(p.Altura_Poda),
             SYSDATETIME(),
             COUNT(*)
+            SUM(p.Tallos_Planta), SUM(p.Longitud_Tallo),
+            SUM(p.Diametro_Tallo), SUM(p.Ramilla_Planta),
+            SUM(p.Tocones_Planta), SUM(p.Cortes_Defectuosos),
+            SUM(p.Altura_Poda), COUNT(*),
+            SYSDATETIME()
         FROM Silver.Fact_Ciclo_Poda p
         JOIN Silver.Dim_Tiempo t ON t.ID_Tiempo = p.ID_Tiempo
         JOIN Silver.Dim_Geografia g ON g.ID_Geografia = p.ID_Geografia
